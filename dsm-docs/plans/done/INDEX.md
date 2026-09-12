@@ -447,6 +447,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-543 | A wording pattern in the always-loaded Session Transcript reinforcement block correlates with a model-side session-start refusal on newer models | v1.26.0 | 2026-09-03 | DSM_0.2 §17.1 alignment template + `.claude/CLAUDE.md` reinforcement block (rewording); localized by manual ablation |
 | BACKLOG-545 | Reframe the Session Transcript Protocol delimiter from "thinking" to a plan entry ecosystem-wide | v1.26.0 | 2026-09-04 | DSM_0.2 §6 delimiter label (`Start Plan`), §7, DSM_0.2.G, the §17.1 template, and `transcript-reminder.sh` |
 | BACKLOG-546 | The document-metrics script writes to the folder renamed away in S138, creates it on the way, and reports success either way | v1.26.3 | 2026-09-04 | `scripts/document_structure_metrics.py` (REFERENCE_FILE path + assert-never-create) |
+| BACKLOG-547 | The Central align exception is a procedure that exists only inside the markers it writes, and the template it reads has moved | — | 2026-09-12 | `/dsm-go` Step 1.8 (no-Central-exception + measured cost) and `/dsm-align` Step 1 Hub fast-path + Step 13 marker `note:` rule |
 | BACKLOG-521 | Two Sprint Boundary Checklist items name paths no scaffold creates | — | 2026-08-21 | DSM_2.0.C Template 8, /dsm-align Step 3 |
 | BACKLOG-522 | dsm-docs/guides/ has no index and no trigger-gated convention | — | 2026-08-21 | dsm-docs/guides/README.md |
 | BACKLOG-524 | Cost gate misses recursive delegation; trigger wording ambiguous | — | 2026-08-21 | DSM_0.2 §8.9.2 |

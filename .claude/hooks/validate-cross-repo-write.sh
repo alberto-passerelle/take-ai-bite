@@ -47,8 +47,26 @@ INPUT=$(cat)
 # Coverage limits are stated in DSM_0.2.C so the prose does not over-claim
 # relative to the mechanism.
 #
-# Exit 1 (not 2) is the non-blocking channel: stderr surfaces to the user
-# without vetoing the call.
+# Exit 1 (not 2) is the non-blocking channel: it does not veto the call.
+#
+# WHO ACTUALLY SEES IT (measured S259, 2026-09-09; corrected from "stderr
+# surfaces to the user", which was imprecise about the audience). A non-zero
+# hook exit is recorded in the session JSONL at
+# ~/.claude/projects/<slug>/<session-id>.jsonl as an attachment of type
+# hook_non_blocking_error, carrying the full stderr. That reaches the transcript
+# and the UI. It is NOT surfaced into the tool result the AGENT reads, so an
+# agent cannot see this warning in the turn that triggered it.
+#
+# The consequence is worth stating rather than leaving for someone to rediscover:
+# a warn-not-block hook informs the human and the record, not the writer. That
+# does not overturn the choice above , blocking shell on a guess is still worse ,
+# but it means this branch is a detector for review, not a live correction.
+#
+# How the fact was established, so it can be re-checked rather than trusted:
+# six PreToolUse:Bash dispatches were found in one session's log, including three
+# to this script, each with exitCode 1 and full stderr, none of which had been
+# visible to the agent at the time. A hook exiting 0 produces no attachment at
+# all, so absence of records is not evidence of absence of dispatch.
 TOOL_NAME=$(echo "$INPUT" | python3 -c "
 import sys, json
 try:
