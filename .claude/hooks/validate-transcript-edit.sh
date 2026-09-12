@@ -1,7 +1,13 @@
 #!/bin/bash
 # Hook: Enforce session transcript append-only rule (DSM_0.2 §7)
-# Fires on PreToolUse for Edit calls to *session-transcript.md
-# Four validations (0-3 block; 4 warns):
+# Fires on PreToolUse for Edit calls to *session-transcript.md, and (BL-552)
+# for Bash calls that redirect into it. The two paths validate different
+# things because different things are knowable: the Edit path sees old_string
+# and new_string and checks all four rules below; the Bash path sees only a
+# command string and checks the two that survive that (delimiter present, and
+# the unquoted-heredoc backtick hazard). The Bash branch states its own
+# coverage limits at its head rather than here.
+# Four validations on the Edit path (0-3 block; 4 warns):
 # 1. old_string must be anchored to the last non-empty line of the file
 # 2. new_string must start with old_string (append-only, no replacement)
 # 3. Appended content must contain a <------------Start {timestamp}------------>
@@ -11,6 +17,116 @@ set -e
 
 # Read JSON from stdin and extract fields
 INPUT=$(cat)
+
+# --- Bash branch (BL-552) -------------------------------------------------
+# DSM_0.2 §7 sanctions TWO append paths and, until this branch, only one was
+# inspected. This hook was registered on the Edit matcher alone, so a Bash
+# heredoc append reached the transcript ungated , and the heredoc is not an
+# exotic path: §7 names it the REQUIRED fallback whenever the Edit path is
+# closed, which BL-500 documents as the case where the last non-empty line
+# recurs earlier in the file and the anchor rule and Edit's uniqueness rule
+# become jointly unsatisfiable.
+#
+# So the sanctioned fallback was, by construction, the unvalidated one, and
+# the hook routed its own catch into its own blind spot: in S258 check 1/4
+# correctly BLOCKED a two-line Edit anchor, the recovery went through an
+# unquoted heredoc, and three backtick-quoted spans were executed as shell
+# commands instead of being written. The surviving prose still read as fluent
+# English with the spans simply missing. Recorded by four consecutive analysis
+# runs (S252, S253, S254, S258) before it was filed.
+#
+# WARN, never block; detection is a floor, not a proof. Both choices are
+# INHERITED from validate-cross-repo-write.sh's BL-484 branch rather than
+# re-decided: shell is not statically analysable, a parser that blocks on a
+# guess produces false blocks on ordinary commands, and a gate the operator
+# learns to dismiss is worse than no gate, because a reflex-dismissed gate
+# still reads as protection. Exit 1 is the documented non-blocking channel.
+#
+# WHO SEES THE WARNING (measured S259, 2026-09-09). A non-zero hook exit is
+# recorded in the session JSONL as a hook_non_blocking_error attachment carrying
+# the full stderr, which reaches the transcript and the UI. It is NOT surfaced
+# into the tool result the AGENT reads. So this branch warns the human and the
+# record, not the writer, and it is a detector for review rather than a live
+# correction. Same correction applied to validate-cross-repo-write.sh, whose
+# BL-484 comment carried the imprecise wording this inherited.
+#
+# NOT COVERED, stated so this branch does not over-claim relative to what it
+# actually inspects:
+#   * Check 1's ANCHOR has no Bash analogue. A heredoc append carries no
+#     old_string, so there is nothing to anchor and nothing to compare.
+#   * Check 2's APPEND-ONLY becomes the truncating `>` redirect, which is
+#     deliberately NOT flagged: /dsm-go Step 6 legitimately resets the
+#     transcript with `cat > ... << EOF` at every boot, so flagging it would
+#     fire on ordinary work in every session, which is the over-firing
+#     failure DSM_0.2 §8.9.2 names. Accepted as a coverage limit.
+#   * Check 4's timestamp drift stays Edit-only rather than being duplicated
+#     here; two copies of the same arithmetic drift apart, which is the
+#     BL-490 restated-literal family.
+#   * Variable-constructed paths, eval, and computed heredoc targets evade
+#     the redirect match by design.
+TOOL_NAME=$(echo "$INPUT" | python3 -c "
+import sys, json
+try:
+    print(json.load(sys.stdin).get('tool_name', ''))
+except Exception:
+    print('')
+" 2>/dev/null || echo "")
+
+if [ "$TOOL_NAME" = "Bash" ]; then
+  # No '&&' at statement head anywhere below: under 'set -e' a false test in
+  # an AND-list aborts the hook, turning a warning into a silent veto
+  # (DSM_0.2 §19.2's family). The existing check 4 carries the same warning.
+  BASH_FINDINGS=$(echo "$INPUT" | python3 -c '
+import sys, json, re
+try:
+    cmd = json.load(sys.stdin).get("tool_input", {}).get("command", "") or ""
+except Exception:
+    sys.exit(0)
+
+# Only commands that redirect into the session transcript are inspected.
+# Everything else produces no output at all (the over-firing control).
+if not re.search(r">>?\s*[^\s|;&]*\.claude/session-transcript\.md", cmd):
+    sys.exit(0)
+
+out = []
+# \x27 and \x22 are the quote characters, written as escapes because this
+# program is delivered inside a single-quoted shell string.
+for m in re.finditer(r"<<-?\s*([\x27\x22]?)([A-Za-z_][A-Za-z0-9_]*)\1", cmd):
+    quote, delim = m.group(1), m.group(2)
+    rest = cmd[m.end():]
+    end = re.search(r"^[ \t]*" + re.escape(delim) + r"[ \t]*$", rest, re.M)
+    body = rest[:end.start()] if end else rest
+    if "<------------Start " not in body:
+        out.append("B1|no timestamped delimiter in the appended block")
+    if quote == "" and "\x60" in body:
+        out.append("B2|unquoted heredoc whose body contains a backtick")
+print("\n".join(out))
+' 2>/dev/null || true)
+
+  if [ -n "$BASH_FINDINGS" ]; then
+    cat >&2 <<WARNEOF
+WARNING: Session transcript Bash append (DSM_0.2 §7, BL-552).
+
+$BASH_FINDINGS
+
+This is a WARNING, not a block. The command has gone through.
+
+B1 , every appended entry must carry a delimiter:
+  <------------Start Plan / HH:MM------------>
+
+B2 , an UNQUOTED heredoc performs command substitution on backticks as well as
+on \$(...). A backtick-quoted term in ordinary prose is EXECUTED and replaced by
+its output, and the surviving text still reads as fluent English with the span
+missing. DSM_0.2 §7 names only the \$(...) direction; BACKLOG-500 is the
+protocol-text half of this gap.
+FIX: single-quote the heredoc (<< 'EOF') when the body contains backticks, or
+prefer the Edit append path, which this hook validates in full.
+WARNEOF
+    exit 1
+  fi
+  exit 0
+fi
+
 eval "$(echo "$INPUT" | python3 -c "
 import sys, json, shlex
 data = json.load(sys.stdin)

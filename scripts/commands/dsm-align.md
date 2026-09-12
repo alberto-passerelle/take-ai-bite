@@ -64,6 +64,8 @@ Before starting alignment, check if git is initialized:
 
    **Hub fast-path:** If the project is DSM Central (has `scripts/commands/` directory), skip steps 2, 4, 5, 6, and 8c. These steps check spoke scaffold structure and validate CLAUDE.md paths against the filesystem, both of which are redundant on the hub that defines the templates. Run steps 1, **3 (canonical dsm-docs/ folder scaffold, idempotent)**, 7, 7b, 8, 8b, 9, 10, 10b, 11, 12, 13. Step 3 is included in the hub fast-path because a Kick-off'd mirror clone is functionally a hub (per DSM_0.2.A §25.4) but arrives with an empty scaffold; Step 3's idempotent check-then-create is a no-op for Central (scaffold already exists) and the missing piece for fresh clones. Step 10b is mandatory on the hub because hub-self-installs the session-transcript hooks (transcript-reminder + validate-transcript-edit) and applies `chmod +x`. Omitting 10b on hub fast-path was the S180 root cause of a full session of zero transcript appends in DSM Central, the hooks were present on disk but not executable, so Claude Code's hook subsystem silently dropped the per-turn reminder injection.
 
+   **This fast-path is the path DSM Central actually takes, and there is no alternative to it (BL-547).** `/dsm-go` Step 1.8 branch 6 routes a version mismatch here, at Central as at any spoke. Between roughly S233 and S259 Central instead performed a "marker-only refresh" that skipped the skill entirely; that practice was written down nowhere but in the `note:` field of the gitignored `.claude/last-align.txt` each run wrote, so it propagated by being copied forward between untracked artifacts and could not be reviewed. It is retired. Two consequences worth stating here rather than leaving to the BL: the template location must always be resolved by SEARCHING for the template rather than by a remembered line number or file, since it has already moved once (v1.26.0 relocated §17.1's base template into `DSM_0.2.T_Alignment_Templates.md`); and Steps 11, 11b and 11c are Central-only, so this branch is the only code path on which they ever execute, which is why skipping the skill made all three unreachable (BL-498).
+
    **External Contribution (EC) fast-path:** If the project is detected as an External Contribution, skip steps 2-6 (spoke scaffold in the current repo), 8c (path validation against spoke structure), and 11 (command sync). Instead, run steps 1, 7, 7b, 8, 8b, 9, 10, 10b, **EC scaffold step (step 3-EC)**, 12, 12a, 13. The EC scaffold step creates governance folders in the external governance repo, not in the current project.
 
    **EC detection (two-tier):**
@@ -396,7 +398,27 @@ Before starting alignment, check if git is initialized:
 
 11b. **Check done/INDEX.md currency (DSM Central only):**
    - Skip this step if the project is not DSM Central (no `scripts/commands/` directory).
-   - Collect the set of `BACKLOG-NNN` files in `dsm-docs/plans/done/` and the set of `BACKLOG-NNN` rows present in `dsm-docs/plans/done/INDEX.md`.
+   - Collect the `BACKLOG-NNN` entries in **both** `done/` trees and the `BACKLOG-NNN` rows present in `dsm-docs/plans/done/INDEX.md`, then take the set difference:
+
+     ```bash
+     DONE=$( { ls dsm-docs/plans/done/ ; ls plan/backlog/done/ ; } 2>/dev/null \
+             | grep -oE '^BACKLOG-[0-9]+' | sort -u )
+     ROWS=$(grep -oE 'BACKLOG-[0-9]+' dsm-docs/plans/done/INDEX.md 2>/dev/null | sort -u)
+     if [ -z "$DONE" ] || [ -z "$ROWS" ]; then
+       echo "UNRESOLVED: collected $(printf '%s' "$DONE" | grep -c .) BL entries and $(printf '%s' "$ROWS" | grep -c .) index rows; set difference NOT computed"
+     else
+       MISSING=$(comm -23 <(printf '%s\n' "$DONE") <(printf '%s\n' "$ROWS"))
+       N=$(printf '%s' "$MISSING" | grep -c .)
+       [ "$N" -eq 0 ] && echo "OK: INDEX.md covers all $(printf '%s' "$DONE" | grep -c .) closed BLs" \
+                      || echo "MISSING $N row(s): $(printf '%s' "$MISSING" | tr '\n' ' ')"
+     fi
+     ```
+
+     **Both trees, not one (BL-498).** `INDEX.md`'s own scope statement reads "BLs in `dsm-docs/plans/done/` + `plan/backlog/done/`", and this step scanned only the first for as long as it existed. Measured at S242, that gap was nine legacy-tree BLs (100, 139, 142, 143, 160, 165, 231, 235, 236) invisible to the audit since it shipped, so even a reliably-executing narrow version would have reported 21 of 30 and read as a clean pass on the rest.
+
+     **`ls` over the directory, never a file test.** `BACKLOG-236` is a **directory**, not a file. Matching `^BACKLOG-[0-9]+` against `ls` output never inspects the filesystem type, so a directory is collected exactly once like any other entry. This is structural rather than a special case, which matters because a special case written for one entry rots the moment a second directory appears.
+
+     **The empty guard is the point, not defensive padding.** If either tree path is wrong, or a rename moves one, the collected set is empty, the set difference is empty, and a version without this guard reports "no missing rows" , a false all-clear indistinguishable from a real one (DSM_0.2 §19.1's second question). `UNRESOLVED` and `OK` must never be the same line. Note also that the guard covers `ROWS`: an unreadable or relocated `INDEX.md` would otherwise make every closed BL look missing, which fails loudly and is therefore the less dangerous direction, but is still not a measurement.
    - If any `done/` BL has no INDEX row, **report as warning**: "done/INDEX.md is missing N row(s): [BL numbers]. These BLs were closed without `/dsm-backlog-done` Step 8 (typically a manual `git mv` to done/). Backfill the rows, deriving version/date/resolver from CHANGELOG.md."
    - **Root cause this catches:** `/dsm-backlog-done` Step 8 updates the index, but a BL closed by manual `git mv` instead of the skill bypasses Step 8, so the index silently drifts behind `done/`.
    - Do NOT auto-backfill; report for user action (version/date/resolver derivation needs a CHANGELOG cross-reference and judgment). For a large gap, a Sonnet subagent can generate the rows for review.
@@ -573,6 +595,7 @@ Before starting alignment, check if git is initialized:
    - `result` is `pass` if no warnings or critical issues, `warnings` if only warnings, `critical` if any critical issues were found
    - `dsm-version`: CHANGELOG is the source of truth for version numbers; do not guess or use other files
    - `dsm-version` is written **without** a `v` prefix (BL-483), matching the CHANGELOG's own heading format. `/dsm-go` Step 1.8 compares this value against the CHANGELOG heading; if the two are stored in different formats the comparison can never match and the conditional-align optimisation silently never fires. Both sides of that comparison changed together in BL-483 and must continue to move together
+   - `note:` is optional free text and records what this run **found**: which checks fired, what was repaired, what still needs the user. It must **never** record how to perform an alignment. The marker is gitignored, so a procedure written into it is unreviewable, unversioned, and travels only by being copied forward from one session's marker into the next. That is precisely how the retired Central exception survived two releases and then broke silently: the procedure it carried still found its grep target after v1.26.0 moved the §17.1 base template, so it would have reported enormous drift against a one-line pointer, confidently and on the wrong file (BL-547). A marker records results; the skill records procedure
 
    **Origin:** Previously, spoke-action surfacing lived in `/dsm-go` Step 2c, which read `last-align.txt` after `/dsm-align` Step 13 had already overwritten it. The old version was lost, so 2c always saw "versions match" and never surfaced spoke actions. Moving surfacing into Step 13 (read-before-write) fixes the ordering bug.
 
