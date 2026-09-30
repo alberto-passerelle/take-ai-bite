@@ -6,7 +6,7 @@
 # unstaged content changes. If yes, blocks the commit with a clear
 # bypass message.
 #
-# Origin: three sightings in DSM Central (S184 BL-349, S190 IronCalc
+# Origin: three sightings in DSM Central (S184 BL-349, S190
 # inbox move, S191 /dsm-light-go checkpoint annotation). MEMORY
 # captured the lesson; this hook enforces it.
 #

@@ -110,7 +110,7 @@ compounds as more code is built on the flawed foundation.
 
 **Why this matters:** Catching format mismatches early (Sprint 1) costs minutes; catching them late (Sprint 3) costs hours of rework. This principle is simple: look at real data before creating fake data.
 
-**Origin:** Discovered during DSM Graph Explorer development where 145 tests passed against a wrong fixture format, causing 448 false errors on first real-world run.
+**Origin:** Discovered during a spoke project's development where 145 tests passed against a wrong fixture format, causing 448 false errors on first real-world run.
 
 ### 1.2. Post-Experiment Upstream Contribution Assessment
 
@@ -144,7 +144,7 @@ If all three are met, proceed through the pipeline:
 **Scaling:** This applies across all spoke projects. Any experiment validating an
 external library is a potential pipeline trigger.
 
-**Origin:** DSM Graph Explorer Sessions 33-34, EXP-005 (FalkorDBLite validation)
+**Origin:** Sessions 33-34, EXP-005 (FalkorDBLite validation)
 discovered 5 documentation gaps and led to FalkorDB/falkordblite#85.
 
 ---
@@ -394,4 +394,4 @@ appended as the build progresses.
   runner exists. The git log plus the smoke-test log together form a verifiable
   build narrative.
 
-**Origin:** traveline-ds-project-skeleton S1 (2026-05-22); BACKLOG-452.
+**Origin:** S1 (2026-05-22); BACKLOG-452.

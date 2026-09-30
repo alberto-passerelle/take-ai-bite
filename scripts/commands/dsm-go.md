@@ -44,7 +44,7 @@ before any session-start protocol can run correctly.
    reach its own stated maximum. The gate did not misfire, but a number that is wrong in
    a way that looks like a known quirk is how a defect survives review, and this one
    survived five consecutive spoke reports plus a Central boot that wrote off the missing
-   folder as "expected". It also PROPAGATED: `dsm-blog-poster` was measured carrying an
+   folder as "expected". It also PROPAGATED: a spoke project was measured carrying an
    empty `dsm-docs/inbox/.gitkeep` created to satisfy this list, which inflated its count
    to a false `9/9`, the same ghost BL-266 deleted from Central in S150.
 2. Also check for `_inbox/` at project root
@@ -198,7 +198,7 @@ Step 0.7 only DETECTS. The lockfile WRITE happens at the end of Step 6
 (transcript reset), so the `transcript_anchor` field reflects the post-reset
 state. See Step 6 for the write spec.
 
-**Origin:** BL-431 (S207, derived from heating-systems-conversational-ai
+**Origin:** BL-431 (S207, derived from
 S10.L2 incident where two Claude Code conversations operated the same branch
 in parallel with no awareness, surfacing only when `git status` showed
 foreign entries).
@@ -584,13 +584,13 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    - **2a.5. Ecosystem Path Registry:** Read `.claude/dsm-ecosystem.md` (created by `/dsm-align` in Step 1.8). Parse the Paths table and cache each Name -> Path mapping for the session. For each entry, verify the path exists on the filesystem:
      - If the path exists: note as validated
      - If the path does not exist: warn "Ecosystem path '{name}' points to '{path}' which does not exist. Cross-repo operations using this path will be skipped."
-   - **2a.6. Default-branch verification:** **Non-suppressible (per DSM_0.2 §8.9.1):** the halt-with-critical-warning prompt below MUST display and MUST receive an explicit user response (fix the configuration, or type `defer`). Auto mode does NOT bypass this prompt regardless of explicit suspension. If `GIT_AVAILABLE` is true AND `git remote get-url origin` returns a URL containing `github.com`, resolve the configured remote default branch with `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`. Compare against the local main line: read the project-specific section of `.claude/CLAUDE.md` for an optional `**Main branch:**` declaration; default to `main` if absent. If the remote default differs from the local main line, **halt with a critical warning** that names both values and the fix command (`gh repo edit --default-branch {local}`). This is a hard gate: no session work proceeds until the user fixes the configuration OR types `defer` to bypass for this session only. Cache the resolved value for the session (one `gh` call per session). **Skip silently if:** remote `origin` does not point at GitHub (no `github.com` substring), OR `gh` CLI is not installed (warn once: "install gh to enable default-branch verification" and continue). Origin: Default-branch verification protocol. Failure mode this catches: dsm-jupyter-book S4 lost ~45 minutes to an HTTP 404 cascade because the repo's default branch was a stale session branch, not `main`.
+   - **2a.6. Default-branch verification:** **Non-suppressible (per DSM_0.2 §8.9.1):** the halt-with-critical-warning prompt below MUST display and MUST receive an explicit user response (fix the configuration, or type `defer`). Auto mode does NOT bypass this prompt regardless of explicit suspension. If `GIT_AVAILABLE` is true AND `git remote get-url origin` returns a URL containing `github.com`, resolve the configured remote default branch with `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`. Compare against the local main line: read the project-specific section of `.claude/CLAUDE.md` for an optional `**Main branch:**` declaration; default to `main` if absent. If the remote default differs from the local main line, **halt with a critical warning** that names both values and the fix command (`gh repo edit --default-branch {local}`). This is a hard gate: no session work proceeds until the user fixes the configuration OR types `defer` to bypass for this session only. Cache the resolved value for the session (one `gh` call per session). **Skip silently if:** remote `origin` does not point at GitHub (no `github.com` substring), OR `gh` CLI is not installed (warn once: "install gh to enable default-branch verification" and continue). Origin: Default-branch verification protocol. Failure mode this catches: a spoke project (S4) lost ~45 minutes to an HTTP 404 cascade because the repo's default branch was a stale session branch, not `main`.
    - **2a.7. Open-PR CI status check (per BL-441):** If `GIT_AVAILABLE` is true AND the `origin` remote points at GitHub AND `gh` is installed (reuse the determination cached in 2a.6), check whether the current branch has an open PR and surface its CI status in the boot report so a session never resumes on top of silently-failing CI. Run:
      ```bash
      PR_NUMBER=$(gh pr list --head "$(git branch --show-current)" --json number --jq '.[0].number' 2>/dev/null)
      [ -n "$PR_NUMBER" ] && gh pr checks "$PR_NUMBER" 2>/dev/null
      ```
-     Behavior: if any check has `conclusion=failure`, surface in the boot report: "PR #{N} has K failing CI check(s): [names]." If all checks pass, include "PR #{N} CI: green". Only FAILED checks are enumerated; `pending` checks are silent (a mid-workflow resume is not a failure); green checks collapse into the summary line. One `gh` call at boot (rate-limit guard). **Skip silently if:** no `gh`, no GitHub remote, or no open PR for the current branch (the common case). On any `gh` error (auth, rate limit, network), skip silently; never block the boot. Origin: IronCalc S14, where PR #865's `lint-all` was red for 20 days (a `cargo fmt --check` failure) while `/dsm-go` reported "awaiting re-review" from MEMORY; the user had to ask "check PR #865" to surface it.
+     Behavior: if any check has `conclusion=failure`, surface in the boot report: "PR #{N} has K failing CI check(s): [names]." If all checks pass, include "PR #{N} CI: green". Only FAILED checks are enumerated; `pending` checks are silent (a mid-workflow resume is not a failure); green checks collapse into the summary line. One `gh` call at boot (rate-limit guard). **Skip silently if:** no `gh`, no GitHub remote, or no open PR for the current branch (the common case). On any `gh` error (auth, rate limit, network), skip silently; never block the boot. Origin: S14, where PR #865's `lint-all` was red for 20 days (a `cargo fmt --check` failure) while `/dsm-go` reported "awaiting re-review" from MEMORY; the user had to ask "check PR #865" to surface it.
    - **2a.8. CLAUDE.md section completeness (Module A §23):** Check whether CLAUDE.md contains all 4 required sections (DSM_0.2 Alignment, participation pattern, project type, project specific). If all present, pass silently. If sections are missing, report which ones and suggest completing them before implementation. This is a hard gate: no implementation work until all 4 sections exist. Existing complete projects pass silently.
    - **2b. Inbox check (behavior depends on project type from 2a):** If this is an External Contribution, do NOT create `_inbox/` in the external repo (see DSM_0.2 External Contribution exception). **Inbox location and resolution by project type:**
 
@@ -604,7 +604,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
        1. Read `contributions-docs` from the ecosystem registry cached in Step 2a.5
        2. Derive project name: `basename "$(pwd)"`
        3. Target: `{contributions-docs}/{project-name}/_inbox/`
-     - Check: `ls {target}/` (exclude `README.md` and `done/` from results). Example: `ls ~/dsm-external-contribution-storage/IronCalc/_inbox/`
+     - Check: `ls {target}/` (exclude `README.md` and `done/` from results). Example: `ls ~/dsm-external-contribution-storage/{project-name}/_inbox/`
      - The governance inbox is the **only** inbox to check for EC projects. Do NOT also scan `_inbox/` at the external repo root; per the External Contribution protocol it should not exist there, and scanning would waste a call and risk the wrong-path failure mode
      - **Skip condition:** if `contributions-docs` is missing from the ecosystem registry, or the resolved `{target}/` path does not exist on the filesystem, warn "EC governance inbox resolution failed (contributions-docs registry entry missing OR {target} does not exist). Skipping EC inbox check, run `/dsm-align` to scaffold." and continue the session without halting
 
@@ -614,7 +614,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
      **Filesystem-over-MEMORY rule (per BL-421):** MEMORY.md describes inbox state at the END of the previous session, not the START of the current one. New entries may have arrived between wrap-up and session start (cross-repo notifications, hub→spoke pushes). Trust the filesystem (`ls _inbox/`) over MEMORY narration. If MEMORY says "inbox cleared" but `ls` shows entries, report what `ls` shows; do not echo MEMORY's stale claim.
    - **2d. Subscription file:** Read `~/.claude/claude-subscription.md` if it exists. Cache the plan type and configuration profiles for the session. If the file does not exist, note: "No subscription file found. To enable session configuration recommendations, provide your Claude plan details." Continue without recommendations until the file is created.
-   - **2e. FEATURES notification reconciliation (per BL-530):** The blog-poster notification is sent by `/dsm-wrap-up` Step 1e from a **session-scoped diff** (`git diff <baseline-sha>..HEAD -- FEATURES.md`), so an F-entry the introducing session failed to send is never a candidate again , the next session's diff starts behind it. Three ordinary paths skip that step: `/dsm-quick-wrap-up` names the notification among what it does not do, `/dsm-light-wrap-up` does not mention blog-poster at all, and a full wrap-up skips it whenever the cross-repo target was not confirmed. This step is the reconciliation that catches those, and it lives at session start **because the failure is that the previous session's wrap-up did not run it**; a check in the same place as the send cannot catch the send being skipped.
+   - **2e. FEATURES notification reconciliation (per BL-530):** The downstream notification is sent by `/dsm-wrap-up` Step 1e from a **session-scoped diff** (`git diff <baseline-sha>..HEAD -- FEATURES.md`), so an F-entry the introducing session failed to send is never a candidate again , the next session's diff starts behind it. Three ordinary paths skip that step: `/dsm-quick-wrap-up` names the notification among what it does not do, `/dsm-light-wrap-up` does not mention it at all, and a full wrap-up skips it whenever the cross-repo target was not confirmed. This step is the reconciliation that catches those, and it lives at session start **because the failure is that the previous session's wrap-up did not run it**; a check in the same place as the send cannot catch the send being skipped.
 
      Run the snippet below and report its single line in the boot report. The absent-`FEATURES.md` guard is **inside** the snippet, not stated only as prose above it: when it lived in prose, the block run in a project without a `FEATURES.md` printed `OK: nothing owed` , a clean bill of health for a comparison it had not made. Found by executing that branch rather than by reading it.
 
@@ -623,10 +623,10 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
        echo "SKIP: no FEATURES.md in this project"
        return 2>/dev/null || exit 0
      fi
-     BP=$(awk -F'|' '/^\| *blog-poster *\|/ {gsub(/^ *| *$/,"",$3); print $3; exit}' .claude/dsm-ecosystem.md 2>/dev/null)
+     BP=$(awk -F'|' '/^\| *blog-spoke *\|/ {gsub(/^ *| *$/,"",$3); print $3; exit}' .claude/dsm-ecosystem.md 2>/dev/null)
      BP="${BP/#\~/$HOME}"; BP="${BP%/}"
      if [ -z "$BP" ] || [ ! -d "$BP/_inbox" ]; then
-       echo "UNRESOLVED: blog-poster inbox not found (registry entry or path missing) , owed set NOT computed"
+       echo "UNRESOLVED: blog-spoke inbox not found (registry entry or path missing) , owed set NOT computed"
      else
        vset() { grep -hoE '^- \*\*F-[0-9]+' "$@" 2>/dev/null | grep -oE 'F-[0-9]+' | sort -u; }
        FEAT=$(vset FEATURES.md)
@@ -638,8 +638,8 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
        else
          OWED=$(comm -23 <(printf '%s\n' "$FEAT") <(printf '%s\n' "$RECV") | awk -v f="$FLOOR" '$0 >= f')
          N=$(printf '%s' "$OWED" | grep -c '^F-')
-         if [ "$N" -eq 0 ]; then echo "OK: nothing owed to blog-poster (watermark $FLOOR)"
-         else echo "OWED: $N F-entries owed to blog-poster (watermark $FLOOR): $(printf '%s' "$OWED" | tr '\n' ' ')"; fi
+         if [ "$N" -eq 0 ]; then echo "OK: nothing owed to blog-spoke (watermark $FLOOR)"
+         else echo "OWED: $N F-entries owed to blog-spoke (watermark $FLOOR): $(printf '%s' "$OWED" | tr '\n' ' ')"; fi
        fi
      fi
      ```
@@ -795,7 +795,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    fi
    ```
    If the transcript has no `**Started:**` line (corrupted or empty), skip archiving. Report the archived filename in the session report.
-5.7. **STAA reminder:** If a transcript was archived in Step 5.5, check whether the previous session's wrap-up included a STAA recommendation. If the archived transcript's final entries contain "STAA recommended: yes", check `.claude/last-staa.txt` before reminding (per BL-442): parse the recommending session number `N` from the archived transcript's `# Session N Transcript` header, then **suppress the reminder when `last-staa.txt` exists AND its `analyzed_session` value is `>= N`** (STAA already covered that session or a later one). Otherwise (no `last-staa.txt`, or `analyzed_session < N`) remind the user: "Previous session recommended STAA analysis. Run `/dsm-staa` in a separate Claude Code conversation (do not wrap in `/dsm-go` or `/dsm-parallel-session-go`)." If no transcript was archived, or if the previous session recommended "STAA: no", skip this step silently. The cross-reference prevents the false-positive reminder (portfolio S84: STAA had already run, but the reminder fired off the archived transcript text alone). Missing `last-staa.txt` degrades to "remind" (conservative direction).
+5.7. **STAA reminder:** If a transcript was archived in Step 5.5, check whether the previous session's wrap-up included a STAA recommendation. If the archived transcript's final entries contain "STAA recommended: yes", check `.claude/last-staa.txt` before reminding (per BL-442): parse the recommending session number `N` from the archived transcript's `# Session N Transcript` header, then **suppress the reminder when `last-staa.txt` exists AND its `analyzed_session` value is `>= N`** (STAA already covered that session or a later one). Otherwise (no `last-staa.txt`, or `analyzed_session < N`) remind the user: "Previous session recommended STAA analysis. Run `/dsm-staa` in a separate Claude Code conversation (do not wrap in `/dsm-go` or `/dsm-parallel-session-go`)." If no transcript was archived, or if the previous session recommended "STAA: no", skip this step silently. The cross-reference prevents the false-positive reminder (S84: STAA had already run, but the reminder fired off the archived transcript text alone). Missing `last-staa.txt` degrades to "remind" (conservative direction).
 5.8. **Incomplete wrap-up recovery:** Detect whether the previous session ended without a full wrap-up.
 
    **The signal is `.claude/last-wrap-up.txt`, not the session-number comparison (BL-493).**
@@ -863,9 +863,9 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    - **If the file does not exist:** No action (step 5.8 handles incomplete wrap-up detection).
 6. **Reset session transcript:** Overwrite `.claude/session-transcript.md` with a fresh session header (the file persists across sessions; do not delete and recreate it).
 
-   **No-skip rule (§7 unconditional activation):** This step is the canonical activation point for the Session Transcript Protocol. When `/dsm-go` is entered as a deferral from `/dsm-light-go` (the user accepted the safety gate's "switch to /dsm-go?" prompt), Step 6 MUST run before any user task action. Skipping Step 6 to jump straight into the user's task is the failure mode that caused portfolio S69 to run ~6 turns with zero transcript appends. The unconditional activation rule in DSM_0.2 §7 is the third independent enforcement layer, but Step 6 is the canonical reset + activation point and the agent must execute it on every entry to `/dsm-go`, including deferral entries.
+   **No-skip rule (§7 unconditional activation):** This step is the canonical activation point for the Session Transcript Protocol. When `/dsm-go` is entered as a deferral from `/dsm-light-go` (the user accepted the safety gate's "switch to /dsm-go?" prompt), Step 6 MUST run before any user task action. Skipping Step 6 to jump straight into the user's task is the failure mode that caused S69 to run ~6 turns with zero transcript appends. The unconditional activation rule in DSM_0.2 §7 is the third independent enforcement layer, but Step 6 is the canonical reset + activation point and the agent must execute it on every entry to `/dsm-go`, including deferral entries.
 
-   **Heredoc warning (§7 append technique):** The `cat > ... << EOF` form below uses an unquoted heredoc deliberately so `$(date -Iseconds)` expands. Do NOT change to `<< 'EOF'` (single-quoted); single-quoted heredocs suppress expansion and write the literal `$(date -Iseconds)` string into the transcript instead of the timestamp. Observed in portfolio S69.
+   **Heredoc warning (§7 append technique):** The `cat > ... << EOF` form below uses an unquoted heredoc deliberately so `$(date -Iseconds)` expands. Do NOT change to `<< 'EOF'` (single-quoted); single-quoted heredocs suppress expansion and write the literal `$(date -Iseconds)` string into the transcript instead of the timestamp. Observed in S69.
 
    Write exactly this content, replacing N, timestamp, project name, agent, and model:
    ```bash

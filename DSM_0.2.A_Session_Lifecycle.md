@@ -58,7 +58,7 @@ its content is actionable:
 **Pushing process:**
 1. For each ripe per-session file, write a notification to DSM Central's inbox:
    `{dsm-central-path}/_inbox/{date}_{this-project-name}_{content}.md`
-   (e.g., `2026-03-17_dsm-graph-explorer_feedback-entries-46-47.md`)
+   (e.g., `2026-03-17_dsm-example-spoke_feedback-entries-46-47.md`)
 2. **Path validation:** Before writing, verify the resolved target path is DSM
    Central's inbox, not the project's own governance inbox. If the resolved path
    contains the current project name as a subdirectory (e.g.,
@@ -117,7 +117,7 @@ the notification targets and format.
 
 **Notification targets by project type:**
 
-| Project type | Notify portfolio? | Notify DSM Central? | Notify blog-poster? |
+| Project type | Notify portfolio? | Notify DSM Central? | Notify the blog spoke? |
 |-------------|:-:|:-:|:-:|
 | DSM Central | Yes | N/A (is DSM Central) | On new F-entries |
 | Spoke project | Yes | Yes | On new F-entries |
@@ -127,11 +127,11 @@ the notification targets and format.
 
 **DSM Central target:** `{dsm-central-path}/_inbox/{this-project-name}.md`
 
-**Blog-poster target:** `{blog-poster-path}/_inbox/{this-project-name}.md` (resolved from Ecosystem Path Registry; logical name: `blog-poster`)
+**Blog spoke target:** `{blog-spoke-path}/_inbox/{this-project-name}.md` (resolved from Ecosystem Path Registry; logical name: `blog-spoke`)
 
-**Blog-poster notification trigger:** Only when `FEATURES.md` receives new F-entries (not on README changes, formatting, or non-feature updates). The entry tells blog-poster to: (1) update the feature blog with the new capability, and (2) write and post a dedicated blog about the new feature.
+**Blog spoke notification trigger:** Only when `FEATURES.md` receives new F-entries (not on README changes, formatting, or non-feature updates). The entry tells the blog spoke to: (1) update the feature blog with the new capability, and (2) write and post a dedicated blog about the new feature.
 
-**Blog-poster entry format:**
+**Blog spoke entry format:**
 ```
 ### [YYYY-MM-DD] New feature in {project name}: {feature short title}
 
@@ -441,7 +441,7 @@ progress report updated" as a standard item.
 **How (techniques and tools):**
 | Technique/Tool | Purpose | Notes |
 |---------------|---------|-------|
-| {e.g., XGBoost} | {e.g., Demand forecasting} | {e.g., 11% RMSE improvement} |
+| {e.g., XGBoost} | {e.g., Sales forecasting} | {e.g., 11% RMSE improvement} |
 
 **Data scale:** {row count, feature count, relevant scale indicators}
 
@@ -1010,8 +1010,8 @@ out of scope for §8.1 and tracked separately under BL-427 Step 5.
 The transform below is the ONE authoritative implementation of the trim rule.
 `/dsm-wrap-up` Step 0, `/dsm-quick-wrap-up` Step 0 and `/dsm-staa` Step 8 all
 reference this block; none re-inlines its own copy (re-inlining is the drift mechanism that produced the
-silent-empty-mirror bug across three spokes — heating-systems S15,
-dsm-blog-poster S21, dsm-data-science-portfolio-working-folder S90/S91). If the
+silent-empty-mirror bug across three spokes — S15,
+S21, S90/S91). If the
 rule changes, it changes HERE and both skills inherit it.
 
 The transform is **shape-tolerant**: it must work whether or not the live file
@@ -1402,7 +1402,7 @@ Different reader profiles warrant different identifier policies.
 
 **DO NOT:**
 - Delete artifacts instead of moving to done/; done/ preserves traceability
-  for the Graph Explorer and historical reference
+  for audit and historical reference
 - Retire transcripts flagged for STAA; the flag indicates unrealized value
 - Move checkpoints to done/ mechanically by age alone; the supersession
   criterion requires that a newer checkpoint covers the same scope
@@ -2139,7 +2139,7 @@ DSM_3 Section 6.4.3 (implement via BL workflow for substantive changes, defer, o
 
 **WARNING:** After processing, **move** the entry to `_inbox/done/`. Do not mark entries as "Status: Processed" or add completion markers while keeping the entry in place. Processed entries in `done/` preserve communication history and traceability; entries left in the inbox root cause stale re-processing in future sessions (observed in spoke project sessions).
 
-**Enumerate-each-entry rule (per BL-421):** at session start, when N > 1 entries exist, list every entry on its own line (filename + type + priority + source). Do not collapse N>1 to a single count or a top-entry summary. The `/dsm-align` Step 12b notification (when present) is cognitively "fresh" because the agent just observed it during Step 1.8; pre-existing entries from prior sessions are cognitively "stale" but often more important. Enumeration is the guard against availability bias collapsing N>1 to 1. The rule is about completeness, not verbosity: a 1-entry inbox still gets one line; the rule prevents collapsing N>1, not collapsing 1 to 0. Origin: portfolio S76 (2026-04-19), where 3 inbox entries were collapsed to 1 (the freshly-written /dsm-align entry) and the 2 pre-existing entries were caught ~20 minutes later when the user pivoted to inbox processing.
+**Enumerate-each-entry rule (per BL-421):** at session start, when N > 1 entries exist, list every entry on its own line (filename + type + priority + source). Do not collapse N>1 to a single count or a top-entry summary. The `/dsm-align` Step 12b notification (when present) is cognitively "fresh" because the agent just observed it during Step 1.8; pre-existing entries from prior sessions are cognitively "stale" but often more important. Enumeration is the guard against availability bias collapsing N>1 to 1. The rule is about completeness, not verbosity: a 1-entry inbox still gets one line; the rule prevents collapsing N>1, not collapsing 1 to 0. Origin: S76 (2026-04-19), where 3 inbox entries were collapsed to 1 (the freshly-written /dsm-align entry) and the 2 pre-existing entries were caught ~20 minutes later when the user pivoted to inbox processing.
 
 **Filesystem-over-MEMORY rule (per BL-421):** MEMORY.md describes inbox state at the END of the previous session, not the START of the current one. New entries may arrive between wrap-up and session start (cross-repo notifications, hub→spoke pushes, async user pushes). Trust the filesystem (`ls _inbox/`) over MEMORY narration. If MEMORY says "inbox cleared" but `ls` shows entries, report what `ls` shows; do not echo MEMORY's stale claim. The pattern generalizes beyond inbox to any session-start state check, but this rule is scoped to inbox; broader generalization deferred to a follow-up BL.
 
@@ -3049,7 +3049,7 @@ substantial bookkeeping. Tracked as a future enhancement.
 
 ### 26.8. Origin
 
-Heating-systems-conversational-ai S10.L2 (2026-04-29). Two Claude Code
+S10.L2 (2026-04-29). Two Claude Code
 conversations were running in parallel against the same project on the
 same git branch (`session-10/2026-04-23`). Neither agent detected the
 other. Discovery happened only when `git status` and the shared

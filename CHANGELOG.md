@@ -107,7 +107,7 @@ Minor rather than patch: BL-531 and BL-520 each add a new DSM_0.2 section, which
 - **The cross-repo write guard resolved relative paths against the wrong directory (BL-532).** `validate-cross-repo-write.sh` resolved a relative Bash write target against the hook's own working directory instead of the one the command establishes for itself, so `cd /elsewhere && cat > note.md` was judged in-repo and passed. It now resolves against the command's own `cd`, and DSM_0.2.C §2 records both the new behaviour and the limit it does not close. The test is worth repeating because it generalises: the plan assumed a real write outside the repo was required, and the scratchpad could not stand in because the hook allowlists `/tmp`, which makes a legitimate skip indistinguishable from the bug. The hook is `PreToolUse` and its analysis is purely static on the command string, so `cd /nonexistent && cat > note.md` fails at `cd`, short-circuits, writes **zero bytes anywhere**, and the hook still resolves the target and warns. The mechanism under test needed the offence **described**, not committed.
   **Spoke action:** Copy the updated hook and re-`chmod +x`, or run `/dsm-align`, which does both.
 
-- **`/dsm-review-feedback` read a filename shape no project uses (BL-533).** The skill scanned for legacy bare feedback filenames while every live spoke writes the dated per-session form, so the review surface it presented was empty by construction. It now reads **both** tiers, and six documents were reconciled to the two-tier model, with DSM_0.2.A §4 gaining the BL-472 carve-out that settles when a bare name is legacy and when it is a documented DSM-1.0 project-lifecycle tier. Two corrections to the BL's own filing are recorded rather than quietly absorbed: it claimed no project holds the bare files (IronCalc holds both, at 282 and 832 lines), and it named "four methodology sites" where the census found **30 lines**, most of them correct. The census itself was re-run because the first one was bounded by a `feedback-to-dsm/` path prefix and reported 17; unbounded it was 30, and the site the prefix hid was the Spoke Feedback Handover Prompt Template , the prompt a user copies to invoke the very skill being fixed.
+- **`/dsm-review-feedback` read a filename shape no project uses (BL-533).** The skill scanned for legacy bare feedback filenames while every live spoke writes the dated per-session form, so the review surface it presented was empty by construction. It now reads **both** tiers, and six documents were reconciled to the two-tier model, with DSM_0.2.A §4 gaining the BL-472 carve-out that settles when a bare name is legacy and when it is a documented DSM-1.0 project-lifecycle tier. Two corrections to the BL's own filing are recorded rather than quietly absorbed: it claimed no project holds the bare files (an external OSS contribution holds both, at 282 and 832 lines), and it named "four methodology sites" where the census found **30 lines**, most of them correct. The census itself was re-run because the first one was bounded by a `feedback-to-dsm/` path prefix and reported 17; unbounded it was 30, and the site the prefix hid was the Spoke Feedback Handover Prompt Template , the prompt a user copies to invoke the very skill being fixed.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`.
 
 - **`/dsm-wrap-up` Step 11's mirror-PR filter was an exact match, so it never fired (BL-535).** The step guards against a stale open sync PR colliding with a new one, using `gh pr list --head "sync/"`. `--head` is an **exact branch match**, not a prefix, so the filter matched nothing and the safety net had never once fired in the life of the step. The failure was invisible in the most durable way available: six consecutive sessions believed the filter matched take-ai-bite's retained #92/#93 and worked *around* the step, and every success reinforced the belief. Nothing ever collided. The filter is now applied client-side, with three distinguishable outcomes rather than a silent zero, and a positive guard created inside the session that fixed it, because a check that can only report "none" proves nothing.
@@ -122,7 +122,7 @@ Minor rather than patch: BL-531 and BL-520 each add a new DSM_0.2 section, which
 ### Spawned
 
 - **BACKLOG-534** (Medium): `/dsm-go` Step 0.5 counts nine scaffold folders where DSM_0.1 §10 and `/dsm-align` both say eight, so a correctly scaffolded project can never report 9/9 and five spokes have reported the mismatch as expected noise.
-- **BACKLOG-536** (High): `/dsm-wrap-up` Step 6a's per-session feedback scan matches on two filename suffixes, so topically-named session feedback is never pushed; carries a backfill decision on two portfolio files that have waited since 2026-07-25.
+- **BACKLOG-536** (High): `/dsm-wrap-up` Step 6a's per-session feedback scan matches on two filename suffixes, so topically-named session feedback is never pushed; carries a backfill decision on two spoke files that have waited since 2026-07-25.
 - **BACKLOG-537** (High): Central's own gitignored `.claude/commands/` copies **shadow** the user-level ones and nothing keeps them current, so `dsm-review-feedback.md` went 56 lines stale the instant BL-533 edited the source , the fix was invisible at the hub
   - **[Corrected 2026-08-25, S254]** The precedence in this entry is BACKWARDS and the entry is annotated rather than rewritten, since a released CHANGELOG section is a record of what the version claimed. Measured at `https://code.claude.com/docs/en/skills.md`: personal overrides project, and `.claude/commands/` files "work the same way". The user-level copy wins, so the leftovers are inert wherever a user-level copy exists and the fix was NOT invisible at the hub. BACKLOG-537 has been rewritten and dropped to Low; BACKLOG-542 carries the prevention. that shipped it. Two hand-repairs in six sessions is the signal to change the mechanism.
 - **BACKLOG-538** (Low): the cross-repo write hook's two branches disagree on `/tmp`, so the same target passes via Bash and blocks via Write.
@@ -135,7 +135,7 @@ Minor rather than patch: BL-531 and BL-520 each add a new DSM_0.2 section, which
 - **DSM_0.2 §7: the transcript hook now checks the timestamp's VALUE, and warns rather than blocks (BL-517).** `validate-transcript-edit.sh` held four checks that all validated the *shape* of an append, anchor, append-only, no `replace_all`, delimiter present. None read the number the delimiter carries. Three recorded drift incidents passed every one of them: roughly 13 hours, 8 hours 27 minutes, and a non-monotone 132-minute swing in both directions, the last of which recorded a merge being authorised at 15:19 that git timestamps at 14:36, an action logged before its own authorisation. New check 4/4 compares the delimiter's `HH:MM` against the wall clock and warns above a **5-minute** tolerance. The proposed tolerance was 10 minutes on the stated ground that "both observed failures were off by hours"; the third instance falsified that premise before implementation, and warning rather than blocking is what makes the tighter bound cheap; a false positive costs one line of stderr. `[RETROACTIVE]` delimiters get no exemption, since §7 already requires them to carry the current time. Checks 0-3 continue to block: they guard against an append that would damage the file, whereas a drifted stamp mislabels a log entry, and vetoing an append over it would wedge the protocol the hook exists to keep running. Exit 1 is the non-blocking channel, the convention `validate-cross-repo-write.sh` already documents.
   **Spoke action:** Run `/dsm-align`, then `scripts/sync-commands.sh --deploy`. **This is the only entry in this release that requires `/dsm-align`:** the check renumbering (`0/3`→`0/4`) appears inside the §17.1 base template, so a spoke's reinforcement block otherwise cites a count that does not match its own hook.
 
-- **`/dsm-go` Step 2e reconciles what the blog-poster recipient is actually owed (BL-530).** The FEATURES notification was computed solely from `git diff <baseline>..HEAD -- FEATURES.md`, which is session-scoped, so an entry missed by the session that introduced it was never a candidate again. Three ordinary paths skip that send: `/dsm-quick-wrap-up` lists it among what it does not do, `/dsm-light-wrap-up` never mentions it, and a full wrap-up skips it whenever the cross-repo target was unconfirmed. The new step compares `FEATURES.md` against what the recipient has actually received and reports the difference at session start, the only place that can catch the *previous* session's skip. Two design points earned by execution rather than reasoning: an entry counts as received only when quoted **verbatim** in the `- **F-NNN` form, because a bare F-number match read the prose "Past entries (F-001 to F-086) are populated lazily" as six-and-eighty notifications and reported 109 entries owed; and the watermark is the **highest** verbatim entry in the recipient's archive, derived rather than hard-coded, because the real record turned out patchy rather than truncated; three entries were missing *below* six that had arrived. Measured on the live backlog this release cleared: seven owed, where the obvious live-file-only comparison reports four.
+- **`/dsm-go` Step 2e reconciles what the spoke recipient is actually owed (BL-530).** The FEATURES notification was computed solely from `git diff <baseline>..HEAD -- FEATURES.md`, which is session-scoped, so an entry missed by the session that introduced it was never a candidate again. Three ordinary paths skip that send: `/dsm-quick-wrap-up` lists it among what it does not do, `/dsm-light-wrap-up` never mentions it, and a full wrap-up skips it whenever the cross-repo target was unconfirmed. The new step compares `FEATURES.md` against what the recipient has actually received and reports the difference at session start, the only place that can catch the *previous* session's skip. Two design points earned by execution rather than reasoning: an entry counts as received only when quoted **verbatim** in the `- **F-NNN` form, because a bare F-number match read the prose "Past entries (F-001 to F-086) are populated lazily" as six-and-eighty notifications and reported 109 entries owed; and the watermark is the **highest** verbatim entry in the recipient's archive, derived rather than hard-coded, because the real record turned out patchy rather than truncated; three entries were missing *below* six that had arrived. Measured on the live backlog this release cleared: seven owed, where the obvious live-file-only comparison reports four.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`.
 
 - **A guides index, and a convention for guides that only apply to one setup (BL-522).** `dsm-docs/guides/` had seven files and no index, so a lesson that is a landmine under one configuration and noise everywhere else had nowhere to live. `dsm-docs/guides/README.md` now lists every guide and separates unconditional ones from **trigger-gated** ones, which open with an `**Applies when:**` block whose conditions must all hold and an explicit instruction to stop reading otherwise. The load-bearing requirement is that each condition be checkable **without reading the body**; a condition needing the guide's own content to evaluate defeats the gate, because the reader has already paid the cost the gate exists to avoid. First gated entry: MCP `${VAR}` expansion in `.mcp.json`, where the value is read once at startup from the launching shell, an unset variable forwards the literal `${VAR}` string as a credential, and a health check reports the server connected because it pings an unauthenticated endpoint.
@@ -215,16 +215,16 @@ Minor rather than patch: BL-531 and BL-520 each add a new DSM_0.2 section, which
 
 - **`/dsm-go` Step 3 archived handoffs without reading them (BL-511).** The step opened by asserting that any handoff predating the session "has been consumed", which stated an assumption as fact, then annotated the file, moved it to `done/` and reported the move. Handoffs are written only when there is complex pending work, so a session's own inheritance reached `done/` instead of the reader, and the report emitted a clean success line either way. Step 3 now reads the file in full, surfaces its pending items in the session report alongside the checkpoint's and labelled by source, and only then archives. Where a handoff and a checkpoint disagree on a next step the disagreement is surfaced rather than silently resolved. The report separates a read handoff from a filed one, which were previously byte-identical lines. `/dsm-light-go` deliberately skips handoff lifecycle and is unchanged.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`.
-- **Session-baseline checksums dropped every file inside an untracked directory (BL-512).** `git status --porcelain` collapses a wholly-untracked directory to a single entry ending in a slash rather than listing its contents, so `$NF` handed `md5sum` a directory and every file beneath it vanished from the baseline. Same silent shape as the two defects before it in the same four lines: the error is on stderr, mid-pipeline, with no `pipefail`, so the step reported success over an incomplete record. Fixed at three enumerating sites (`/dsm-go` Step 5, `/dsm-wrap-up` Step 9, `/dsm-quick-wrap-up` Step 7) with `-uall` on the untracked line only. Five further `git status --porcelain` calls are named in the BL as correct as written, so a later uniform sweep reads as a regression rather than as completing the fix. Reported by the `invoice-triage` spoke against one site; re-deriving the census rather than transcribing the report widened it to three, including the two wrap-up sites the reporter had flagged as uninvestigated.
+- **Session-baseline checksums dropped every file inside an untracked directory (BL-512).** `git status --porcelain` collapses a wholly-untracked directory to a single entry ending in a slash rather than listing its contents, so `$NF` handed `md5sum` a directory and every file beneath it vanished from the baseline. Same silent shape as the two defects before it in the same four lines: the error is on stderr, mid-pipeline, with no `pipefail`, so the step reported success over an incomplete record. Fixed at three enumerating sites (`/dsm-go` Step 5, `/dsm-wrap-up` Step 9, `/dsm-quick-wrap-up` Step 7) with `-uall` on the untracked line only. Five further `git status --porcelain` calls are named in the BL as correct as written, so a later uniform sweep reads as a regression rather than as completing the fix. Reported by a spoke against one site; re-deriving the census rather than transcribing the report widened it to three, including the two wrap-up sites the reporter had flagged as uninvestigated.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`. A baseline written with `-uall` and compared without it comes apart as badly as the original bug, so deploy all three files together.
 - **`/dsm-staa` Step 2 defaulted to a subject it could not tell was already analysed (BL-509).** Two defects in one step. The off-by-one default was overridden on six consecutive runs, because the window it warns about is the normal shape of the workflow rather than an edge case, and a default taken zero times out of six is the wrong default. And Step 2 never consulted `.claude/last-staa.txt`, so a run could re-analyse a spent subject, append duplicate lessons, and let Step 9 overwrite a real marker with a record of a null run. Step 2 now selects on how many candidate subjects are unanalysed: zero halts before Step 4 and skips Steps 6 to 9, one is the default, two asks. The halt reports the marker values that drove it, so a wrong halt is diagnosable in one read. BACKLOG-442's superseded mitigation carries a pointer to this entry.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`.
-- **The wrap-up F-entry counter reported edited entries as new (BL-507).** Implemented in S245 and unreleased until now. The count came from a `+`-line count over the diff, which cannot distinguish an added entry from an edited one, so an editing pass over existing entries inflated the blog-poster notification. It is now computed as a set difference over F-numbers.
+- **The wrap-up F-entry counter reported edited entries as new (BL-507).** Implemented in S245 and unreleased until now. The count came from a `+`-line count over the diff, which cannot distinguish an added entry from an edited one, so an editing pass over existing entries inflated the spoke notification. It is now computed as a set difference over F-numbers.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`.
 
 ### Changed
 
-- **DSM_0.2 §17.1: the punctuation rule is scoped by outside readership, not by repository (BL-513).** BL-505 shipped six days earlier stating the predicate is readership and implementing it as "reaches a public repository". The two coincide at Central, where every outside reader arrives through the public mirror, and diverge in a private project whose deliverables leave as `.docx` attachments: a CV sent to an employer has an outside reader and was marked exempt by the rule that most needs to govern it. The scope now reads "reaches a reader outside the project, by any channel", with publication to a public repository named as the most common instance rather than the definition. The same revision adds the deliberate-application caveat a corpus grep confirmed existed nowhere: an em dash joining two independent clauses usually wants a period or a semicolon, since a comma there produces a splice, and an em dash used as a numeric range separator must never become a comma, because in a decimal-comma locale `30—40 Sek.` becomes `30,40 Sek.` and reads as a decimal. Reported by the portfolio spoke.
+- **DSM_0.2 §17.1: the punctuation rule is scoped by outside readership, not by repository (BL-513).** BL-505 shipped six days earlier stating the predicate is readership and implementing it as "reaches a public repository". The two coincide at Central, where every outside reader arrives through the public mirror, and diverge in a private project whose deliverables leave as `.docx` attachments: a CV sent to an employer has an outside reader and was marked exempt by the rule that most needs to govern it. The scope now reads "reaches a reader outside the project, by any channel", with publication to a public repository named as the most common instance rather than the definition. The same revision adds the deliberate-application caveat a corpus grep confirmed existed nowhere: an em dash joining two independent clauses usually wants a period or a semicolon, since a comma there produces a splice, and an em dash used as a numeric range separator must never become a comma, because in a decimal-comma locale `30—40 Sek.` becomes `30,40 Sek.` and reads as a decimal. Reported by a spoke project.
   **Spoke action:** Run `/dsm-align` to pick up the revised §17.1 alignment block.
 
 ### Spawned
@@ -251,7 +251,7 @@ Minor rather than patch: BL-531 and BL-520 each add a new DSM_0.2 section, which
 
 ### Fixed
 
-- **`/dsm-align` installed only one of three hook matchers, and reported success (BL-503).** Sub-step 10e keyed merge idempotency on the command string alone, while `scripts/templates/settings-hooks.json` registers `validate-cross-repo-write.sh` under `Write`, `Edit` **and** `Bash`. The first entry landed, the other two matched the skip condition and were dropped, so **BL-484's `Bash` coverage could never reach any spoke** while the step reported `settings.json: already ok`. A correct run and a two-thirds-dropped run emitted the same line. The key is now the `(matcher, command)` pair. Reported by `dsm-blog-poster` S34.
+- **`/dsm-align` installed only one of three hook matchers, and reported success (BL-503).** Sub-step 10e keyed merge idempotency on the command string alone, while `scripts/templates/settings-hooks.json` registers `validate-cross-repo-write.sh` under `Write`, `Edit` **and** `Bash`. The first entry landed, the other two matched the skip condition and were dropped, so **BL-484's `Bash` coverage could never reach any spoke** while the step reported `settings.json: already ok`. A correct run and a two-thirds-dropped run emitted the same line. The key is now the `(matcher, command)` pair. Reported by S34.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`, then `/dsm-align`. The run will install the `Bash` matcher that has never landed on any spoke; expect `settings.json: merged` rather than `already ok`.
 - **Auto-memory directory was derived with a slug rule that drops underscores (BL-504).** `/dsm-wrap-up`, `/dsm-light-wrap-up` and `/dsm-quick-wrap-up` all ran `pwd | sed 's#/#-#g'`, but Claude Code maps **both** `/` and `_` to `-`. For any project under a path containing an underscore the derived directory does not exist, so `/dsm-wrap-up` Step 0.5 never pre-confirmed the auto-memory target (letting the BL-391 cross-repo hook fire mid-wrap-up, the exact interruption Step 0.5 exists to prevent) and the two light variants skipped on their `-d` guard. Central's own path has no underscore, which is why the hub that owned the file could not observe the defect. Reported by `ai-project-management` S1 against one file; a corpus sweep found all three.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`. Projects under a path containing `_` (e.g. `~/_projects/`) were silently affected and are fixed by the deploy.
@@ -335,7 +335,7 @@ Adds the "Forward the Why" collaboration principle (DSM_6.0 §1.13) and reconcil
 
 ### Added
 
-- **BL-473:** New collaboration principle **DSM_6.0 §1.13 "Forward the Why"**. When knowledge or a decision flows forward (to a later BL, session, or step), encode the causal link at its source so the receiver inherits the *why*, not just the *what*, instead of reverse-engineering it. The anti-pattern it names is backward reconstruction. Names three faces (Registering, Delegating, Planning), with the Downstream Impact Map and Causal Handoff mechanisms as adoptable instances (spawned BLs). Origin: meter-to-cash spoke S6-S7.
+- **BL-473:** New collaboration principle **DSM_6.0 §1.13 "Forward the Why"**. When knowledge or a decision flows forward (to a later BL, session, or step), encode the causal link at its source so the receiver inherits the *why*, not just the *what*, instead of reverse-engineering it. The anti-pattern it names is backward reconstruction. Names three faces (Registering, Delegating, Planning), with the Downstream Impact Map and Causal Handoff mechanisms as adoptable instances (spawned BLs). Origin: spoke S6-S7.
   **Spoke action:** Review DSM_6.0 §1.13 (new principle; DSM_6.0 is mirrored).
 
 ### Changed
@@ -351,8 +351,8 @@ Adds the "Forward the Why" collaboration principle (DSM_6.0 §1.13) and reconcil
 
 ### Spawned
 
-- **Downstream Impact Map** (BL to file): a BL-template section for registering cross-BL coupling at the upstream source (Forward the Why Registering face; meter-to-cash S6).
-- **Causal Handoff** (BL to file): a causal-forward checkpoint "pending" format plus `/dsm-checkpoint` authoring change (Forward the Why Delegating face; meter-to-cash S7).
+- **Downstream Impact Map** (BL to file): a BL-template section for registering cross-BL coupling at the upstream source (Forward the Why Registering face; S6).
+- **Causal Handoff** (BL to file): a causal-forward checkpoint "pending" format plus `/dsm-checkpoint` authoring change (Forward the Why Delegating face; S7).
 
 ## [1.17.1] - 2026-07-09
 
@@ -365,11 +365,11 @@ Clarifies the §17.1 Punctuation rule so the em-dash replacement is stated as a 
 
 ## [1.17.0] - 2026-06-18
 
-Refines the §8.10 chunked-drafting protocol for structured prose: a document-co-development model validated live on a portfolio spoke (S106).
+Refines the §8.10 chunked-drafting protocol for structured prose: a document-co-development model validated live on a spoke (S106).
 
 ### Changed
 
-- **BL-465:** **DSM_0.2 §8.10 Gate 3 (chunked drafting)** refined, the review unit changes from "section" to **subchapter** (or a single paragraph when the subchapter is long, so a long subchapter is delivered as several paragraph-bites), and prose is now delivered **file-first**: each bite is written to an editable draft file the user edits in place, not pasted as a conversation block that cannot be edited there. Explicitly analogized to the Notebook Collaboration Protocol. The "full-file Write reserved for assembly" rule is reconciled so incremental per-bite file writes are permitted while whole-document generation stays the prohibited anti-pattern; Gate 4 remains the cross-section consistency pass. Mirrored into the §17.1 base template + hub alignment block. Origin: Data Science Portfolio S106, live-validated on a 4-part blog series.
+- **BL-465:** **DSM_0.2 §8.10 Gate 3 (chunked drafting)** refined, the review unit changes from "section" to **subchapter** (or a single paragraph when the subchapter is long, so a long subchapter is delivered as several paragraph-bites), and prose is now delivered **file-first**: each bite is written to an editable draft file the user edits in place, not pasted as a conversation block that cannot be edited there. Explicitly analogized to the Notebook Collaboration Protocol. The "full-file Write reserved for assembly" rule is reconciled so incremental per-bite file writes are permitted while whole-document generation stays the prohibited anti-pattern; Gate 4 remains the cross-section consistency pass. Mirrored into the §17.1 base template + hub alignment block. Origin: S106, live-validated on a 4-part blog series.
   **Spoke action:** Run `/dsm-align` to update the chunked-drafting reinforcement bullet (the §17.1 alignment template changed; all project types).
 
 ## [1.16.0] - 2026-06-15
@@ -382,9 +382,9 @@ Batches four collaboration-and-lifecycle protocols implemented in S219 (Voice-At
   **Spoke action:** Run `/dsm-align` to update the reinforcement block (the §17.1 alignment template changed; all project types).
 - **BL-437:** New section **DSM_0.2.D §9 "Read-Before-Draft for OSS Contributions"**, before drafting a PR/issue body for an external maintained repo, read the target's CONTRIBUTING.md (+ nested guides), `.github/pull_request_template.md`, PR-gate workflow files, and 1-2 recent merged PRs of similar shape, then draft against the resulting readiness checklist (title format, body structure, release-note requirement, required CI, CoC/CLA, test-evidence) rather than an internal default. Pre-draft hygiene that pairs with Voice-Attribution Review (post-draft, pre-send) on the same outbound channel. Added to the §17.1 base template.
   **Spoke action:** Run `/dsm-align` to update the reinforcement block (the §17.1 alignment template changed; all project types).
-- **BL-441:** **Open-PR CI Status Check** in `/dsm-go` (Step 2a.7) and `/dsm-wrap-up`, when the current branch has an open GitHub PR, the boot report surfaces its CI status (failing checks enumerated, green collapsed to a summary line, pending silent) so a session never resumes on top of silently-failing CI. One `gh` call at boot, skipped silently when there is no `gh`, no GitHub remote, or no open PR. Origin: IronCalc S14, where PR #865's `lint-all` was red for 20 days while `/dsm-go` reported "awaiting re-review" from MEMORY.
+- **BL-441:** **Open-PR CI Status Check** in `/dsm-go` (Step 2a.7) and `/dsm-wrap-up`, when the current branch has an open GitHub PR, the boot report surfaces its CI status (failing checks enumerated, green collapsed to a summary line, pending silent) so a session never resumes on top of silently-failing CI. One `gh` call at boot, skipped silently when there is no `gh`, no GitHub remote, or no open PR. Origin: S14, where PR #865's `lint-all` was red for 20 days while `/dsm-go` reported "awaiting re-review" from MEMORY.
   **Spoke action:** Run `scripts/sync-commands.sh --deploy` (command files changed).
-- **BL-442:** **STAA reminder logic + off-by-one fix** in `/dsm-go` (Step 5.7) and `/dsm-staa`, the session-start STAA reminder now cross-references `.claude/last-staa.txt` and suppresses the reminder when `analyzed_session >= N` (the recommending session), eliminating the false-positive reminder that fired off the archived transcript text alone (portfolio S84). Missing `last-staa.txt` degrades to "remind" (conservative direction).
+- **BL-442:** **STAA reminder logic + off-by-one fix** in `/dsm-go` (Step 5.7) and `/dsm-staa`, the session-start STAA reminder now cross-references `.claude/last-staa.txt` and suppresses the reminder when `analyzed_session >= N` (the recommending session), eliminating the false-positive reminder that fired off the archived transcript text alone (S84). Missing `last-staa.txt` degrades to "remind" (conservative direction).
   **Spoke action:** Run `scripts/sync-commands.sh --deploy` (command files changed).
 
 ### Changed
@@ -399,7 +399,7 @@ Batches four collaboration-and-lifecycle protocols implemented in S219 (Voice-At
 
 ## [1.15.0] - 2026-06-09
 
-Adds a safety protocol for soft injection / frame capture: cooperative external content (a polite issue-thread comment, a tool-result suggestion, a third-party message) drifting the agent at the decision-framing layer without the user's authorization (S210 filing, S218 content, S219 release; BL-436, from heating-systems-conversational-ai S13). DSM_0.2.C §3 already gated syntactic injection (shell commands, suspicious patterns); §3.1 closes the framing-layer gap that no suspicion filter catches.
+Adds a safety protocol for soft injection / frame capture: cooperative external content (a polite issue-thread comment, a tool-result suggestion, a third-party message) drifting the agent at the decision-framing layer without the user's authorization (S210 filing, S218 content, S219 release; BL-436, from S13). DSM_0.2.C §3 already gated syntactic injection (shell commands, suspicious patterns); §3.1 closes the framing-layer gap that no suspicion filter catches.
 
 ### Added
 
@@ -410,7 +410,7 @@ Adds a safety protocol for soft injection / frame capture: cooperative external 
 
 ## [1.14.0] - 2026-06-01
 
-Promotes the concept-introduction / no-repetition writing discipline from portfolio-spoke tribal knowledge to a named DSM principle (S216, BL-454, filed S215). The pattern stabilized across three deliverable types (CV summaries, public-facing copy, hiring deliverables) before promotion; S86 set the bar at "multiple deliverable types" and it was met.
+Promotes the concept-introduction / no-repetition writing discipline from a spoke project's tribal knowledge to a named DSM principle (S216, BL-454, filed S215). The pattern stabilized across three deliverable types (CV summaries, public-facing copy, hiring deliverables) before promotion; S86 set the bar at "multiple deliverable types" and it was met.
 
 ### Added
 
@@ -428,7 +428,7 @@ Codifies the user-reframes-proposal handling pattern as a named operational sub-
 
 ## [1.12.0] - 2026-05-31
 
-Names the per-item smoke-test practice as a DSM artifact (S213, BL-452, from the traveline-ds-project-skeleton S1 proposal). Single BL, three coordinated methodology edits, each its own Gate cycle with per-item Test Execution Log.
+Names the per-item smoke-test practice as a DSM artifact (S213, BL-452, from the S1 proposal). Single BL, three coordinated methodology edits, each its own Gate cycle with per-item Test Execution Log.
 
 ### Added
 
@@ -453,7 +453,7 @@ Four sibling BLs filed in S211 implemented in S212 as a coherent silent-failure 
 
 ### Fixed
 
-- **BL-449:** Forbid Edit `replace_all: true` on `.claude/session-transcript.md`. The append-anchor rule assumes a unique last-line anchor; `replace_all` duplicates content at every match and explodes the file (IronCalc S17: 95 MB / 1.5M lines; blog-poster S22: Output block duplicated). `validate-transcript-edit.sh` gains a Check 0 that blocks the case before the anchor/append/delimiter checks, naming the `[RETROACTIVE]` Bash-heredoc recovery path. Prohibition added to DSM_0.2 §7 anti-patterns + §17.1 template + CLAUDE.md. Size-anomaly detection deferred per the BL risk note (deterministic `replace_all` block is the high-value guard).
+- **BL-449:** Forbid Edit `replace_all: true` on `.claude/session-transcript.md`. The append-anchor rule assumes a unique last-line anchor; `replace_all` duplicates content at every match and explodes the file (S17: 95 MB / 1.5M lines; S22: Output block duplicated). `validate-transcript-edit.sh` gains a Check 0 that blocks the case before the anchor/append/delimiter checks, naming the `[RETROACTIVE]` Bash-heredoc recovery path. Prohibition added to DSM_0.2 §7 anti-patterns + §17.1 template + CLAUDE.md. Size-anomaly detection deferred per the BL risk note (deterministic `replace_all` block is the high-value guard).
   **Spoke action:** Run `/dsm-align` (§7/§17.1 + hook); spokes re-`chmod` the synced hook at next `/dsm-go` Step 0e.
 
 ### Spawned
@@ -485,31 +485,31 @@ Three BLs implemented in S211 from a 5-spoke inbox triage, all silent-failure / 
 Six BLs landed in S207 from an inbox-derived backlog filing pass. Three new
 DSM_0.2 sub-sections (§8.6.1, §8.9.1, §8.10), one new DSM_0.2.A section (§26),
 two skill amendments. All BLs traced to external spoke incidents
-(haystack-magic S5-S8, heating-systems-conversational-ai S10/S10.L2).
+(S5-S8, S10/S10.L2).
 
 ### Added
 
-- **BL-430: DSM_0.2 §8.10 Chunked Drafting Protocol for Structured Documents.** New sub-section operationalizing the four-gate Pre-Generation Brief Protocol for prose deliverables (project plans, proposals, reports, research papers, blog posts). Closes the gap §8 left for prose: the agent's default reading of "produce the artifact at Gate 3" was collapsing to "produce the whole document at Gate 3" for prose, yielding 2000-3500 word full-file Write operations that defeated per-section review and the Take a Bite philosophy. Trigger is document type, not length. Four gates given prose-specific shape: Gate 1 Definition (purpose / audience / outcome / length / scope), Gate 2 TOC (chapters + per-section length budget), Gate 3 Chunked drafting (one section at a time with per-section user review and approval before next), Gate 4 Run / Final Assembly (full-document consistency, format conversion last). Anti-pattern guard enumerates 4 rationalization variants forbidden. §17.1 alignment template gains a Pre-Generation Brief Protocol reinforcement bullet. Origin: haystack-magic S8 R3 hiring challenge produced two structured documents (~2565 + ~3519 words) by full-file Write; first carried a load-bearing factual error (misattributed deepset 5-Step Guide labels) that escaped into the SUBMITTED deliverable because per-section review never happened.
+- **BL-430: DSM_0.2 §8.10 Chunked Drafting Protocol for Structured Documents.** New sub-section operationalizing the four-gate Pre-Generation Brief Protocol for prose deliverables (project plans, proposals, reports, research papers, blog posts). Closes the gap §8 left for prose: the agent's default reading of "produce the artifact at Gate 3" was collapsing to "produce the whole document at Gate 3" for prose, yielding 2000-3500 word full-file Write operations that defeated per-section review and the Take a Bite philosophy. Trigger is document type, not length. Four gates given prose-specific shape: Gate 1 Definition (purpose / audience / outcome / length / scope), Gate 2 TOC (chapters + per-section length budget), Gate 3 Chunked drafting (one section at a time with per-section user review and approval before next), Gate 4 Run / Final Assembly (full-document consistency, format conversion last). Anti-pattern guard enumerates 4 rationalization variants forbidden. §17.1 alignment template gains a Pre-Generation Brief Protocol reinforcement bullet. Origin: a spoke's S8 R3 hiring challenge produced two structured documents (~2565 + ~3519 words) by full-file Write; first carried a load-bearing factual error (misattributed external-documentation labels) that escaped into the SUBMITTED deliverable because per-section review never happened.
   - **Spoke action:** Run `/dsm-align` to update the Pre-Generation Brief Protocol reinforcement block (§17.1 template change). Review §8.10 for behavioral changes when generating prose deliverables.
 
-- **BL-431: DSM_0.2.A §26 Concurrent-Session Detection Protocol + lockfile mechanism.** New `/dsm-go` Step 0.7 detects an existing `.claude/session.lock`, hard-halts with three resolution options (wrap-up / force-concurrent / manual rm). Lockfile WRITE happens at end of Step 6 (transcript reset) so the `transcript_anchor` field reflects post-reset state. Cleanup added to all three primary wrap-up skills (full / light / quick). `/dsm-parallel-session-go` exempted per §26.5 because parallel sessions are concurrent siblings by design via the commit booking system. Light-mode continuation gap documented as a known limitation per §26.6. New `.gitignore` entry. Origin: heating-systems-conversational-ai S10.L2 (2026-04-29) where two parallel Claude Code conversations operated the same branch with no awareness, surfacing only when `git status` showed entries the active agent had not authored.
+- **BL-431: DSM_0.2.A §26 Concurrent-Session Detection Protocol + lockfile mechanism.** New `/dsm-go` Step 0.7 detects an existing `.claude/session.lock`, hard-halts with three resolution options (wrap-up / force-concurrent / manual rm). Lockfile WRITE happens at end of Step 6 (transcript reset) so the `transcript_anchor` field reflects post-reset state. Cleanup added to all three primary wrap-up skills (full / light / quick). `/dsm-parallel-session-go` exempted per §26.5 because parallel sessions are concurrent siblings by design via the commit booking system. Light-mode continuation gap documented as a known limitation per §26.6. New `.gitignore` entry. Origin: S10.L2 (2026-04-29) where two parallel Claude Code conversations operated the same branch with no awareness, surfacing only when `git status` showed entries the active agent had not authored.
   - **Spoke action:** Run `sync-commands.sh --deploy` to update runtime command copies. Next `/dsm-go` writes the lockfile; next wrap-up clears it.
 
-- **BL-432: DSM_0.2 §8.9.1 Non-Suppressible Prompts Convention.** New sibling sub-section under §8.9 introducing a prompt classification that auto mode must honor regardless of explicit suspension. Closes the gap §8.9 left for procedural safety prompts living inside skill files (not inside Gate 1/2/3 cycles). Initial scope: `/dsm-go` Step 0.7 (concurrent-session halt, BL-431), Step 2a.6 (default-branch verification), Step 5.9 (light-wrap-up continuation, the original motivating site). Skill file annotation convention: `**Non-suppressible (per DSM_0.2 §8.9.1):**` marker line above the prompt. Anti-pattern guard enumerates 4 rationalization variants forbidden. The user's explicit auto-mode suspension does NOT extend to non-suppressible prompts. Origin: heating-systems S10.L2 where auto mode silently bypassed Step 5.9's light-wrap-up continuation prompt; the agent recognized the prompt's existence in its thinking block, then unilaterally pressed past it.
+- **BL-432: DSM_0.2 §8.9.1 Non-Suppressible Prompts Convention.** New sibling sub-section under §8.9 introducing a prompt classification that auto mode must honor regardless of explicit suspension. Closes the gap §8.9 left for procedural safety prompts living inside skill files (not inside Gate 1/2/3 cycles). Initial scope: `/dsm-go` Step 0.7 (concurrent-session halt, BL-431), Step 2a.6 (default-branch verification), Step 5.9 (light-wrap-up continuation, the original motivating site). Skill file annotation convention: `**Non-suppressible (per DSM_0.2 §8.9.1):**` marker line above the prompt. Anti-pattern guard enumerates 4 rationalization variants forbidden. The user's explicit auto-mode suspension does NOT extend to non-suppressible prompts. Origin: S10.L2 where auto mode silently bypassed Step 5.9's light-wrap-up continuation prompt; the agent recognized the prompt's existence in its thinking block, then unilaterally pressed past it.
   - **Spoke action:** Review §8.9.1 for behavioral changes. No spoke template change; the rule lives in DSM_0.2 core, inherited via `@`.
 
-- **BL-433: /dsm-staa Step 8 regenerate compact reasoning-lessons mirror.** New step in `/dsm-staa` that regenerates `.claude/reasoning-lessons-compact.md` after Step 6 append + Step 7 prune complete. Closes the staleness window between `/dsm-staa` runs and the next `/dsm-wrap-up` (potentially 24+ hours), during which `/dsm-go` Step 1.5 reads a stale boot-time canonical context. The transform implements the same rule `/dsm-wrap-up` Step 0 describes in prose; behaviorally identical output verified by byte-diff against current compact mirror. Auto-generated comment in the mirror header references both regenerators. Origin: haystack-magic S7 STAA continuation where /dsm-staa appended 6 [STAA] entries and pruned 2 [auto] entries, leaving the compact mirror 13 minutes stale, missing 6 lessons and including 2 pruned ones.
+- **BL-433: /dsm-staa Step 8 regenerate compact reasoning-lessons mirror.** New step in `/dsm-staa` that regenerates `.claude/reasoning-lessons-compact.md` after Step 6 append + Step 7 prune complete. Closes the staleness window between `/dsm-staa` runs and the next `/dsm-wrap-up` (potentially 24+ hours), during which `/dsm-go` Step 1.5 reads a stale boot-time canonical context. The transform implements the same rule `/dsm-wrap-up` Step 0 describes in prose; behaviorally identical output verified by byte-diff against current compact mirror. Auto-generated comment in the mirror header references both regenerators. Origin: a spoke's S7 STAA continuation where /dsm-staa appended 6 [STAA] entries and pruned 2 [auto] entries, leaving the compact mirror 13 minutes stale, missing 6 lessons and including 2 pruned ones.
   - **Spoke action:** Run `sync-commands.sh --deploy` to update the `/dsm-staa` runtime copy. Next `/dsm-staa` run will regenerate the compact mirror at exit.
 
-- **BL-434: /dsm-align Step 12 conditional Command sync spec.** Replaces enumerated values with conditional default for the `Command sync` line in /dsm-align Step 12 report template. Spoke runs (Step 11 skipped) emit `Command sync: N/A (not DSM Central)` verbatim; DSM Central runs (Step 11 ran) emit populated `OK: N | Drifted: N | Missing: N` counts. Closes the "blank field invites invention" failure mode where the agent ran an out-of-scope `diff -q` on user-scope command files and populated the field with fabricated `Drifted: 2`. Cost of that detour: ~115 transcript lines of correction. Origin: heating-systems-conversational-ai S10 (2026-04-23).
+- **BL-434: /dsm-align Step 12 conditional Command sync spec.** Replaces enumerated values with conditional default for the `Command sync` line in /dsm-align Step 12 report template. Spoke runs (Step 11 skipped) emit `Command sync: N/A (not DSM Central)` verbatim; DSM Central runs (Step 11 ran) emit populated `OK: N | Drifted: N | Missing: N` counts. Closes the "blank field invites invention" failure mode where the agent ran an out-of-scope `diff -q` on user-scope command files and populated the field with fabricated `Drifted: 2`. Cost of that detour: ~115 transcript lines of correction. Origin: S10 (2026-04-23).
   - **Spoke action:** Run `sync-commands.sh --deploy` to update the `/dsm-align` runtime copy. Next spoke `/dsm-align` run emits `N/A (not DSM Central)` exactly.
 
-- **BL-435: DSM_0.2 §8.6.1 Skill Scope Is Authoritative principle.** New sibling sub-section under §8.6 generalizing BL-434's lesson to all skills. §8.6 prevents memory-based claims about skill behavior; §8.6.1 prevents augmentation: agent invokes skill correctly, runs adjacent off-scope checks, folds findings into the skill's report. Core principle: "Silence from the skill on a concern is the skill's answer." Three handling options for adjacent checks: (a) out-of-band audit with its own distinct label, (b) file a BL to extend the skill's documented scope, (c) skip the check. Anti-pattern guard enumerates 4 rationalization variants forbidden. Distinguishes composition (using one skill's output as another skill's input, allowed) from augmentation (folding off-skill findings into a skill's report, forbidden). Origin: same heating-systems S10 incident; §8.6.1 generalizes BL-434's specific Command-sync wording fix.
+- **BL-435: DSM_0.2 §8.6.1 Skill Scope Is Authoritative principle.** New sibling sub-section under §8.6 generalizing BL-434's lesson to all skills. §8.6 prevents memory-based claims about skill behavior; §8.6.1 prevents augmentation: agent invokes skill correctly, runs adjacent off-scope checks, folds findings into the skill's report. Core principle: "Silence from the skill on a concern is the skill's answer." Three handling options for adjacent checks: (a) out-of-band audit with its own distinct label, (b) file a BL to extend the skill's documented scope, (c) skip the check. Anti-pattern guard enumerates 4 rationalization variants forbidden. Distinguishes composition (using one skill's output as another skill's input, allowed) from augmentation (folding off-skill findings into a skill's report, forbidden). Origin: same S10 incident; §8.6.1 generalizes BL-434's specific Command-sync wording fix.
   - **Spoke action:** Review §8.6.1 for behavioral changes. No spoke template change; the rule lives in DSM_0.2 core, inherited via `@`.
 
 ### Spawned
 
-No new BLs spawned by this version. All 6 BLs in §1.9.0 came FROM external spoke inbox entries (haystack-magic S5-S8, heating-systems S10/S10.L2) processed in S207, not from internal scope-splitting or audit-revealed gaps in this session's work.
+No new BLs spawned by this version. All 6 BLs in §1.9.0 came FROM external spoke inbox entries (S5-S8, S10/S10.L2) processed in S207, not from internal scope-splitting or audit-revealed gaps in this session's work.
 
 ### Closed
 
@@ -559,7 +559,7 @@ No new BLs spawned by this version. All 6 BLs in §1.9.0 came FROM external spok
 ### Added - Vocabulary Linking Convention (BL-239 T3 + T4, closes BL-239)
 
 - **DSM_0.1 §7.1 Vocabulary Linking Convention** (new subsection): blog posts and public documents link DSM-specific terms to `dsm-docs/guides/dsm-vocabulary.md` on first use. Internal methodology files skip because the vocabulary is part of the set. Alternative "Terms used" footer for short posts.
-  - **Spoke action:** Review DSM_0.1 §7.1 on next `/dsm-go`. Applies to spokes that produce blog posts or public-facing documents (Take-AI-Bite, Graph Explorer, Blog Poster).
+  - **Spoke action:** Review DSM_0.1 §7.1 on next `/dsm-go`. Applies to spokes that produce blog posts or public-facing documents (Take-AI-Bite).
 - **README.md Links section** now references the DSM vocabulary file with a short parenthetical showing example terms (spoke, hub, Level 3 branch, `@` reference). README is mirror-synced; TAB receives the same link via next sync.
 
 ### Closed
@@ -609,10 +609,10 @@ No new BLs were spawned by v1.6.1's work, because the entire rollout chain (BL-3
 
 ### Added - Counter-evidence surfacing, default-branch verification, PR-merge parity, sprint-plan template injection (BL-380, BL-385, BL-386, BL-387)
 
-- **BL-385: Pre-Generation Brief Gate 2 counter-evidence surfacing.** DSM_0.2 §8.2.1 is a new subsection requiring the agent to surface the strongest counter-evidence to its own recommendation before requesting Gate 2 approval. Includes a format spec (`## Strongest counter-evidence` block with counter-claim + "why I am still recommending X despite this"), an anti-pattern guard ("No counter-evidence found" is not acceptable without listing sources checked), trigger scope (recommendation-style Gate 2s only; mechanical edits and trivial artifacts excluded per §8.4), and consequence-of-skipping (§22 Protocol Violation Triage). Origin: heating-systems S5 incident where two ranking errors needed user pushback to surface counter-evidence visible at brief time. S194 demonstrated voluntary application: every Gate 1 brief in BL-236f/h, BL-386, BL-387, BL-380 included a counter-evidence section before this codification landed; this rule promotes that pattern from voluntary to required.
+- **BL-385: Pre-Generation Brief Gate 2 counter-evidence surfacing.** DSM_0.2 §8.2.1 is a new subsection requiring the agent to surface the strongest counter-evidence to its own recommendation before requesting Gate 2 approval. Includes a format spec (`## Strongest counter-evidence` block with counter-claim + "why I am still recommending X despite this"), an anti-pattern guard ("No counter-evidence found" is not acceptable without listing sources checked), trigger scope (recommendation-style Gate 2s only; mechanical edits and trivial artifacts excluded per §8.4), and consequence-of-skipping (§22 Protocol Violation Triage). Origin: S5 incident where two ranking errors needed user pushback to surface counter-evidence visible at brief time. S194 demonstrated voluntary application: every Gate 1 brief in BL-236f/h, BL-386, BL-387, BL-380 included a counter-evidence section before this codification landed; this rule promotes that pattern from voluntary to required.
   - **Spoke action:** Review DSM_0.2 §8.2.1 on next `/dsm-go`. Affects every Gate 2 in every DSM project via the `@` reference chain the moment spokes re-load DSM_0.2.
 
-- **BL-386: Default-branch verification at session-start and PR-create.** Two complementary checks close a failure class where a spoke's GitHub default branch is left at a stale session branch instead of `main`, leading to HTTP 404 cascades on `workflow_dispatch` and wrong-base PR merges. Check A (preventive) adds `/dsm-go` Step 2a.6: when `GIT_AVAILABLE` + GitHub remote, resolve the remote default via `gh repo view --json defaultBranchRef` and compare against the local main line (defaults to `main`, overridable via an optional `**Main branch:**` declaration in CLAUDE.md's project-specific section). Hard gate on mismatch; `defer` keyword bypasses for one session; silent skip when gh is unavailable or remote is not GitHub; result cached per session. Check B (detective) documents in DSM_0.2.C §2.1 the discipline to always pass `--base` explicitly on `gh pr create` and run `gh pr view {N} --json baseRefName` post-create before merging. Frames the rule as Earn Your Assertions (DSM_6.0 §1.3) extended to command defaults: "resolve the relevant default before running a destructive command that depends on it." Origin: dsm-jupyter-book S4 lost ~45 minutes to an HTTP 404 cascade because the repo's default branch was a stale session branch.
+- **BL-386: Default-branch verification at session-start and PR-create.** Two complementary checks close a failure class where a spoke's GitHub default branch is left at a stale session branch instead of `main`, leading to HTTP 404 cascades on `workflow_dispatch` and wrong-base PR merges. Check A (preventive) adds `/dsm-go` Step 2a.6: when `GIT_AVAILABLE` + GitHub remote, resolve the remote default via `gh repo view --json defaultBranchRef` and compare against the local main line (defaults to `main`, overridable via an optional `**Main branch:**` declaration in CLAUDE.md's project-specific section). Hard gate on mismatch; `defer` keyword bypasses for one session; silent skip when gh is unavailable or remote is not GitHub; result cached per session. Check B (detective) documents in DSM_0.2.C §2.1 the discipline to always pass `--base` explicitly on `gh pr create` and run `gh pr view {N} --json baseRefName` post-create before merging. Frames the rule as Earn Your Assertions (DSM_6.0 §1.3) extended to command defaults: "resolve the relevant default before running a destructive command that depends on it." Origin: a spoke project (S4) lost ~45 minutes to an HTTP 404 cascade because the repo's default branch was a stale session branch.
   - **Spoke action:** Run `sync-commands.sh --deploy` to pick up `/dsm-go` Step 2a.6. Review DSM_0.2.C §2.1 for the PR-create discipline. Projects using a non-`main` default branch should declare `**Main branch:**` in `.claude/CLAUDE.md` project-specific section so Check A compares against the correct value.
 
 - **BL-387: Permission-system parity for push-to-main vs PR-merge-to-main.** Closes an asymmetry where `git push origin main` required user confirmation but `gh pr merge {N} --merge|--squash|--rebase` to a main-base PR did not, even though both operations have identical publication outcome. DSM_0.2.C §2 gains a new "PR-merge to main" bullet in the Destructive Action Protocol's "Operations requiring confirmation" list, documenting the equivalence with an explicit "equivalent in publication outcome, not equivalent in policy enforcement" nuance (PR merge respects branch protection; direct push bypasses it). Confirmation may be batched within a larger work-block approval but must be specific to the merge, not absorbed into a general "proceed" instruction. DSM_0.2.C §2.2 is a new subsection alongside §2.1 documenting the opt-in permission-rule pattern (`Bash(gh pr merge:*)` deny pattern in `.claude/settings.json`) for security-sensitive projects, honest that it matches all PR merges, not just to main, with When-To-Adopt and When-NOT-To-Adopt criteria. DSM Central's project CLAUDE.md Destructive Command Protocol section gains a back-reference bullet pointing to DSM_0.2.C §2 + §2.2 for visibility. Couples tightly with BL-386: together they form a target-verify → action-authorize chain for destructive-merge operations.
@@ -644,8 +644,8 @@ No new BLs were spawned by v1.6.1's work, because the entire rollout chain (BL-3
 
 ### Added - Mirror Central release tags to TAB (BL-376)
 
-- **BL-376: `/dsm-version-update` Step 4b mirrors Central release tags to TAB (and any `mirror: true` ecosystem entry).** Closes the gap where Central had 29 tags and TAB had 0: mirror sync propagated files but not refs, so downstream consumers (dsm-jupyter-book and other TAB-clone projects) could not `git checkout vX.Y.Z` against a TAB checkout. New Step 4b (in `scripts/commands/dsm-version-update.md`) iterates `mirror: true` ecosystem entries after the CLAUDE.md Version Update Workflow Step 9 file sync has completed, verifies the sync commit landed, detects pre-existing tags (no overwrite, halts and reports for manual resolution), then creates and pushes `vX.Y.Z` on each mirror at the mirror's sync commit. Fires only at version-bump events; `/dsm-wrap-up` silent-drift syncs do NOT push tags. Inline semantic note documents that the mirror tag points to the mirror's sync commit, not Central's release commit (mirror commit histories are independent). CLAUDE.md Version Update Workflow Step 9 gains a one-line cross-reference to Step 4b for discoverability. First mirror to exercise Step 4b in a real version release: this release (v1.5.3) landing `v1.5.3` on TAB at its current sync commit.
-  - **Spoke action:** None required. Mirror tag push is a Central-side + mirror-side operation; spokes that consume TAB (e.g., dsm-jupyter-book) will see `vX.Y.Z` tags appear on TAB going forward and can `git fetch <tab-remote> --tags` to pull them. Historical tags (v1.3.0 through v1.5.2) are NOT backfilled on TAB; CHANGELOG remains the full history record.
+- **BL-376: `/dsm-version-update` Step 4b mirrors Central release tags to TAB (and any `mirror: true` ecosystem entry).** Closes the gap where Central had 29 tags and TAB had 0: mirror sync propagated files but not refs, so downstream consumers (TAB-clone projects) could not `git checkout vX.Y.Z` against a TAB checkout. New Step 4b (in `scripts/commands/dsm-version-update.md`) iterates `mirror: true` ecosystem entries after the CLAUDE.md Version Update Workflow Step 9 file sync has completed, verifies the sync commit landed, detects pre-existing tags (no overwrite, halts and reports for manual resolution), then creates and pushes `vX.Y.Z` on each mirror at the mirror's sync commit. Fires only at version-bump events; `/dsm-wrap-up` silent-drift syncs do NOT push tags. Inline semantic note documents that the mirror tag points to the mirror's sync commit, not Central's release commit (mirror commit histories are independent). CLAUDE.md Version Update Workflow Step 9 gains a one-line cross-reference to Step 4b for discoverability. First mirror to exercise Step 4b in a real version release: this release (v1.5.3) landing `v1.5.3` on TAB at its current sync commit.
+  - **Spoke action:** None required. Mirror tag push is a Central-side + mirror-side operation; spokes that consume TAB will see `vX.Y.Z` tags appear on TAB going forward and can `git fetch <tab-remote> --tags` to pull them. Historical tags (v1.3.0 through v1.5.2) are NOT backfilled on TAB; CHANGELOG remains the full history record.
 
 ### Spawned
 
@@ -666,7 +666,7 @@ No new BLs were spawned by v1.6.1's work, because the entire rollout chain (BL-3
 
 ### Added - Git-mv rename-staging warning hook (BL-370)
 
-- **BL-370: `.claude/hooks/validate-rename-staging.sh` pre-commit warning hook.** New PreToolUse:Bash hook catches the recurring pattern where Edit-tool or `sed -i` content changes made before `git mv` get dropped from the commit because `git mv` does not auto-restage prior content deltas. Three sightings in DSM Central (S184 BL-349, S190 IronCalc inbox move, S191 `/dsm-light-go` checkpoint annotation) forced the "file a BL" threshold per MEMORY.md convention. The hook filters to `git commit` calls, parses `git diff --cached --name-status` for R-typed renames, and for each renamed new-path checks whether the working tree differs from the staged content. If yes, blocks with exit 2 and emits clear bypass instructions (`git add <path>` to stage the content, or `git commit --no-verify` for intentional rename-first workflows). Silent (exit 0) when no renames are staged or all content is staged. MEMORY pitfall entry updated to reference BL-370 as the enforcement mechanism.
+- **BL-370: `.claude/hooks/validate-rename-staging.sh` pre-commit warning hook.** New PreToolUse:Bash hook catches the recurring pattern where Edit-tool or `sed -i` content changes made before `git mv` get dropped from the commit because `git mv` does not auto-restage prior content deltas. Three sightings in DSM Central (S184 BL-349, S190 inbox move, S191 `/dsm-light-go` checkpoint annotation) forced the "file a BL" threshold per MEMORY.md convention. The hook filters to `git commit` calls, parses `git diff --cached --name-status` for R-typed renames, and for each renamed new-path checks whether the working tree differs from the staged content. If yes, blocks with exit 2 and emits clear bypass instructions (`git add <path>` to stage the content, or `git commit --no-verify` for intentional rename-first workflows). Silent (exit 0) when no renames are staged or all content is staged. MEMORY pitfall entry updated to reference BL-370 as the enforcement mechanism.
   - **Spoke action:** Run `/dsm-align` on next `/dsm-go` to install the new hook (Step 10b copies the script to `.claude/hooks/` and merges the `PreToolUse:Bash` entry into `.claude/settings.json`). Cloned mirrors get it pre-wired via `.claude/settings.json.template`.
 
 ### Spawned
@@ -707,7 +707,7 @@ No new BLs were spawned by v1.6.1's work, because the entire rollout chain (BL-3
 
 ### Spawned
 
-- BL-355 (Medium): Deep research on 6 external repos for DSM and Graph Explorer relevance. Executed by parallel session 187.1.
+- BL-355 (Medium): Deep research on 6 external repos for DSM and spoke relevance. Executed by parallel session 187.1.
 
 ## [1.4.17] - 2026-04-12
 
@@ -725,11 +725,11 @@ No new BLs were spawned by v1.6.1's work, because the entire rollout chain (BL-3
 
 ### Added - §22 Stop Condition + /dsm-go EC Inbox Resolution (S184)
 
-- **BL-350: DSM_0.2 §22 stop-condition amendment for protocol violations.** §22 Protocol Violation Triage Response previously said the three-step response (Fix + Root-cause + Prevent) runs "before continuing other work". In blog-poster S19 that phrasing was soft enough that the agent acknowledged a CLAUDE.md violation mid-paragraph, flagged it as an inline disclaimer, and then continued presenting BL-010 angle rankings built on unread sources. The user had to escalate ("this is unacceptable") to halt the output. §22 now has three additions: (a) a bridging clause on the opening paragraph ("The current output-in-progress counts as other work; see the stop condition below"), (b) a new Stop Condition paragraph with four explicit actions (name the violation, halt without completing, propose corrective action, wait for user confirmation before resuming), and (c) a new Anti-pattern paragraph stating that acknowledging a violation as a footnote while continuing the same output is itself a §22 failure. Cross-reference to DSM_6.0 Earn Your Assertions as the source principle. Origin inline: blog-poster S19 incident. Flat structure preserved, no new subsections, cross-references stable.
+- **BL-350: DSM_0.2 §22 stop-condition amendment for protocol violations.** §22 Protocol Violation Triage Response previously said the three-step response (Fix + Root-cause + Prevent) runs "before continuing other work". In S19 that phrasing was soft enough that the agent acknowledged a CLAUDE.md violation mid-paragraph, flagged it as an inline disclaimer, and then continued presenting BL-010 angle rankings built on unread sources. The user had to escalate ("this is unacceptable") to halt the output. §22 now has three additions: (a) a bridging clause on the opening paragraph ("The current output-in-progress counts as other work; see the stop condition below"), (b) a new Stop Condition paragraph with four explicit actions (name the violation, halt without completing, propose corrective action, wait for user confirmation before resuming), and (c) a new Anti-pattern paragraph stating that acknowledging a violation as a footnote while continuing the same output is itself a §22 failure. Cross-reference to DSM_6.0 Earn Your Assertions as the source principle. Origin inline: S19 incident. Flat structure preserved, no new subsections, cross-references stable.
   - **Spoke action:** Review DSM_0.2 §22 for behavioral changes. The stop condition applies immediately on next session start via the `@` reference chain, no template regeneration or command re-deploy needed.
 
-- **BL-349: /dsm-go EC governance inbox check.** `/dsm-go` Step 2b previously *declared* that the External Contribution inbox lives at `contributions-docs/{project}/_inbox/` but gave no resolution or check instructions; the `ls` command and resolution path were both implicit. Result: inbox entries delivered to the EC governance folder (e.g., `~/dsm-external-contribution-storage/IronCalc/_inbox/`) were invisible to `/dsm-go`, the user had to manually point the agent at them each session. Dependency follow-up to BL-348 (S183 EC fast-path for `/dsm-align`). Step 2b now branches by project type with three resolution flows: hub/spoke (unchanged), EC (reads `contributions-docs` from the ecosystem registry cached in Step 2a.5, derives project name from `basename "$(pwd)"`, targets `{contributions-docs}/{project-name}/_inbox/`, checks with `ls`, and explicitly refuses to scan the upstream repo root per BL-348). Skip condition added for missing registry entry or non-existent target (warn and continue, do not halt). The shared processing paragraph (read source files, evaluate, propose) is preserved for all project types.
-  - **Spoke action:** Run `scripts/sync-commands.sh --deploy` to update the deployed `/dsm-go` command file. External Contribution spokes (IronCalc et al.) pick up the new resolution logic automatically on next session start via the deployed command file.
+- **BL-349: /dsm-go EC governance inbox check.** `/dsm-go` Step 2b previously *declared* that the External Contribution inbox lives at `contributions-docs/{project}/_inbox/` but gave no resolution or check instructions; the `ls` command and resolution path were both implicit. Result: inbox entries delivered to the EC governance folder (e.g., `~/dsm-external-contribution-storage/{project-name}/_inbox/`) were invisible to `/dsm-go`, the user had to manually point the agent at them each session. Dependency follow-up to BL-348 (S183 EC fast-path for `/dsm-align`). Step 2b now branches by project type with three resolution flows: hub/spoke (unchanged), EC (reads `contributions-docs` from the ecosystem registry cached in Step 2a.5, derives project name from `basename "$(pwd)"`, targets `{contributions-docs}/{project-name}/_inbox/`, checks with `ls`, and explicitly refuses to scan the upstream repo root per BL-348). Skip condition added for missing registry entry or non-existent target (warn and continue, do not halt). The shared processing paragraph (read source files, evaluate, propose) is preserved for all project types.
+  - **Spoke action:** Run `scripts/sync-commands.sh --deploy` to update the deployed `/dsm-go` command file. External Contribution spokes pick up the new resolution logic automatically on next session start via the deployed command file.
 
 ### Spawned
 
@@ -739,10 +739,10 @@ None. Neither BL-349 nor BL-350 produced follow-up BLs this session.
 
 ### Added - External Contribution Alignment Support (S183)
 
-- **BL-347: Rename `dsm-collaboration-storage` → `dsm-external-contribution-storage`.** The governance folder for external contribution projects was named `dsm-collaboration-storage`, a vague label that did not communicate its purpose. DSM_3 §6.6 uses the term "External Contribution" for this project type, so the folder name now matches. Updated the physical folder (`mv`), Central ecosystem registry, IronCalc ecosystem registry (cross-repo write), MEMORY.md, and 3 research files. Historical references in done/ BLs, CHANGELOG entries, blog materials, and the EXP-002 graphml were preserved as records of what was true when written.
+- **BL-347: Rename `dsm-collaboration-storage` → `dsm-external-contribution-storage`.** The governance folder for external contribution projects was named `dsm-collaboration-storage`, a vague label that did not communicate its purpose. DSM_3 §6.6 uses the term "External Contribution" for this project type, so the folder name now matches. Updated the physical folder (`mv`), Central ecosystem registry, an external contribution's ecosystem registry (cross-repo write), MEMORY.md, and 3 research files. Historical references in done/ BLs, CHANGELOG entries, blog materials, and the EXP-002 graphml were preserved as records of what was true when written.
 
-- **BL-348: `/dsm-align` External Contribution governance scaffold.** `/dsm-align` previously had no code path for External Contribution projects. When run inside an external repo (e.g., `~/IronCalc`), it either ran spoke scaffold checks against the external repo (wrong, would pollute upstream with `dsm-docs/`, the BL-114 incident pattern) or skipped them entirely via the hub fast-path. The governance folder at `{contributions-docs}/{project-name}/` was never audited or scaffolded. New EC fast-path: detection is two-tier, (a) read CLAUDE.md alignment section for "External Contribution" in EITHER the Project type line OR the Participation pattern line, (b) fall back to filesystem signals (README + LICENSE/CONTRIBUTING + `@` reference + absence of `dsm-docs/` and `scripts/commands/`) with user confirmation gate. New step 3-EC scaffolds the governance folder behind an explicit cross-repo write confirmation gate. Idempotent: subsequent runs pass through if the scaffold is already complete. The both-fields tier-1 check was added mid-session after an audit of IronCalc revealed that the original single-field detection would have missed its legitimate layered layout (Project type: Application, Participation pattern: External Contribution), potentially creating `dsm-docs/` in the upstream repo.
-  - **Spoke action:** Run `sync-commands.sh --deploy` to update `/dsm-align`. External Contribution projects should restart their Claude Code window and re-run `/dsm-align` to exercise the new code path. IronCalc has a detailed audit inbox entry at `~/dsm-external-contribution-storage/IronCalc/_inbox/2026-04-11_dsm-central-s183_audit-recommendations.md` with 7 recommended actions including CLAUDE.md cleanup (F3-F5) and legacy folder migration.
+- **BL-348: `/dsm-align` External Contribution governance scaffold.** `/dsm-align` previously had no code path for External Contribution projects. When run inside an external repo (e.g., `~/{external-repo}`), it either ran spoke scaffold checks against the external repo (wrong, would pollute upstream with `dsm-docs/`, the BL-114 incident pattern) or skipped them entirely via the hub fast-path. The governance folder at `{contributions-docs}/{project-name}/` was never audited or scaffolded. New EC fast-path: detection is two-tier, (a) read CLAUDE.md alignment section for "External Contribution" in EITHER the Project type line OR the Participation pattern line, (b) fall back to filesystem signals (README + LICENSE/CONTRIBUTING + `@` reference + absence of `dsm-docs/` and `scripts/commands/`) with user confirmation gate. New step 3-EC scaffolds the governance folder behind an explicit cross-repo write confirmation gate. Idempotent: subsequent runs pass through if the scaffold is already complete. The both-fields tier-1 check was added mid-session after an audit of an external contribution revealed that the original single-field detection would have missed its legitimate layered layout (Project type: Application, Participation pattern: External Contribution), potentially creating `dsm-docs/` in the upstream repo.
+  - **Spoke action:** Run `sync-commands.sh --deploy` to update `/dsm-align`. External Contribution projects should restart their Claude Code window and re-run `/dsm-align` to exercise the new code path. An external OSS contribution has a detailed audit inbox entry at `~/dsm-external-contribution-storage/{project-name}/_inbox/2026-04-11_dsm-central-s183_audit-recommendations.md` with 7 recommended actions including CLAUDE.md cleanup (F3-F5) and legacy folder migration.
 
 ### Spawned
 
@@ -801,10 +801,10 @@ None. Neither BL-349 nor BL-350 produced follow-up BLs this session.
 
 ### Added - BL-319 Hook Delivery Scaffold + /dsm-go Step 1.8 Hardening (S179 batch)
 
-- **BACKLOG-319 (High):** Scaffold delivery for per-turn transcript hook. Closes the gap between DSM_0.2 §7 per-turn enforcement docs (shipped v1.4.9) and the hook mechanism that enforces them. Evidence: portfolio S69 ran six consecutive turns with zero transcript appends; dsm-blog-poster S17 produced a single entry in the entire session. Both had the same root cause, the hook was absent from `.claude/settings.json` and no committed template or delivery step existed to install one. Implementation (Option C, single source of truth):
+- **BACKLOG-319 (High):** Scaffold delivery for per-turn transcript hook. Closes the gap between DSM_0.2 §7 per-turn enforcement docs (shipped v1.4.9) and the hook mechanism that enforces them. Evidence: S69 ran six consecutive turns with zero transcript appends; S17 produced a single entry in the entire session. Both had the same root cause, the hook was absent from `.claude/settings.json` and no committed template or delivery step existed to install one. Implementation (Option C, single source of truth):
   - NEW `scripts/templates/settings-hooks.json`: minimal JSON fragment with the two hook entries (`UserPromptSubmit` -> `transcript-reminder.sh`, `PreToolUse/Edit` -> `validate-transcript-edit.sh`). Does not inline script bodies; references `.claude/hooks/` by relative path so Central's tracked scripts remain canonical.
   - NEW `/dsm-align` step 10b: copies hook scripts from `{dsm-central}/.claude/hooks/*.sh` (resolved via the Ecosystem Path Registry) into each project's `.claude/hooks/`, then idempotently merges the template entries into `.claude/settings.json`. Merge matches by `command` field so repeat runs produce zero diff. Preserves all pre-existing permissions, custom hooks, and top-level keys. Runs on DSM Central itself as well as spokes. Smoke-tested on a seeded temp spoke (pre-existing permissions, custom hooks, myCustomKey) before commit; RUN1 installed=2 merged_any=True, RUN2 merged_any=False, all pre-existing content preserved.
-  - NEW `data/experiments/EXP-003-bl-319-hook-delivery/`: pre-registered experiment with 8 success criteria across 3 cohort spokes (take-ai-bite, dsm-data-science-portfolio, dsm-blog-poster — one per DSM project type). `run-check.sh` automates SC1-SC7; SC8 is a manual fire-test in TAB. Execution deferred to next session (requires coordinated `/dsm-align` runs across separate Claude Code windows).
+  - NEW `data/experiments/EXP-003-bl-319-hook-delivery/`: pre-registered experiment with 8 success criteria across 3 cohort spokes (one per DSM project type). `run-check.sh` automates SC1-SC7; SC8 is a manual fire-test in TAB. Execution deferred to next session (requires coordinated `/dsm-align` runs across separate Claude Code windows).
   - **Spoke action:** Run `/dsm-align` to install the hook scripts and wire `.claude/settings.json`. First run on a cold spoke creates `.claude/dsm-ecosystem.md` in step 10 and installs the hook in step 10b in the same pass.
   - **Spoke action:** Run `sync-commands.sh --deploy` to pick up the new step 10b in `/dsm-align`.
 
@@ -824,7 +824,7 @@ None. Neither BL-349 nor BL-350 produced follow-up BLs this session.
 ### Added - Light-go Switch-Flow Hardening, Post-Merge Branch Rule, Mirror Sync Personal Content Gate (S178 batch)
 
 - **BACKLOG-331:** Light-go switch-flow recovery and DSM_0.2 §7 hardening (4 sub-items in one BL).
-  - Switch-flow guarantee in `scripts/commands/dsm-light-go.md` Safety Gate handoff text + `scripts/commands/dsm-go.md` Step 6 no-skip rule for deferral entries. Closes the portfolio S69 failure mode (~6 turns with zero transcript appends after `/dsm-light-go` → `/dsm-go` switch dropped Step 6).
+  - Switch-flow guarantee in `scripts/commands/dsm-light-go.md` Safety Gate handoff text + `scripts/commands/dsm-go.md` Step 6 no-skip rule for deferral entries. Closes the S69 failure mode (~6 turns with zero transcript appends after `/dsm-light-go` → `/dsm-go` switch dropped Step 6).
   - **Spoke action:** Run `sync-commands.sh --deploy` to update the runtime copies of `dsm-go` and `dsm-light-go`.
   - Unconditional activation rule in DSM_0.2 §7 + §17.1 base template + Central `.claude/CLAUDE.md`: "if `.claude/session-transcript.md` exists in the project, the protocol is active". Third independent enforcement layer alongside the per-turn hook (occurrence) and PreToolUse shape validator.
   - **Spoke action:** Run `/dsm-align` to propagate the unconditional activation bullet to spoke CLAUDE.md alignment blocks.
@@ -832,11 +832,11 @@ None. Neither BL-349 nor BL-350 produced follow-up BLs this session.
   - **Spoke action:** Run `/dsm-align` to propagate the heredoc anti-pattern bullet to spokes.
   - Cadence gate interactive y/n prompt in `dsm-light-go.md` Branch Cadence Gate: replaces dead-end "options" output with auto-invocation of `/dsm-wrap-up` on `y`. Matches Safety Gate + `/dsm-go` Step 0d patterns.
   - **Spoke action:** Run `sync-commands.sh --deploy` for `dsm-light-go`.
-  - Origins: portfolio S69 (transcript drift + cadence gate UX), dsm-blog-poster S17 (heredoc literal + transcript drift evidence).
+  - Origins: S69 (transcript drift + cadence gate UX), S17 (heredoc literal + transcript drift evidence).
 
 - **BACKLOG-332:** Post-merge branch recreation rule. New DSM_0.2 §20.8 with the rule (create new branch before any further commit), the chain pattern (`gh pr merge ... && git checkout -b session-N/YYYY-MM-DD-{purpose}`), the soft `-{purpose}` naming convention for follow-on branches in the same calendar session, and the recovery sequence using `git update-ref refs/heads/main refs/remotes/origin/main` (since the harness blocks `git reset --hard`). Reinforced in `dsm-go.md` Step 0 docs and Central `.claude/CLAUDE.md` Branching Strategy block.
   - **Spoke action:** Review DSM_0.2 §20.8 for the post-merge branch recreation pattern. No template change; behavioral rule only.
-  - Origin: dsm-blog-poster S17 hit this twice (commit landed on main after `gh pr merge --delete-branch`; recovery cost ~5 min and one extra PR per slip).
+  - Origin: a spoke project (S17) hit this twice (commit landed on main after `gh pr merge --delete-branch`; recovery cost ~5 min and one extra PR per slip).
 
 - **BACKLOG-335 (was BACKLOG-333):** Pre-mirror-sync personal content scanner. New `scripts/check-mirror-sync-content.sh` (executable, ~100 lines) greps a list of files for personal markers (name, PMP credential, LinkedIn URL, freelance/client framing, user-preference phrasing) and exits non-zero on hits. Supports `--confirmed` flag to bypass the gate for legitimate matches (author attribution in README, BL author fields). Wired into `scripts/commands/dsm-wrap-up.md` step 8d Mirror sync, plus the Change Propagation Protocol mirror step and Version Update Workflow step 9 in Central `.claude/CLAUDE.md`. Tested: 0 hits on DSM_0.2 + dsm-go + dsm-wrap-up; 3 legitimate hits on README, 1 on FEATURES, both expected and bypassable.
   - **Spoke action:** None directly (Central-only safety net). Spokes inherit the wrap-up step text via mirror sync of `dsm-wrap-up.md` and gain the gate the next time they wrap up after `sync-commands.sh --deploy`.
@@ -849,13 +849,13 @@ None. Neither BL-349 nor BL-350 produced follow-up BLs this session.
 
 ### Spawned
 
-No new spawned BLs from v1.4.11. The version's work consumed the existing BL-331/332 (filed earlier in S178) plus the two new BL-335/336. BL-319 priority bumped Medium → High based on portfolio S69 + blog-poster S17 evidence; existing BL, no spawn.
+No new spawned BLs from v1.4.11. The version's work consumed the existing BL-331/332 (filed earlier in S178) plus the two new BL-335/336. BL-319 priority bumped Medium → High based on S69 + S17 evidence; existing BL, no spawn.
 
 ## [1.4.10] - 2026-04-09
 
 ### Added - Persistent /dsm-align Report and Skill Self-Reference Protocol (S176+S177 batch)
 
-- DSM_0.2 §8.6: new Skill Self-Reference Protocol requires reading the skill prompt file before claiming any skill behavior. Origin: efficientnet S8 false-claim incident about `/dsm-wrap-up` portfolio handling. (BL-327)
+- DSM_0.2 §8.6: new Skill Self-Reference Protocol requires reading the skill prompt file before claiming any skill behavior. Origin: S8 false-claim incident about `/dsm-wrap-up` portfolio handling. (BL-327)
   **Spoke action:** Run `/dsm-align` to update reinforcement block.
 - DSM_0.2 §17.1 base template Pre-Generation Brief block: new bullet for the what/why/how thinking-block rule before Gate 1, propagated from §8.5 to make spokes inherit it explicitly. (BL-325)
   **Spoke action:** Run `/dsm-align` to update reinforcement block.
@@ -866,9 +866,9 @@ No new spawned BLs from v1.4.11. The version's work consumed the existing BL-331
 
 - `scripts/commands/dsm-align.md` step 12a: new persistent alignment report written to `.claude/last-align-report.md` on every run (post-change and check-only) with explicit warning/collision text, already-correct items, and skipped-step reasons. Step 12b modified to fire on check-only runs when warnings exist and to reference the persistent file instead of duplicating contents. (BL-329)
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`.
-- `scripts/commands/dsm-align.md` step 10: new scaffold for `.claude/reasoning-lessons.md` with a standard header template; `scripts/commands/dsm-go.md` Step 0.5 now includes the file in scaffold completeness so a missing file auto-triggers `/dsm-align`. Prevents the efficientnet failure mode of 11 sessions without the lessons file. (BL-328)
+- `scripts/commands/dsm-align.md` step 10: new scaffold for `.claude/reasoning-lessons.md` with a standard header template; `scripts/commands/dsm-go.md` Step 0.5 now includes the file in scaffold completeness so a missing file auto-triggers `/dsm-align`. Prevents the failure mode of 11 sessions without the lessons file. (BL-328)
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`.
-- `scripts/commands/dsm-light-wrap-up.md` and `scripts/commands/dsm-light-go.md`: new Cadence Gate refusing to operate on a session branch whose date ≠ today (Option D, hard cadence rule). Catches the efficientnet 7-session failure mode where light cycles ran across multiple days on a stale session branch. Task branches (`bl-*`, `sprint-*`, `parallel/*`) exempt. (BL-326, S176)
+- `scripts/commands/dsm-light-wrap-up.md` and `scripts/commands/dsm-light-go.md`: new Cadence Gate refusing to operate on a session branch whose date ≠ today (Option D, hard cadence rule). Catches the 7-session failure mode where light cycles ran across multiple days on a stale session branch. Task branches (`bl-*`, `sprint-*`, `parallel/*`) exempt. (BL-326, S176)
   **Spoke action:** Run `scripts/sync-commands.sh --deploy`.
 - DSM_0.2 §7 Turn-Boundary Transcript Append Self-Check: rewritten positively ("Every turn begins with a transcript append"); tool-call-count condition removed; pure-reasoning-turn failure mode example added; exemption replaced with content-based criterion (content-trivial turns only). §17.1 template bullet mirrored. (BL-330, S176)
   **Spoke action:** Run `/dsm-align` to update reinforcement block.
@@ -976,7 +976,7 @@ None this version.
   gap where §23 covered install-time conflict detection but not runtime
   context.
 - Skills registry template gains a `Register-sensitive` column (yes/no/partial).
-- Humanizer skill registry entry annotated with the german-adversarial-prompting
+- Humanizer skill registry entry annotated with the
   S8 incident and marked register-sensitive: yes.
   **Spoke action:** Review §23.4 for behavioral changes; update local
   skills-registry.md with Register-sensitive column
@@ -990,7 +990,7 @@ None this version.
   work items; material elsewhere (`_reference/`, `docs/`, README, inbox,
   sprint plan drafts) is INPUT to the planning pipeline, not a substitute
   for it. Operationalizes DSM_3 planning pipeline at the spoke behavioral
-  surface. Origin: utility_conversational_ai S1 MO-1 (agent treated
+  surface. Origin: a spoke project S1 MO-1 (agent treated
   `_reference/sprint-plan.md` as actionable, skipping research → formalize
   → plan).
   **Spoke action:** Run `/dsm-align` to update reinforcement block
@@ -1247,7 +1247,7 @@ None this version.
 
 ### Source
 
-- dsm-stress-tester S9 feedback; Session 130
+- S9 feedback; Session 130
 
 ## [1.3.64] - 2026-03-15
 
@@ -1259,7 +1259,7 @@ None this version.
 
 ### Source
 
-- Portfolio inbox feedback (S35), dsm-blog-poster S4, dsm-stress-tester S5; Session 130
+- inbox feedback (S35), S4, S5; Session 130
 
 ## [1.3.63] - 2026-03-15
 
@@ -1321,7 +1321,7 @@ None this version.
 
 ### Source
 
-- Artz project cold-start (S114); Session 128
+- A client project cold-start (S114); Session 128
 
 ## [1.3.54] - 2026-03-14
 
@@ -1331,7 +1331,7 @@ None this version.
 
 ### Source
 
-- Reclaim Launcher retrospective (S87), stress-test feedback; Session 128
+- retrospective (S87), stress-test feedback; Session 128
 
 ## [1.3.53] - 2026-03-14
 
@@ -1355,7 +1355,7 @@ None this version.
 
 ### Source
 
-- dsm-graph-explorer S22 + S107 feedback; Session 128
+- S22 + S107 feedback; Session 128
 
 ## [1.3.51] - 2026-03-14
 
@@ -1365,7 +1365,7 @@ None this version.
 
 ### Source
 
-- dsm-graph-explorer S25 research; Session 128
+- S25 research; Session 128
 
 ## [1.3.50] - 2026-03-14
 
@@ -1377,7 +1377,7 @@ None this version.
 
 ### Source
 
-- Artz cold-start (S114); Session 128
+- A client project cold-start (S114); Session 128
 
 ## [1.3.49] - 2026-03-14
 
@@ -1412,7 +1412,7 @@ None this version.
 
 ### Source
 
-- Portfolio S35 feedback; Session 128
+- S35 feedback; Session 128
 
 ## [1.3.46] - 2026-03-14
 
@@ -1424,7 +1424,7 @@ None this version.
 
 ### Source
 
-- Reclaim Launcher S5-S7 feedback; Session 128
+- S5-S7 feedback; Session 128
 
 ## [1.3.45] - 2026-03-14
 
@@ -1434,7 +1434,7 @@ None this version.
 
 ### Source
 
-- dsm-graph-explorer S28 feedback (Entry 37, Proposal #32); Session 128
+- S28 feedback (Entry 37, Proposal #32); Session 128
 
 ## [1.3.44] - 2026-03-14
 
@@ -1445,7 +1445,7 @@ None this version.
 
 ### Source
 
-- dsm-graph-explorer S29-S30 feedback (Entry 39-40, Proposals #34-#35); Session 128
+- S29-S30 feedback (Entry 39-40, Proposals #34-#35); Session 128
 
 ## [1.3.43] - 2026-03-14
 
@@ -1457,7 +1457,7 @@ None this version.
 
 ### Source
 
-- Reclaim Launcher Session 5 process review; Session 128
+- Session 5 process review; Session 128
 
 ## [1.3.42] - 2026-03-14
 
@@ -1477,7 +1477,7 @@ None this version.
 
 ### Source
 
-- Reclaim Launcher Issue #4 retrospective (S87); Session 128
+- Issue #4 retrospective (S87); Session 128
 
 ## [1.3.40] - 2026-03-14
 
@@ -1490,7 +1490,7 @@ None this version.
 
 ### Source
 
-- Stress-test project feedback (practice S1-S6), Artz S2-S4; Session 128
+- Stress-test project feedback (practice S1-S6), a client project S2-S4; Session 128
 
 ## [1.3.39] - 2026-03-14
 
@@ -1510,24 +1510,24 @@ None this version.
 
 - Take AI Bite `.claude/CLAUDE.md`: spoke project configuration with Documentation (DSM 5.0) / Standard Spoke pattern, Protocol Applicability table, content sync workflow, public-facing content rules (DSM acronym disambiguation), Session Transcript and Pre-Generation Brief reinforcement blocks
 - DSM_3 Section 7 Project Registry: added Take AI Bite entry ("Public-facing framework distribution, curated DSM subset for external adoption")
-- DSM_3 Section 7: Graph Explorer metrics refreshed (218 -> 471 tests, Sprint 11)
+- DSM_3 Section 7: spoke metrics refreshed (218 -> 471 tests, Sprint 11)
 - 3 new backlog items from spoke feedback: BL-179 (Lightweight Chain Resilience), BL-180 (Sprint Alignment Review at Boundary), BL-181 (Sprint Boundary Hub/Portfolio Notification)
 
 ### Source
 
-- BL-156 Phase 3 (Session 122); spoke feedback from Artz S2-S4 and Graph Explorer S29-S30
+- BL-156 Phase 3 (Session 122); spoke feedback from a client project S2-S4 and S29-S30
 
 ## [1.3.37] - 2026-03-10
 
 ### Added - Third-Party Asset Due Diligence (BACKLOG-166)
 
-- DSM_6.0 Principle 1.8 (Know What You Own): checklist and guidance for verifying licensing before deploying any third-party asset (AI-generated images, stock photos, fonts, code snippets, API data); covers free-tier vs. paid-tier ownership distinctions, high-risk scenario flags, scope (public-facing vs. internal), timing (at creation, not deployment), and relationship to Principle 1.7 (Own Your Process); evidence from Recraft AI logo incident (dsm-blog-poster S4)
+- DSM_6.0 Principle 1.8 (Know What You Own): checklist and guidance for verifying licensing before deploying any third-party asset (AI-generated images, stock photos, fonts, code snippets, API data); covers free-tier vs. paid-tier ownership distinctions, high-risk scenario flags, scope (public-facing vs. internal), timing (at creation, not deployment), and relationship to Principle 1.7 (Own Your Process); evidence from Recraft AI logo incident (S4)
 - DSM_6.0 Section 2.2 Gaps table: new row mapping third-party asset licensing gap to Principle 1.8
 - DSM_0: updated DSM_6.0 description from seven to eight principles, added Know What You Own
 
 ### Source
 
-- BL-166 (Session 112); evidence from dsm-blog-poster inbox (Recraft logo licensing incident, S4)
+- BL-166 (Session 112); evidence from the spoke inbox (Recraft logo licensing incident, S4)
 
 ## [1.3.36] - 2026-03-10
 
@@ -1553,7 +1553,7 @@ None this version.
 
 ### Source
 
-- BL-162 promotion to DSM body (Session 111); field evidence from AMEX (Sessions 98-100) and Steuern (Session 110) private projects
+- BL-162 promotion to DSM body (Session 111); field evidence from AMEX (Sessions 98-100) and a private project (Session 110)
 
 ## [1.3.59] - 2026-03-04
 
@@ -1567,7 +1567,7 @@ None this version.
 
 ### Source
 
-- Architecture designed in Session 92; evidence from Reclaim Launcher external contribution (Sessions 82-89, all 3 PRs merged upstream)
+- Architecture designed in Session 92; evidence from external contribution (Sessions 82-89, all 3 PRs merged upstream)
 
 ## [1.3.58] - 2026-03-02
 
@@ -1598,7 +1598,7 @@ None this version.
 
 ### Source
 
-- Three process gap feedback entries from Reclaim Launcher external contribution (Sessions 2-3): research artifact not auto-generated, feedback inbox notification skipped, checkpoint not read at session start. Common pattern: agent completes primary action but misses automatic follow-through.
+- Three process gap feedback entries from external contribution (Sessions 2-3): research artifact not auto-generated, feedback inbox notification skipped, checkpoint not read at session start. Common pattern: agent completes primary action but misses automatic follow-through.
 
 ## [1.3.56] - 2026-03-01
 
@@ -1643,8 +1643,8 @@ None this version.
 
 ### Added - Phase 0.5 Research Hardening (BACKLOG-141)
 
-- Phase 0.5 source verification: new gate after drafting requires every factual claim in research-derived documents to trace to a specific source; anti-pattern added for unsourced claims (from IronCalc OBS-007)
-- Phase 0.5 done/ move checklist: replaced passive "fill in" guidance with explicit 4-step checklist (Status, Date Completed, Outcome Reference, verify artifact) with blocking language (from IronCalc OBS-008)
+- Phase 0.5 source verification: new gate after drafting requires every factual claim in research-derived documents to trace to a specific source; anti-pattern added for unsourced claims (from OBS-007)
+- Phase 0.5 done/ move checklist: replaced passive "fill in" guidance with explicit 4-step checklist (Status, Date Completed, Outcome Reference, verify artifact) with blocking language (from OBS-008)
 - Inbox processing: "read referenced source file before evaluating" added to DSM_0.2 Session-Start Inbox Check and `/dsm-go` Step 2b; ensures agents follow the source pointer rather than evaluating from inbox summaries alone
 
 ## [1.3.51] - 2026-02-19
@@ -1757,7 +1757,7 @@ None this version.
 - Step 7 (Tracking) added to DSM_1.0 Section 2.5.6 Blog Process: update tracker after publication, move files to done/
 - Sprint Boundary Checklist in DSM_2.0: added "Blog publication tracker updated" item (template and example)
 - Publication Tracker subsection in DSM_0.1 Blog Artifacts: standard table format, status key, scope by project type (spoke, hub, external contribution)
-- IronCalc contributions-docs scaffolding: added missing done/ subfolders to blog/, checkpoints/, handoffs/
+- contributions-docs scaffolding: added missing done/ subfolders to blog/, checkpoints/, handoffs/
 
 ## [1.3.40] - 2026-02-15
 
@@ -1772,7 +1772,7 @@ None this version.
 
 ## [1.3.39] - 2026-02-15
 
-### Added - IronCalc-Derived Protocols and Breaking Change Notification
+### Added - External-Contribution-Derived Protocols and Breaking Change Notification
 
 - Breaking Change Notification Protocol in DSM_0.2 and DSM_3 Section 6.4.6 (BACKLOG-115): hub sends inbox entries to spokes on breaking changes, spoke updates Protocol Applicability table, agent enforces grace period
 - Research Execution Methodology in DSM_0.2 Phase 0.5 (BACKLOG-117): 4-step pipeline (gather, cluster, synthesize, validate), full citation metadata requirement, external contribution tone calibration
@@ -1864,9 +1864,9 @@ None this version.
 **`/dsm-wrap-up`** updated:
 - README check added as step 1: detects README changes, sends inbox to portfolio and DSM Central
 
-**IronCalc feedback:**
-- Full incident evidence transferred to `contributions-docs/IronCalc/feedback/methodology.md` (OBS-001, 11 problems, source audit with verbatim quotes)
-- Proposed fixes registered in `contributions-docs/IronCalc/feedback/backlogs.md` (BACKLOG-114, 115)
+**External contribution feedback:**
+- Full incident evidence transferred to `contributions-docs/{project-name}/feedback/methodology.md` (OBS-001, 11 problems, source audit with verbatim quotes)
+- Proposed fixes registered in `contributions-docs/{project-name}/feedback/backlogs.md` (BACKLOG-114, 115)
 
 **Backlog:**
 - BACKLOG-114 implemented (External Contribution Protocol Hardening, 7 fixes)
@@ -1969,7 +1969,7 @@ None this version.
 - Section 4.4: added "Experiment types" note distinguishing tuning experiments (threshold selection, no learned weights) from model experiments (train/test splits, cross-validation required)
 
 **Inbox** processed:
-- Graph Explorer: 6 entries processed (3 implemented, 3 cleared)
+- Spoke: 6 entries processed (3 implemented, 3 cleared)
 
 ---
 
@@ -2196,18 +2196,18 @@ None this version.
 - Covers materials, drafts, final posts, and LinkedIn posts
 - Added Blog Artifacts section with pattern table and scope examples
 
-**sql-query-agent Feedback Triage**
+**Spoke Feedback Triage**
 - Processed 14 proposals from first spoke project: 5 rejected (already addressed), 9 accepted
 - Created BACKLOG-061 through BACKLOG-067 from accepted proposals
 
 **First DSM Central Blog Post**
-- "A Methodology That Listens" covering the feedback loop from sql-query-agent
+- "A Methodology That Listens" covering the feedback loop from a spoke project
 - Materials, draft, and LinkedIn post in docs/blog/
 
-**dsm-blog-poster Project Scaffolded** (BACKLOG-055)
-- Hugo v0.142.0 extended site at ~/dsm-blog-poster
+**Project Scaffolded** (BACKLOG-055)
+- Hugo v0.142.0 extended site
 - CLAUDE.md with 7-post content migration catalog
-- Renamed ~/nlp-and-llms to ~/dsm-disaster-tweets
+- Renamed the project directory to the `dsm-` naming convention
 
 ---
 
@@ -2218,7 +2218,7 @@ None this version.
 **DSM_0 - Renamed Custom Instructions to DSM_0.2** (BACKLOG-056)
 - Renamed `DSM_Custom_Instructions_v1.1.md` to `DSM_0.2_Custom_Instructions_v1.1.md`
 - Updated all @references across DSM repo and 3 spoke projects
-- Migrated sql-query-agent from Windows to WSL path
+- Migrated a spoke project from Windows to WSL path
 
 **DSM_0 - Refactored to Concise Orientation Map** (BACKLOG-058)
 - Reduced from 1,628 to 980 lines (40% reduction)
@@ -2267,7 +2267,7 @@ None this version.
 
 - BACKLOG-050: Research Agent MCP Server (High, development)
 - BACKLOG-051: Model Optimization Guide (Medium, development)
-- BACKLOG-052: DSM Jupyter Book (Medium, development)
+- BACKLOG-052: DSM publishing tool (Medium, development)
 - BACKLOG-054: Coding Anti-Patterns Guide (Medium, improvement)
 - BACKLOG-055: Personal Website with Blog and LinkedIn Automation (Medium, development)
 - BACKLOG-058: Unified DSM Workflow in DSM_0 (High, improvement)
@@ -2275,7 +2275,7 @@ None this version.
 
 ### Changed
 - **DSM_Custom_Instructions:** Added Punctuation section
-- **README:** Updated Graph Explorer stats (202 tests, 94% coverage)
+- **README:** Updated spoke stats (202 tests, 94% coverage)
 - **DSM_0:** Updated section references for 4.4.1 and 6.5.6; script paths updated
 
 ---
@@ -2289,12 +2289,12 @@ None this version.
 - **Pre-Generation Brief Protocol** (BACKLOG-043)
   - Structured 4-point brief (what, why, key decisions, structure) before every artifact
   - Formalizes existing "confirm before generating" guidance into actionable protocol
-  - Cross-validated by dsm-graph-explorer project (highest-priority feedback item)
+  - Cross-validated by a spoke project (highest-priority feedback item)
 
 - **Notebook Collaboration Protocol** (BACKLOG-045)
   - Agent provides cells as code blocks in conversation, never writes .ipynb directly
   - Cell-by-cell interaction mechanics: provide, execute, validate, next
-  - Cross-validated by sql-query-agent project (lowest scoring DSM section at 2.5/5)
+  - Cross-validated by a spoke project (lowest scoring DSM section at 2.5/5)
 
 - **Phase 0.5: Research and Grounding** (BACKLOG-039)
   - Optional research phase before sprint planning for novel techniques/domains
@@ -2304,7 +2304,7 @@ None this version.
 - **Sprint Cadence and Feedback Boundaries** (BACKLOG-040)
   - Short sprint guidance: prefer 1-3 focused sprints over monolithic sprints
   - Sprint boundary checklist (checkpoint, feedback, decisions, blog)
-  - Cross-validated by dsm-graph-explorer restructuring into 4 short sprints
+  - Cross-validated by spoke restructuring into 4 short sprints
 
 - **App Development Protocol** added to template (moved from project-specific CLAUDE.md)
 - **CLAUDE.md Configuration** requirement: all projects must `@` reference Custom Instructions
@@ -2357,7 +2357,7 @@ This release adds methodology-to-project guidance (top-down via gateway reviews)
 standardized development protocols, and cross-project learning mechanisms. Grounded
 in research across multi-agent systems, organizational learning theory, and software
 engineering governance patterns. All changes cross-validated by two concurrent DSM
-projects (dsm-graph-explorer, sql-query-agent-ollama).
+projects.
 
 ---
 
@@ -2753,7 +2753,7 @@ Provides systematic organization for experiment artifacts (scripts, results, tes
 
 ### Purpose
 
-Clarifies the distinction between pytest unit tests and capability experiments (C.1.3) to prevent redundancy or gaps in validation coverage. Emerged from practical implementation experience in RAG Document Assistant project.
+Clarifies the distinction between pytest unit tests and capability experiments (C.1.3) to prevent redundancy or gaps in validation coverage. Emerged from practical implementation experience in a document question-answering project.
 
 ---
 
@@ -3068,7 +3068,7 @@ When building application code (packages, modules, scripts):
 - `DSM_0_START_HERE_Complete_Guide.md` - Added "Project Type Decision" section
 - `DSM_1.0_Data_Science_Collaboration_Methodology_v1.1.md` - Added DSM 4.0 callouts in Sections 1.2 and 2
 - `DSM_1.0_Methodology_Appendices.md` - Added DSM 4.0 reference in Appendix D header
-- `DSM_3_Methodology_Implementation_Guide_v1.1.md` - Added Example 3 (DevFlow Analyzer - SW Engineering project)
+- `DSM_3_Methodology_Implementation_Guide_v1.1.md` - Added Example 3 (a CI/CD-analysis SW-engineering project)
 - `.claude/CLAUDE.md` - Added Key Paths for new documents
 - `README.md` - Updated System Components and When to Use tables
 
@@ -3085,9 +3085,9 @@ When building application code (packages, modules, scripts):
 
 ## [1.1.3] - 2025-12-14
 
-### Added - Favorita Project Methodology Enhancements
+### Added - Sales-Forecasting Case Study Methodology Enhancements
 
-**4 methodology modifications implemented from Favorita Demand Forecasting lessons learned:**
+**4 methodology modifications implemented from a sales-forecasting case study's lessons learned:**
 
 **HIGH Priority:**
 - **MOD-20: Scale-Dependent Validation Protocol** - Added to Appendix B.4.3
@@ -3130,7 +3130,7 @@ When building application code (packages, modules, scripts):
 
 ### Added - Methodology Enhancements (MOD Implementations)
 
-**16 methodology modifications implemented from TravelTide lessons learned:**
+**16 methodology modifications implemented from a customer-segmentation case study's lessons learned:**
 
 **CRITICAL Priority:**
 - **MOD-15: Sprint-Based Structure** - Replaced all "Week 1/2/3/4" terminology with "Sprint 1/2/3/4"
@@ -3323,7 +3323,7 @@ When building application code (packages, modules, scripts):
 - `CHANGELOG.md` - This file
 
 ### Battle-Tested Foundation
-- Methodology validated through TravelTide Customer Segmentation Project
+- Methodology validated through a customer-segmentation project
 - 5,765 customer cohort analysis
 - 89+ engineered features
 - K=3 clustering optimization
@@ -3384,7 +3384,7 @@ When building application code (packages, modules, scripts):
    - Time Series: Stationarity testing, seasonal decomposition
    - NLP: Text preprocessing, TF-IDF vectorization
    - Computer Vision: Image augmentation, transfer learning
-   - Clustering: Optimal K selection, cluster profiling (TravelTide example)
+   - Clustering: Optimal K selection, cluster profiling (case-study example)
    - Regression/Classification: Metrics and evaluation patterns
    - Domain-specific challenges and solutions
 
@@ -3413,7 +3413,7 @@ When building application code (packages, modules, scripts):
 - Better suited for team collaboration and reviews
 
 **Content Enhancements:**
-- TravelTide decision log example in main doc (Section 4.1.4)
+- A case-study decision log example in main doc (Section 4.1.4)
 - 32+ code examples across appendices
 - Domain-specific techniques and patterns
 - Platform-specific troubleshooting guidance
@@ -3443,7 +3443,7 @@ When building application code (packages, modules, scripts):
 ### Planned
 - Templates directory with project starter templates
 - Examples directory with domain-specific case studies
-- TravelTide complete case study
+- A complete customer-segmentation case study
 - Troubleshooting guide expansion
 - FAQ document
 - Video tutorials (consideration)

@@ -281,7 +281,7 @@ Cross-reference: Section 6.5 (AI Contribution Guidelines Template, Module C),
 Section 6.4 (Bidirectional Project Inbox, Module B),
 Section 6.6.7 Phase 1 (Contribution Scope Planning, Module C)
 
-Research basis: `{contributions-docs-path}/IronCalc/research/` (6 research documents
+Research basis: `{contributions-docs-path}/{project-name}/research/` (6 research documents
 covering upstream analysis, protocol applicability, contributor-side gap analysis,
 and AI policy best practices)
 
@@ -388,7 +388,7 @@ has been processed into a Contribution Scope Plan, move to
 upstream project undergoes significant restructuring between contribution
 phases, update the analysis before resuming contributions.
 
-**Evidence:** IronCalc Session 4 demonstrated that systematic analysis of 305
+**Evidence:** One external contribution's Session 4 demonstrated that systematic analysis of 305
 Rust files produced a coding style reference that directly informed first-draft
 quality. Sessions 1-3 used ad hoc file sampling and missed patterns the
 systematic approach revealed (OBS-004, Score 8/10).

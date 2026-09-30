@@ -99,7 +99,7 @@ Examples:
 - docs: Fix typo in Implementation Guide
 - feature: Add computer vision domain template
 - fix: Correct file naming convention example
-- example: Add TravelTide case study
+- example: Add a customer-segmentation case study
 ```
 
 **Commit Types:**

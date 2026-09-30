@@ -263,7 +263,7 @@ rather than PM.
 | Integration Management | Context routing (§6) | `@` chain, mirror sync, Version Update Workflow |
 | Schedule Management | Session lifecycle (§3-4) | /dsm-go, /dsm-wrap-up, sprint cadence |
 | Cost Management | Context budget | Context Budget Protocol (DSM_0.2 §11) |
-| Quality Management | Instruction validation | Branch Testing, Graph Explorer CI |
+| Quality Management | Instruction validation | Branch Testing, a spoke's CI |
 | Risk Management | Failure prevention | Failure Mode Taxonomy (DSM_6.1 §7), Protocol Violation Triage |
 
 ### 7.2. The Dual-Stakeholder Model

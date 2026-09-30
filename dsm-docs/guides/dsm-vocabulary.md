@@ -34,7 +34,7 @@ maintain separate vocabularies.
 | Term | One-liner | Origin |
 |------|-----------|--------|
 | **Automation Without Restraint** | Comprehensive output is not the same as useful output | AI-in-DS project (S97) |
-| **My Fork, My Rules** | Governance sovereignty inside a fork boundary | Reclaim Launcher (S82-89) |
+| **My Fork, My Rules** | Governance sovereignty inside a fork boundary | S82-89 |
 | **Antifragile from the Smallest Element** | Principles as testable units that strengthen from scrutiny | S98, BL-000 |
 | **Ripple Effect** | A human design decision propagates through interconnected projects via agent-mediated infrastructure | S104-106, BL-156 |
 | **Collaboration Infrastructure** | Deliberate, versioned, explicit structures that define how an ecosystem works; replaces the imprecise "working culture" | S107, BL-164 |

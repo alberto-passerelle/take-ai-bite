@@ -21,10 +21,10 @@ Light wrap-up is for **same-day continuation only**. If the current session bran
 2. Compare against today's date (`date +%Y-%m-%d`).
 3. **If the dates match:** Continue to Step 1 normally.
 4. **If the branch date is earlier than today:** STOP and warn:
-   > "Session branch `{branch-name}` was created on {branch-date}, today is {today}. Light wrap-up is for same-day continuation only; multi-day branch accumulation is the exact failure mode the Branch Cadence Gate closes (efficientnet project ran 7 sessions on one branch because consecutive light wrap-ups never merged). Run `/dsm-wrap-up` (full) to merge this branch to main, then start the next session with `/dsm-go`."
+   > "Session branch `{branch-name}` was created on {branch-date}, today is {today}. Light wrap-up is for same-day continuation only; multi-day branch accumulation is the exact failure mode the Branch Cadence Gate closes (a client project ran 7 sessions on one branch because consecutive light wrap-ups never merged). Run `/dsm-wrap-up` (full) to merge this branch to main, then start the next session with `/dsm-go`."
 5. Do not offer a bypass. The user can still run `/dsm-wrap-up` directly to finish the branch cleanly.
 
-**Why this is a hard gate, not a warning:** The efficientnet failure was 7 consecutive light wrap-ups with no intervention, each one looking normal in isolation. A soft warning would have been dismissed. Only a hard refusal forces the merge cadence.
+**Why this is a hard gate, not a warning:** The failure was 7 consecutive light wrap-ups with no intervention, each one looking normal in isolation. A soft warning would have been dismissed. Only a hard refusal forces the merge cadence.
 
 **Fallback when branch name has no parseable date:** If the branch name does not match the `session-N/YYYY-MM-DD` pattern (e.g., a user-renamed branch), fall back to checking `.claude/session-baseline.txt` for the `# Session baseline - {ISO timestamp}` line and compare its date component to today. If neither source yields a usable date, warn "Cannot determine session branch age, assuming same-day" and continue to Step 1.
 
@@ -87,7 +87,7 @@ Light wrap-up is for **same-day continuation only**. If the current session bran
 - Do NOT refresh memory backup (deferred)
 - Do NOT check contributor profile (deferred)
 - Do NOT delete `.claude/session-baseline.txt` (it carries the mode marker for the next session)
-- Light wrap-up is for **same-day continuation only**. Work that spans multiple calendar days must use full `/dsm-wrap-up` at the end of each day (see Cadence Gate above). This prevents multi-session branch accumulation (the Branch Cadence Gate, efficientnet project incident).
+- Light wrap-up is for **same-day continuation only**. Work that spans multiple calendar days must use full `/dsm-wrap-up` at the end of each day (see Cadence Gate above). This prevents multi-session branch accumulation (the Branch Cadence Gate, a prior client-project incident).
 - No co-author lines in commits
 - If $ARGUMENTS is provided, use it as the session description in MEMORY.md
 - All steps run autonomously; do not pause for confirmation between steps

@@ -382,7 +382,7 @@ scaffold check) and before any `pip install` operation.
   changed since last activation, run `pip install -r requirements.txt`
   inside the venv before working
 
-**Origin:** german-adversarial-prompting S7 incident, where the agent
+**Origin:** S7 incident, where the agent
 attempted to install packages using system Python instead of creating a
 virtual environment first.
 
@@ -573,13 +573,13 @@ Brief Protocol regardless.
   Sequential stages on the same outbound channel: read, draft, content-gate,
   send.
 - **DSM_0.2.C §3.1 Soft Injection and Frame Capture (cluster sibling).** Part of
-  the same "user-caught silent gap" cluster (heating-systems S13/S14); §3.1 is
+  the same "user-caught silent gap" cluster (S13/S14); §3.1 is
   inbound frame capture, §2.3 is outbound voice attribution, §9 is pre-draft
   target grounding.
 
-**Origin:** BL-437 (heating-systems-conversational-ai S13, 2026-05-07). Three
+**Origin:** BL-437 (S13, 2026-05-07). Three
 OSS PRs were opened against repos with formal contribution requirements
-(`deepset` CONTRIBUTING.md mandating a release-note YAML, a 5-section PR
+(an external OSS project's CONTRIBUTING.md mandating a release-note YAML, a 5-section PR
 template, a `release-notes-required` CI check) that the spoke never read before
 drafting; the user's session-close audit ("what was our Definition of Ready?")
 surfaced the gap. Retroactive fix cost ~25 minutes vs ~10 minutes preemptive.

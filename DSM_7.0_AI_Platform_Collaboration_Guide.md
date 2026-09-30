@@ -372,7 +372,7 @@ cross-document catalog lives in §5; this subsection curates the
   in three incorrect claims (including the `@` no-recursion claim
   above). Resolution: 741-line systematic assessment, ongoing
   alignment via Platform Alignment Protocol.
-- **Heredoc quoting anti-pattern (portfolio S69).** Single-quoted
+- **Heredoc quoting anti-pattern (S69).** Single-quoted
   heredoc (`<< 'EOF'`) suppresses `$(date ...)` expansion, writing
   literal strings into the transcript. Resolution: Edit-tool append
   path is preferred; Bash heredoc must be unquoted. Documented in
