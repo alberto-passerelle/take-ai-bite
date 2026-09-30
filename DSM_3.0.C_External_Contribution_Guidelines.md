@@ -247,7 +247,7 @@ created locally and excluded via `.git/info/exclude` (not `.gitignore`, which wo
 be committed).
 
 **Why protocol filtering matters:** Not all DSM_0.2 sections apply to external
-contributions. The IronCalc protocol analysis (R1) found only ~3 of 13 sections
+contributions. One external contribution's protocol analysis (R1) found only ~3 of 13 sections
 apply directly; the rest need adaptation or do not apply. The CLAUDE.md must
 specify which protocols apply and which are filtered out.
 
@@ -360,7 +360,7 @@ project team has not yet articulated:
 - Cross-reference the project's roadmap and discussions to align value-add proposals
   with the project's direction
 
-Reference implementation: `{contributions-docs-path}/IronCalc/plan/value-add-opportunities.md`
+Reference implementation: `{contributions-docs-path}/{project-name}/plan/value-add-opportunities.md`
 
 **Phase 2: Onboarding**
 

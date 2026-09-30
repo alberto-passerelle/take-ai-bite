@@ -188,7 +188,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-195 | Remove Personal Names from Documentation | v1.3.68 | 2026-03-15 | — (needs review) |
 | BACKLOG-196 | Remove Outdated Case Studies Folder | — | 2026-03-15 | — (needs review) |
 | BACKLOG-198 | Competitive Landscape Living Document | — | 2026-03-18 | — (needs review) |
-| BACKLOG-199 | Graph Explorer Architecture Audit | — | 2026-03-20 | — (implementation-only) |
+| BACKLOG-199 | Spoke Architecture Audit | — | 2026-03-20 | — (implementation-only) |
 | BACKLOG-200 | Rebranding Documentation Audit | v1.3.68 | 2026-03-15 | — (implementation-only) |
 | BACKLOG-201 | Strip Domain-Specific Content from DSM_1.0 Methodology | v1.4.0 | 2026-03-25 | — (implementation-only) |
 | BACKLOG-202 | Strip Domain-Specific Templates from DSM_1.0 Appendices | v1.4.0 | 2026-03-25 | — (implementation-only) |
@@ -327,7 +327,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-351 | DSM_0.2 §7 STAA exception clause and dsm-staa.md recursion rationale clarification | v1.4.17 | 2026-04-12 | DSM_0.2 §7 |
 | BACKLOG-352 | Preemptive Risk Definition Required for All BLs | v1.9.0 | 2026-05-05 | DSM_0.2 §21.2 |
 | BACKLOG-353 | Claude Code Platform Alignment Protocol | v1.6.2 | 2026-04-20 | — (needs review) |
-| BACKLOG-355 | Deep Research External Repos for DSM and Graph Explorer Relevance | v1.4.18 | — | DSM_0.2 §10 |
+| BACKLOG-355 | Deep Research External Repos for DSM and Spoke Relevance | v1.4.18 | — | DSM_0.2 §10 |
 | BACKLOG-356 | MEMORY.md Hygiene and Line Budget Optimization | v1.4.18 | 2026-04-13 | /dsm-wrap-up Step 2 (MEMORY budget) |
 | BACKLOG-358 | Reasoning Lessons Archive Extraction | — | 2026-04-14 | DSM_0.2.A §8 |
 | BACKLOG-367 | Research Knowledge-Summary Format: validate key:value or identify line-efficient alternatives | — | 2026-04-14 | DSM_0.2 §8.5 |
@@ -363,7 +363,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-419 | BL Lookup Index | v1.8.0 | 2026-04-24 | dsm-docs/plans/done/INDEX.md |
 | BACKLOG-420 | Checkpoint Authoring Identifiers Rule | v1.8.0 | 2026-04-24 | DSM_0.2.A §10.2.1 |
 | BACKLOG-421 | /dsm-go Step 2b Enumerate Inbox Entries Rule | v1.9.0 | 2026-05-05 | /dsm-go Step 2b |
-| BACKLOG-424 | /dsm-wrap-up Step 1 missing blog-poster notification path on FEATURES.md change | v1.9.0 | 2026-05-05 | /dsm-wrap-up Step 1 |
+| BACKLOG-424 | /dsm-wrap-up Step 1 missing spoke notification path on FEATURES.md change | v1.9.0 | 2026-05-05 | /dsm-wrap-up Step 1 |
 | BACKLOG-425 | Research Folder Index Maintenance with /dsm-research-add and /dsm-research-done Skills | — | 2026-04-29 | scripts/commands/dsm-research-add.md, scripts/commands/dsm-research-done.md |
 | BACKLOG-427 | Compact Reasoning-Lessons Mirror for Agent-Facing Session-Start Priming (Steps 1-4 trim-only; Step 5 deferred) | — | 2026-04-29 | DSM_0.2.A §8.1 |
 | BACKLOG-428 | /dsm-go Step 0.8 Cloned-Mirror Kick-off Check Should Be Deterministic, Not Narrated | v1.9.0 | 2026-05-05 | scripts/commands/dsm-go.md (Step 0.8) |
@@ -416,6 +416,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-489 | The closed-session-leftover remedy strands the leftover branch's commits | v1.20.0 | 2026-08-05 | — (needs review) |
 | BACKLOG-491 | Both stated byte caps on the reasoning-lessons compact mirror are unenforceable | v1.22.0 | 2026-08-20 | DSM_0.2.A §8.1 Size bound + /dsm-go Step 1.5 |
 | BACKLOG-493 | /dsm-go Step 5.8's incomplete-wrap-up detection fires on every fresh session | v1.21.0 | 2026-08-05 | /dsm-go Step 5.8 |
+| BACKLOG-498 | The done/INDEX.md currency audit is Central-only but lives inside a skill Central almost never runs | — | 2026-09-12 | /dsm-align Step 11b both-tree audit + BL-547 reachability |
 | BACKLOG-501 | Research-file status labels may not exceed their verification pass | v1.21.0 | 2026-08-12 | DSM_0.2 §10.1 |
 | BACKLOG-502 | The roadmap covers 26% of the backlog it claims to map, and work selection is routed through it | v1.21.0 | 2026-08-12 | plan/roadmap.md curation criterion |
 | BACKLOG-503 | /dsm-align hook merge keys idempotency on command alone, so multi-matcher hooks never reach spokes | v1.21.0 | 2026-08-12 | /dsm-align sub-step 10e |
@@ -454,6 +455,9 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-517 | Transcript delimiter timestamps are never checked against the wall clock | — | 2026-08-21 | validate-transcript-edit.sh check 4/4, DSM_0.2 §7 |
 | BACKLOG-536 | `/dsm-wrap-up` Step 6a's per-session feedback scan is suffix-specific, so topically-named feedback is never pushed | v1.26.2 | 2026-08-31 | /dsm-wrap-up Step 6a, /dsm-align Step 6a (scope widened in-flight), DSM_0.2.A §4 |
 | BACKLOG-537 | Central's six leftover project-level command copies are inert residue the deploy warning flags every run | v1.26.2 | 2026-08-31 | scripts/sync-commands.sh (delete + Central-only --check guard) |
+| BACKLOG-559 | Retroactively reword redistributed reasoning-lesson and feedback entries to remove project/client identity, count-preserving | — | 2026-09-24 | superseded: moot under the B-mirror boundary (2026-09-24 envelope/payload operational design) |
+| BACKLOG-560 | De-identify the public TAB provenance corpus — reword every specific project name to a project-agnostic form | v1.26.4 | 2026-09-30 | DSM_0.2.C §5.7 Public Mirror Project-Name Exclusion (public corpus de-identified; scanner BL-561/564 enforces; §21.4 sweep clean) |
+| BACKLOG-561 | Extend the mirror-sync content scanner to block client and project names, not only operator identity | — | 2026-09-24 | scripts/check-mirror-sync-content.sh (two-tier project-name detection; primary confidentiality gate under BL-558 B-mirror boundary) |
 
 ---
 

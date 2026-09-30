@@ -134,9 +134,9 @@ my-application/                     # Single repo for everything
 
 | Project Type | Deliverables | Pattern | Examples |
 |--------------|--------------|---------|----------|
-| **Data Science** | Notebooks, analysis, insights | In-repo `dsm-docs/` | Customer segmentation, demand forecasting, text classification |
+| **Data Science** | Notebooks, analysis, insights | In-repo `dsm-docs/` | Customer segmentation, sales forecasting, text classification |
 | **ML Application** | Python packages, APIs, services | In-repo `dsm-docs/` | Recommendation engine, prediction API, search system |
-| **Documentation Tool** | CLI tools, parsers, validators | In-repo `dsm-docs/` | Graph Explorer, markdown processors |
+| **Documentation Tool** | CLI tools, parsers, validators | In-repo `dsm-docs/` | Cross-reference validator, markdown processors |
 | **Hybrid** | Notebooks + production code | In-repo `dsm-docs/` | Research → production pipeline |
 
 ### 2.4. Agent Context and CLAUDE.md Reference

@@ -6,7 +6,7 @@ Review feedback from a completed DSM spoke project.
 
 ## Input
 
-The user provides the project path (e.g., `~/sql-query-agent-ollama`).
+The user provides the project path (e.g., `~/my-spoke-project`).
 
 ## Steps
 
@@ -23,7 +23,7 @@ that consumes it describe the same shapes in the same terms.
 
    **Match on the date-and-session prefix, not on the suffix.** `_backlogs` and
    `_methodology` are the two suffixes the convention names, but spokes also write
-   topically-named per-session feedback: measured 2026-08-24, the portfolio carries
+   topically-named per-session feedback: measured 2026-08-24, a spoke project carries
    `2026-07-25_s130_reasoning-lessons-intake-cap.md` and
    `2026-07-25_s130_staa-gitignore-assumption.md`, both carrying the full feedback
    header (Date / Session / Spoke / Type / Severity). A suffix-specific scan reads
@@ -34,7 +34,7 @@ that consumes it describe the same shapes in the same terms.
 3. **Legacy files (still live, not vestigial).** Read the bare
    `feedback-to-dsm/backlogs.md` and `feedback-to-dsm/methodology.md` if they exist, and
    label them as legacy in the report. This is not a deprecated afterthought: measured
-   2026-08-24, the External Contribution project `IronCalc` carries 282 lines of
+   2026-08-24, an external OSS contribution carries 282 lines of
    `backlogs.md` and 832 lines of `methodology.md` in exactly this shape, and it is the
    kind of project this skill exists to review. `/dsm-wrap-up` Step 6c carries the same
    fallback for the same reason.

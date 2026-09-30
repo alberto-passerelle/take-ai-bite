@@ -14,7 +14,7 @@ an instruction system can only grow; it cannot improve.
 
 1. [Evaluation as the Missing Layer in Prompt Engineering](#1-evaluation-as-the-missing-layer-in-prompt-engineering)
 2. [Git History as Instruction System Audit Trail](#2-git-history-as-instruction-system-audit-trail)
-3. [Graph Explorer as Automated Instruction Validation](#3-graph-explorer-as-automated-instruction-validation)
+3. [A Spoke Project as Automated Instruction Validation](#3-a-spoke-project-as-automated-instruction-validation)
 4. [STAA as Systematic Effectiveness Analysis](#4-staa-as-systematic-effectiveness-analysis)
 5. [Temporal Comparison of Methodology States](#5-temporal-comparison-of-methodology-states)
 6. [The Learning Loop from Evaluation to Evolution](#6-the-learning-loop-from-evaluation-to-evolution)
@@ -92,11 +92,11 @@ software rollback point.
 
 ---
 
-## 3. Graph Explorer as Automated Instruction Validation
+## 3. A Spoke Project as Automated Instruction Validation
 
-Graph Explorer is DSM's CI system for instruction documents. It treats the
-methodology as a graph of interconnected documents and validates structural
-integrity, cross-reference consistency, and heading compliance.
+A DSM spoke project serves as DSM's CI system for instruction documents. It
+treats the methodology as a graph of interconnected documents and validates
+structural integrity, cross-reference consistency, and heading compliance.
 
 ### 3.1. Validation Categories
 
@@ -108,17 +108,17 @@ integrity, cross-reference consistency, and heading compliance.
 | Structural completeness | Do required elements exist (TOC, intro paragraphs)? | Document Structure Standard compliance |
 | Link resolution | Do file paths and URLs resolve? | Broken links to moved or deleted files |
 
-### 3.2. Graph Explorer as Prevention, Not Detection
+### 3.2. Automated Validation as Prevention, Not Detection
 
 The Branch Testing Requirement (DSM_0.2 §19) mandates testing before merge.
-Graph Explorer runs as part of this verification, catching issues before they
-propagate to spoke projects via the `@` reference chain. This is prevention
-at the source, which is cheaper and more reliable than detection after the
-fact.
+The spoke's validation runs as part of this verification, catching issues
+before they propagate to spoke projects via the `@` reference chain. This is
+prevention at the source, which is cheaper and more reliable than detection
+after the fact.
 
 ### 3.3. The 547-Test Benchmark
 
-Graph Explorer's current test suite (547 tests) covers the DSM document
+The spoke's current test suite (547 tests) covers the DSM document
 ecosystem. The test count is not a vanity metric; it represents the surface
 area of the instruction system that is automatically validated. Each test
 encodes a structural invariant that, if violated, would produce a specific
@@ -267,7 +267,7 @@ Sources and change history for this module.
 - DSM_0.2 §19: Branch Testing Requirement
 - DSM_0.2 §22: Protocol Violation Triage Response
 - DSM_6.0 §1.9: Think Ahead Principle
-- Graph Explorer: DSM spoke project (cross-reference validation)
+- A DSM spoke project: automated cross-reference validation
 - STAA: Session Transcript Analysis Agent (/dsm-staa command)
 
 ### 7.2. External References
@@ -280,4 +280,4 @@ Sources and change history for this module.
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | 2026-03-25 | Initial release: git as audit trail, Graph Explorer validation, STAA analysis, temporal comparison, learning loop |
+| 1.0 | 2026-03-25 | Initial release: git as audit trail, spoke-based validation, STAA analysis, temporal comparison, learning loop |

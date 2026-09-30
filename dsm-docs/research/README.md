@@ -29,7 +29,7 @@ informs an active BL but is not its primary deliverable.
 | 2026-04-17 | [BL-236f beta-framing patterns](2026-04-17_bl236f-beta-framing-patterns.md) | BL-236f | BL still pending (MEMORY) |
 | 2026-04-17 | [BL-236h README link audit](2026-04-17_bl236h-readme-link-audit.md) | BL-236h | BL still pending (MEMORY) |
 | 2026-04-17 | [Skill-file testing methodology](2026-04-17_skill-file-testing-methodology.md) | BL-374 | Proposed |
-| 2026-04-21 | [Heating-systems S8 first-ever Sonnet session (preliminary)](<2026-04-21 preliminary-research Heating-systems S8 is the ecosystem's first-ever Sonnet session.txt>) | BL-411 | Active; filename non-standard, rename pending |
+| 2026-04-21 | [a client project S8 first-ever Sonnet session (preliminary)](<2026-04-21 preliminary-research a client project S8 is the ecosystem's first-ever Sonnet session.txt>) | BL-411 | Active; filename non-standard, rename pending |
 | 2026-04-21 | [Claude usage metrics API](2026-04-21_claude-usage-metrics-api.md) | BL-412 | Open |
 | 2026-04-24 | [Böckeler "Harness Engineering" vs TAB/DSM](2026-04-24_boeckeler-harness-engineering-vs-tab-dsm.md) | BL-423 | Feeds Thread 1 of BL-423 |
 | 2026-02-27 | [Literate CQRS Knowledge Architecture (folder, 6 files)](Literate-CQRS-Knowledge/) | Literate-CQRS-knowledge-architecture-plan.md | Active research stream |

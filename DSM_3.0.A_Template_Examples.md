@@ -21,7 +21,7 @@ but intentionally generic projects.
 ### 4.1. Example: Data Science Project (DSM 1.0)
 
 ```markdown
-# Project: Regional Demand Forecasting
+# Project: Regional Sales Forecasting
 Domain: Operational Analytics
 
 ## Framework Documents

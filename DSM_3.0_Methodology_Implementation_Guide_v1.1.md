@@ -262,9 +262,9 @@ all projects and prevent misattribution.
 
 **Critical framing rules:**
 - DSM is a personal initiative, independently developed since August 2025
-- Masterschool specialization projects (TravelTide, Favorita) are case studies that stress-tested DSM, not the source of DSM
-- Dog-fooding projects (Graph Explorer, Research Agent) validate DSM by building tools using DSM itself
-- Never frame DSM as a Masterschool product or coursework output
+- Prior specialization case-study projects stress-tested DSM; they are not the source of DSM
+- Dog-fooding projects (DSM spoke tools) validate DSM by building tools using DSM itself
+- Never frame DSM as a coursework or training-program output
 
 **Usage:** The descriptions below are in first person ("I developed"). For third-person
 contexts (LinkedIn summaries, portfolio "About" sections), adapt the voice but preserve
@@ -303,8 +303,8 @@ materials, reference this section directly rather than re-deriving the framing e
 >
 > DSM has been validated across 20+ projects spanning customer analytics, demand
 > forecasting, NLP, computer vision, process mining, RAG systems, energy engineering,
-> and agentic AI. Case studies completed during my Masterschool AI Data Science
-> specialization (TravelTide, Favorita) served as early stress tests, with lessons
+> and agentic AI. Case studies completed during a data science specialization
+> served as early stress tests, with lessons
 > learned incorporated back into the framework. A growing ecosystem of dog-fooding
 > projects, tools built using DSM to validate DSM itself, provides continuous
 > feedback and demonstrates the methodology's adaptability across project types.
@@ -319,42 +319,42 @@ Complete list of projects that DSM has supported, organized by domain. When
 referencing DSM externally, select projects relevant to the context.
 
 **Customer Analytics & Forecasting:**
-- TravelTide: Customer segmentation, CLV analysis, hierarchical clustering (case study)
-- Corporacion Favorita: Demand forecasting, XGBoost, 4.8M transactions (case study)
-- Favorita App: Streamlit deployment of demand forecasting model
+- A customer-analytics project: customer segmentation, CLV analysis, hierarchical clustering (case study)
+- A sales-forecasting project: XGBoost, 4.8M transactions (case study)
+- A forecasting app: Streamlit deployment of a sales-forecasting model
 
 **NLP & Text Analysis:**
-- Disaster Tweets: Tweet classification, TF-IDF vs embeddings vs transformers
-- NLP Topic Modeling: LDA on Jira case data, process mining integration
+- A text-classification project: tweet classification, TF-IDF vs embeddings vs transformers
+- A topic-modeling project: LDA on Jira case data, process-mining integration
 
 **Computer Vision:**
 - Computer Vision: CIFAR-10 classification (ResNet50), steel defect segmentation (U-Net)
 
 **Agentic AI & RAG:**
-- SQL Query Agent: Text-to-SQL with Ollama, local LLM
-- RAG Document Assistant: Multi-provider RAG system, FastAPI, MLflow evaluation
-- DSM Research Agent: MCP server for academic paper search across 6 APIs (in progress)
+- A text-to-SQL agent project: Ollama, local LLM
+- A document question-answering project: multi-provider RAG, FastAPI, MLflow evaluation
+- A DSM academic-search tool: MCP server for academic paper search across 6 APIs (in progress)
 
 **Process Mining & MLOps:**
-- DevFlow Analyzer: LangGraph ReAct agent for CI/CD analysis, 10K+ builds
-- Log Processor: ETL pipeline, BPM data to event logs
+- A CI/CD-analysis project: LangGraph ReAct agent, 10K+ builds
+- A log-processing project: ETL pipeline, BPM data to event logs
 
 **Energy Engineering:**
-- Residential Heating DS Guide: 6K-line domain knowledge base, German standards documentation
-- Residential Energy Apps: Heating curve simulator, Streamlit app, RANSAC regression
+- A residential-heating domain guide: 6K-line knowledge base, German-standards documentation
+- A residential-energy app project: heating-curve simulator, Streamlit, RANSAC regression
 
 **DSM Tooling (dog-fooding):** See also `dsm-docs/core-tools.md` for the authoritative
 Core Tools registry (branding, ecosystem-wide updates).
-- DSM Graph Explorer: Cross-reference validation, 471 tests, 95% coverage
+- A DSM spoke project: Cross-reference validation, 471 tests, 95% coverage
 - Take AI Bite: Public-facing framework distribution, curated DSM subset for external adoption
-- DSM Jupyter Book: Automated methodology publishing (planned)
-- DSM Blog Poster: Hugo site for methodology insights (planned)
+- A DSM publishing tool: automated methodology publishing (planned)
+- A DSM spoke project: Hugo site for methodology insights (planned)
 
 **Other:**
-- Political Parties: CHES 2019 dataset analysis
-- Loan Approval Prediction: ML classification
-- IronCalc: External contribution to open-source spreadsheet engine (Rust)
-- traveline-ds-project-skeleton: Interview-demo Python ML skeleton (src-layout, CI, Docker, MLflow), planted data-leakage-bug challenge (case study)
+- A survey-analysis project: public expert-survey dataset analysis
+- A credit-risk classification project: ML classification
+- An external OSS contribution: open-source spreadsheet engine (Rust)
+- A client project: Interview-demo Python ML skeleton (src-layout, CI, Docker, MLflow), planted data-leakage-bug challenge (case study)
 
 ---
 

@@ -383,7 +383,7 @@ Before starting alignment, check if git is initialized:
    ```
    The step is idempotent by construction: the second run sees byte-identical hooks and matched `(matcher, command)` pairs, so it reports `already_ok` on everything with zero file writes.
 
-   **Origin:** Closes the gap between DSM_0.2 §7 per-turn enforcement docs (shipped v1.4.9) and the hook mechanism that enforces them (previously local-only in each Central instance). Evidence: portfolio S69 and blog-poster S17 both ran with zero transcript appends because the hook was absent.
+   **Origin:** Closes the gap between DSM_0.2 §7 per-turn enforcement docs (shipped v1.4.9) and the hook mechanism that enforces them (previously local-only in each Central instance). Evidence: two spokes (S69 and S17) both ran with zero transcript appends because the hook was absent.
 
 11. **Check command file drift (DSM Central only):**
    - Skip this step if the project is not DSM Central (no `scripts/commands/` directory).
@@ -481,7 +481,7 @@ Before starting alignment, check if git is initialized:
      Step 11's output (N counts as observed in the actual drift check).
 
    The conditional binding closes the "blank field invites invention"
-   failure mode observed in heating-systems S10 (2026-04-23), where the
+   failure mode observed in S10 (2026-04-23), where the
    agent ran an out-of-scope `diff -q` on user-scope command files and
    populated this field with `Drifted: 2` plus a fabricated spoke-action
    recommendation. Cost of that detour: ~115 transcript lines of

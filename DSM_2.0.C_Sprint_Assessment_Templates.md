@@ -454,7 +454,7 @@ source. Against a superseded draft, there is nothing to reconcile against and th
 plan's own history is the record.
 
 This distinction came from tracing the one real field instance
-(`meter-to-cash`) against an earlier draft of this template: its header reads
+(a client project) against an earlier draft of this template: its header reads
 `**Supersedes:** _reference/preliminary-plan.md`, which the earlier draft would
 have classed as a violation of its own central rule. It is not a violation; it is
 the second case, and the template was missing it.
@@ -525,15 +525,15 @@ gate continues to look for it there.
 **Why Template 13 and not the vacant Template 9.** The numbering runs 1-8 and
 10-12; 9 has never existed. Filling it would silently change what "Template 9"
 means in any document written while it was vacant, and three live documents
-already reference the vacancy , the EXP-004 TAB audit finding A2-041, the
-`invoice-triage` intake entry, and BACKLOG-519 itself. A vacant number in a
+already reference the vacancy , the EXP-004 TAB audit finding A2-041, a
+spoke's intake entry, and BACKLOG-519 itself. A vacant number in a
 sequence is a trap: the gap usually means something was removed, and removed
 things leave references behind. 13 is unallocated in all three DSM_2.0 modules
 and costs only a permanent gap, which the numbering already has.
 
 **Origin:** BACKLOG-519, from two independent spokes reaching the same absence.
-`meter-to-cash` invented a `PROJECT-PLAN.md` locally and wrote its own cadence
-rule into it because Central had none to inherit; `invoice-triage` then arrived
+A client project invented a `PROJECT-PLAN.md` locally and wrote its own cadence
+rule into it because Central had none to inherit; another spoke then arrived
 with a 376-line build specification , 13 milestones, 20 numbered requirements, 13
 invariants with named test slots , and no canonical home for the whole-project
 view. Evidence base is two spokes, stated plainly rather than dressed up: both

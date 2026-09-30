@@ -65,7 +65,7 @@ When the `UserPromptSubmit` per-turn reminder hook fires and tells you to append
 
    **Cross-reference:** /dsm-wrap-up Step 0 owns the same rule. If the rule changes (new entry-prefix tag, category-heading shape, freshness-header drift), both /dsm-wrap-up Step 0 and /dsm-staa Step 8 must update together. See **DSM_0.2.A Reasoning Lessons Protocol** for the canonical specification. The auto-generated comment in the mirror header references both regenerators ("/dsm-wrap-up Step 0 or /dsm-staa Step 8") so provenance is honest.
 
-   **Origin:** BL-433 (S207, derived from haystack-magic S7 STAA continuation 2026-05-02). After /dsm-staa appended 6 [STAA] entries and pruned 2 [auto] entries at ~22:17, the compact mirror remained at its 22:04 state from S7 wrap-up, 13 min stale, missing 6 lessons and including 2 pruned ones. The agent regenerated inline manually; this step makes the regeneration a normative part of /dsm-staa.
+   **Origin:** BL-433 (S207, derived from S7 STAA continuation 2026-05-02). After /dsm-staa appended 6 [STAA] entries and pruned 2 [auto] entries at ~22:17, the compact mirror remained at its 22:04 state from S7 wrap-up, 13 min stale, missing 6 lessons and including 2 pruned ones. The agent regenerated inline manually; this step makes the regeneration a normative part of /dsm-staa.
 9. **Write `last-staa.txt` (per BL-442):** After the analysis lands, write `.claude/last-staa.txt` so `/dsm-go` Step 5.7 can suppress the STAA reminder for sessions already analyzed. Parse the analyzed session number `N` from the subject transcript's `# Session N Transcript` header (not the filename). Schema:
 
    ```

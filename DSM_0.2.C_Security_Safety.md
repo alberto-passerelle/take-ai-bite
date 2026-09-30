@@ -243,7 +243,7 @@ failure rather than a silent corruption that surfaces sessions later.
 - User-invoked `gh pr create` outside agent control , the agent cannot
   intercept; the rule covers agent behavior only
 
-**Failure mode this prevents:** dsm-jupyter-book S4 issued
+**Failure mode this prevents:** a spoke project (S4) issued
 `gh pr create` without `--base`, `gh` correctly used the misconfigured
 repo default (a stale session branch), and the merge fired against the
 wrong base. The agent caught the mismatch only after reading the merge
@@ -339,7 +339,7 @@ send's content gate is its own step, never a sub-step of an action sequence.
 - Allowed: "commit + push" approved as one unit (no voice-attributed external
   send; the commit message was already reviewed at its own diff window).
 - Not allowed: "commit + push + post PR comment" approved as one unit , the PR
-  comment body never got its own review (the heating-systems S14 incident: the
+  comment body never got its own review (the S14 incident: the
   comment posted to a public OSS thread under the user's byline before any
   second-pass review of the words).
 - Correct shape: approve "commit + push", then separately surface the PR comment
@@ -384,8 +384,8 @@ approval of the body immediately before the send. Same guard family as §3.1
 - **Cross-Repo Write Safety (§17.1).** Orthogonal PATH-vs-VOICE axes, per the
   distinction above.
 
-**Origin:** BL-439 (heating-systems-conversational-ai S14, 2026-05-07). A PR
-comment on `deepset-ai/haystack#11268` posted to a public OSS thread under the
+**Origin:** BL-439 (S14, 2026-05-07). A PR
+comment posted to a public OSS project's thread under the
 user's GitHub byline because "Authorize Op 5: commit + push + PR comment"
 bundled content approval with action approval. The user surfaced the gap:
 comments on public OSS threads are the user's words, not the agent's.
@@ -552,7 +552,7 @@ require the §3.1 gate because it reframes the decision.
 content is observation by default; engagement requires explicit user
 authorization.
 
-**Origin:** heating-systems-conversational-ai S13 (2026-05-07, via BL-436).
+**Origin:** S13 (2026-05-07, via BL-436).
 Polite volunteer comments on a public OSS issue thread shifted the agent into
 presenting "A/B/C engagement options" without the user having authorized engaging
 the thread at all. The user's pedagogy: "if a stranger tells you to jump out the
@@ -719,3 +719,52 @@ or Restricted data should strongly consider adopting pre-commit scanning.
 - Treat pre-commit hooks as a substitute for write-time prevention; hooks
   can be bypassed with `--no-verify`, and the agent should never suggest
   bypassing them
+
+### 5.7. Public Mirror Project-Name Exclusion
+
+No DSM content that reaches the public mirror may name a specific project, client,
+employer, or the operator's own ecosystem spokes. The rule has two halves —
+**removal** of existing names and **prevention** of new incoming ones — and it is
+bounded to the public surface: private, never-mirrored working files (reasoning
+lessons, feedback, inbox, research, decisions, active plans) may name projects. This
+is the envelope / payload boundary: the envelope (never mirrored) may name a party;
+the payload (whatever reaches the public mirror) must be project-agnostic.
+
+**Two independent reasons, either sufficient:**
+1. **Confidentiality** — a client or engagement name on a public repository is an
+   exposure.
+2. **Reader comprehension** — a public reader cannot resolve a project reference, so
+   the name is a dangling pointer that adds nothing to a project-agnostic methodology.
+   This second reason covers even non-confidential own-spoke names, which is why the
+   rule is "no specific project name," not only "no confidential name."
+
+**Prevention includes generic descriptors.** A neutral rewrite must not smuggle the
+project's own slug back in as a descriptor: relabeling a project by its task domain
+can re-embed the same identifier. Use a genuine synonym or a role label — "a client
+project", "a spoke project", "an external OSS contribution", "an individual".
+Traceability is preserved through project-agnostic ids (session number, backlog
+number), which stay.
+
+**No keep-exceptions.** Openly-contributed upstream software the methodology merely
+cites (a library, a tool, a standard) is a public reference, not a project. But a
+named *engagement* with such a project is still a party and is stripped; a legitimate
+reference in a to-be-mirrored file is reworded, or cleared per-run through the
+scanner's confirm bypass after operator review.
+
+**Enforcement is a backstop, not a proof.** The mirror-sync content scanner is the
+single gate every file crosses to reach the mirror and fails the sync on a project
+name; a periodic discovery sweep is the backstop for names nobody has listed yet;
+operator review is the final control. The guarantee is bounded to the public surface
+and to what the checks can see — it does not claim naming a project is technically
+impossible.
+
+**Scope is the mirror, not a folder name.** "Reaches the public mirror" is a property
+of the mirror allowlist and the file's actual presence in the public repository, not
+of the `dsm-docs/` path — parts of `dsm-docs/` mirror and parts do not. Verify against
+the mirror's real contents, because an allowlist can drift.
+
+**Origin:** a confidentiality sweep and the B-mirror boundary decision, strengthened
+by the operator directive that the rule covers removal *and* prevention of new
+incoming references (including generic descriptors that reproduce a slug). Removal was
+implemented under BL-560; prevention is enforced by the mirror-sync scanner (BL-561,
+matching hardened by BL-564) and backstopped by the discovery sweep (BL-563).

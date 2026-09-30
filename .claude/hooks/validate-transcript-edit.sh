@@ -150,7 +150,7 @@ fi
 # --- Check 0: replace_all is categorically forbidden on the transcript ---
 # (DSM_0.2 §7; BL-449). The append-anchor rule assumes a unique last-line
 # anchor; replace_all duplicates new content at EVERY match, exploding the file
-# (IronCalc S17: 95 MB / 1.5M lines; blog-poster S22: Output block duplicated).
+# (S17: 95 MB / 1.5M lines; S22: Output block duplicated).
 # This check runs before the anchor/append/delimiter checks because replace_all
 # is wrong regardless of their state.
 if [[ "$REPLACE_ALL" == "true" ]]; then
@@ -159,7 +159,7 @@ BLOCKED: Session transcript violation — replace_all forbidden (DSM_0.2 §7, ch
 
 Edit with replace_all: true is never allowed on .claude/session-transcript.md.
 The append-anchor rule assumes a unique last-line anchor; replace_all duplicates
-your new content at every match and explodes the file (IronCalc S17: 95 MB).
+your new content at every match and explodes the file (S17: 95 MB).
 
 FIX: Use a normal append Edit (replace_all absent/false): read the last 3 lines,
 anchor old_string on the last non-empty line, set new_string = old_string + new

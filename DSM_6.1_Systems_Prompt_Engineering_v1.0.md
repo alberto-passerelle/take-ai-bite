@@ -318,7 +318,7 @@ self-contained with its own index, intro paragraphs, and section numbering.
 |--------|-------|-------|
 | [A](DSM_6.1.A_Operational_Channels.md) | Operational Channels and Context Management | The 9 dsm-docs/ folders as PE infrastructure; session lifecycle commands as context management |
 | [B](DSM_6.1.B_Instruction_Design_Patterns.md) | Instruction Design Patterns | CLAUDE.md architecture, command files, protocol templates, hub-spoke feedback loops |
-| [C](DSM_6.1.C_Evaluation_and_Evolution.md) | Evaluation and Evolution | Git as prompt version control, Graph Explorer validation, STAA effectiveness analysis |
+| [C](DSM_6.1.C_Evaluation_and_Evolution.md) | Evaluation and Evolution | Git as prompt version control, spoke-based validation, STAA effectiveness analysis |
 
 **When to read modules:** The core document provides the framing, definitions,
 and conceptual models. Modules provide operational detail. Read a module when

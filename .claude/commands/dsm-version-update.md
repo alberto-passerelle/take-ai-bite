@@ -36,7 +36,7 @@ Walk through each step, showing the user what to do and waiting for confirmation
   - Assign next F-number (increment from current highest)
   - Add entry at the top of the current month section (create month section if needed)
   - Update the "Current count" in the FEATURES.md header
-- New F-entries trigger blog-poster notification at wrap-up (DSM_0.2.A §2)
+- New F-entries trigger a downstream notification at wrap-up (DSM_0.2.A §2)
 
 ### Step 2c: README Conceptual-Currency Review (DSM Central only)
 

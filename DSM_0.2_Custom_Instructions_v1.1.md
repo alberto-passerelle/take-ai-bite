@@ -253,9 +253,9 @@ under §23 (Skill/Hook Collaboration Protocol).
 - Commit the transcript file; it is a session-scoped working artifact
 - Edit or rewrite past transcript entries; each entry reflects reasoning at the time it was written
 - Use Edit with `old_string` matching earlier content to insert entries mid-file; this causes out-of-order timestamps (observed in prior sessions). Use the mandatory append technique above
-- **Use Edit `replace_all: true` on `.claude/session-transcript.md`.** The append-anchor rule assumes a unique last-line anchor; `replace_all` duplicates the new content at every match and explodes the file (IronCalc S17: 95 MB / 1.5M lines; blog-poster S22: an Output block duplicated at every match). Recovery from a botched transcript Edit is a `[RETROACTIVE]` Bash-heredoc append, never a `replace_all` cleanup. The `validate-transcript-edit.sh` PreToolUse hook blocks this case (check 0/4)
+- **Use Edit `replace_all: true` on `.claude/session-transcript.md`.** The append-anchor rule assumes a unique last-line anchor; `replace_all` duplicates the new content at every match and explodes the file (S17: 95 MB / 1.5M lines; S22: an Output block duplicated at every match). Recovery from a botched transcript Edit is a `[RETROACTIVE]` Bash-heredoc append, never a `replace_all` cleanup. The `validate-transcript-edit.sh` PreToolUse hook blocks this case (check 0/4)
 - Use reasoning delimiters in conversation text; VS Code collapses them after streaming
-- **Use single-quoted heredoc (`<< 'EOF'`) when appending to the transcript via Bash** if the content contains shell expansions like `$(date +%H:%M)`. Single-quoted heredocs suppress expansion and write the literal string `$(date +%H:%M)` into the transcript instead of the timestamp. Observed in portfolio S69. Correct form: capture the timestamp into a variable first and use an unquoted heredoc:
+- **Use single-quoted heredoc (`<< 'EOF'`) when appending to the transcript via Bash** if the content contains shell expansions like `$(date +%H:%M)`. Single-quoted heredocs suppress expansion and write the literal string `$(date +%H:%M)` into the transcript instead of the timestamp. Observed in S69. Correct form: capture the timestamp into a variable first and use an unquoted heredoc:
   ```bash
   NOW=$(date +%H:%M)
   cat >> .claude/session-transcript.md << EOF
@@ -565,8 +565,8 @@ strategies (see §14 Heading Parsability).
 
 ### 14.5. Enforcement
 
-Enforceable via Graph Explorer linter rule W004 (warning, not error). Projects
-using GE can validate heading compliance automatically.
+Enforceable via a companion tool's linter rule W004 (warning, not error). Projects
+using that tool can validate heading compliance automatically.
 
 ### 14.6. Document Structure Standard Reference
 
@@ -1683,7 +1683,7 @@ recommendation does not retroactively repair the recommendation.
 This stop-condition rule is the operational expression of DSM_6.0's Earn Your
 Assertions principle: claims that rest on unread sources or skipped checks are
 not earned, and presenting them anyway violates the principle even if the gap
-is acknowledged. Origin: blog-poster S19, where the agent detected mid-paragraph
+is acknowledged. Origin: S19, where the agent detected mid-paragraph
 that it had not read required sources per CLAUDE.md, flagged the gap as an
 inline disclaimer, and then continued presenting angle rankings built on
 the unread sources; the user had to escalate ("this is unacceptable") to halt

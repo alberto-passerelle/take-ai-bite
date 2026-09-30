@@ -39,7 +39,7 @@ DSM's instruction artifacts exhibit the same design concerns as software:
 | Interface contracts | Stable references between documents | `@` reference chain, dispatch tables, section numbering |
 | Configuration management | Environment-specific overrides | CLAUDE.md base template + project-specific sections |
 | Deployment pipeline | Distributing changes to consumers | Mirror sync, command file sync (scripts/sync-commands.sh) |
-| Regression testing | Verifying changes do not break behavior | Branch Testing Requirement, Graph Explorer CI |
+| Regression testing | Verifying changes do not break behavior | Branch Testing Requirement, a spoke's CI |
 
 The discipline is recognizing that instruction documents are not prose to
 be written, but artifacts to be engineered.
