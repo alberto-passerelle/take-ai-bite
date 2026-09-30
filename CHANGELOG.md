@@ -5,6 +5,20 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.4] - 2026-09-30
+
+Patch: the public mirror's provenance corpus is de-identified — no specific project, client, or spoke name reaches it — and the standing rule that keeps it that way is codified as methodology.
+
+### Added
+
+- **DSM_0.2.C §5.7 Public Mirror Project-Name Exclusion — the standing confidentiality rule, codified (BACKLOG-560).** No DSM content that reaches the public mirror may name a specific project, client, employer, or own ecosystem spoke. The rule has two halves — removing names already there and preventing new ones from entering — and it is bounded to the public surface: private, never-mirrored working files may still name projects (the envelope/payload boundary). It treats a project slug re-embedded in a generic descriptor as a violation, keeps traceability through session and backlog ids, and states its enforcement as a backstop rather than a proof — the sync-time scanner is a gate, operator review is the final control, and the guarantee is bounded to what the checks can see.
+  **Spoke action:** None. The corrected methodology arrives with the next mirror sync.
+
+### Changed
+
+- **The public provenance corpus is de-identified (BACKLOG-560).** Every specific project, client, and own-spoke name in the mirrored methodology — plus a public blog file that had drifted outside the sync allowlist — is reworded to a project-agnostic form: the session and backlog id stay, the name is dropped or replaced by a neutral role label. Verified with a boundary-robust sweep (positive control proving the search matches): 0 project-name hits across the whole public tree and across every Central manifest source, and a removed-string sweep finds surviving names only in never-mirrored working surfaces. An openly-contributed upstream project the operator worked on is stripped too — there are no keep-exceptions — overriding an earlier note that had kept it.
+  **Spoke action:** None. The de-identified files arrive with the next mirror sync.
+
 ## [1.26.3] - 2026-09-04
 
 Patch: a published reference document that had been wrong for months is corrected, along with the script that was supposed to keep it right.

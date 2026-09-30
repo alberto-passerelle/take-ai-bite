@@ -6,11 +6,13 @@ Methodology (DSM), the human-AI collaboration framework behind
 feature is numbered for easy reference (F-000 is the first, newest entries
 appear at the top).
 
-**Current count:** 176 features.
+**Current count:** 177 features.
 
 ---
 
 ## September 2026
+
+- **F-176 (2026-09-30) No project name reaches the public mirror, and the rule that guarantees it is now methodology (BACKLOG-560, DSM_0.2.C §5.7)** — The public methodology carried specific project, client, and spoke names in its provenance lines — each one a confidentiality exposure and, to an outside reader with no access to the project, a pointer that resolves to nothing. Every such name is now reworded to a project-agnostic form that keeps the session and backlog id and drops the name, verified clean by a boundary-robust search run with a control that proves the search can actually match. The standing rule behind the cleanup is written into the methodology rather than left as a session practice: no name of a specific project reaches the public mirror, it covers both removing what is there and preventing what tries to enter, and it counts a slug smuggled back in as a generic descriptor as a violation. The guarantee is stated honestly for anyone who adopts it — the scanner is a backstop and operator review is the last gate, so the claim is bounded to the public surface and to what the checks can see, not to technical impossibility.
 
 - **F-175 (2026-09-04) A standing rule retired in favour of a skill that does the same work on demand (v1.26.1, DSM_0.2 §17.1)** — Every project carried an instruction to convert a particular dash to a comma in anything a reader outside the project would see. It was correct, and it was never finished: a rule like that is enforced on every pass, by every author and every agent, forever, to reach a state a skill can now produce against a completed document in one go. The rule is removed rather than repaired. What prompted the review was a defect rather than a preference: an unrelated edit had already deleted the rule's body and left behind the three paragraphs that said which files it applied to, so the surviving text began "The rule governs..." with no rule above it, and the release told every project to adopt that state. Completing the deletion and retiring the rule turned out to be the same edit. The earlier entry describing the rule stays in this timeline, because a timeline records what was true at the time and is not a claim about what is current.
 

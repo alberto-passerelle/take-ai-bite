@@ -456,6 +456,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-536 | `/dsm-wrap-up` Step 6a's per-session feedback scan is suffix-specific, so topically-named feedback is never pushed | v1.26.2 | 2026-08-31 | /dsm-wrap-up Step 6a, /dsm-align Step 6a (scope widened in-flight), DSM_0.2.A §4 |
 | BACKLOG-537 | Central's six leftover project-level command copies are inert residue the deploy warning flags every run | v1.26.2 | 2026-08-31 | scripts/sync-commands.sh (delete + Central-only --check guard) |
 | BACKLOG-559 | Retroactively reword redistributed reasoning-lesson and feedback entries to remove project/client identity, count-preserving | — | 2026-09-24 | superseded: moot under the B-mirror boundary (2026-09-24 envelope/payload operational design) |
+| BACKLOG-560 | De-identify the public TAB provenance corpus — reword every specific project name to a project-agnostic form | v1.26.4 | 2026-09-30 | DSM_0.2.C §5.7 Public Mirror Project-Name Exclusion (public corpus de-identified; scanner BL-561/564 enforces; §21.4 sweep clean) |
 | BACKLOG-561 | Extend the mirror-sync content scanner to block client and project names, not only operator identity | — | 2026-09-24 | scripts/check-mirror-sync-content.sh (two-tier project-name detection; primary confidentiality gate under BL-558 B-mirror boundary) |
 
 ---
