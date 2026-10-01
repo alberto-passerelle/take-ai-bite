@@ -121,3 +121,9 @@ contributions-docs/
 .claude/last-align-report.md
 .claude/last-wrap-up.txt
 .claude/*.code-workspace
+
+# Mirror inbox guard (mirror-sync-manifest category 10): transit inbox entries are
+# local hub-spoke comms and should NOT land in the public mirror. Keep the folder
+# scaffold tracked (README, and the done/ archive at a deeper path are unaffected).
+_inbox/*.md
+!_inbox/README.md
