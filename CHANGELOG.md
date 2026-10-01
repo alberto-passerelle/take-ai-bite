@@ -5,6 +5,22 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.5] - 2026-10-01
+
+Patch: two flow controls on the always-loaded boot context — a per-entry size ceiling plus a codified split for the reasoning-lessons file, and generational memory-tiering skills that keep MEMORY.md lean across sessions.
+
+### Added
+
+- **Generational memory tiering — `/dsm-memory-decommission` and `/dsm-memory-archive` skills (BACKLOG-544).** Two move-only skills age session-tagged content down a three-tier chain: `MEMORY.md` (always loaded) → `MEMORY-long-term.md` (on demand) → `MEMORY-archived.md` (deepest). They auto-run at wrap-up when a tier is over threshold and move the oldest session group whole, never touching the evergreen zone, with a backup and before/after validation. The decommission trigger is on the sessions-zone size (~4 KB), not total `MEMORY.md`, because the evergreen zone alone can exceed a small total target.
+  **Spoke action:** The two commands arrive with the next mirror sync and deploy via `sync-commands.sh --deploy`. Once present they auto-run at your wrap-up when your `MEMORY.md` sessions zone exceeds ~4 KB; no manual step is required.
+- **Soft per-entry size ceiling on reasoning lessons (BACKLOG-495), DSM_0.2.A §8 Maintenance.** Each lesson entry targets ~600 characters of body text — the figure that keeps the 100-entry count target and the 61,440 B byte bound mutually reachable. The ceiling is soft: an over-length entry is compressed or split into two cross-referenced entries, never silently dropped.
+  **Spoke action:** The ceiling applies to your own local reasoning-lessons file; it arrives with the next mirror sync. Existing entries are not retrofitted — it governs new entries at `/dsm-wrap-up` and `/dsm-staa`.
+
+### Changed
+
+- **The ecosystem-split flow control is codified (BACKLOG-495), DSM_0.2.A §8.2.** At DSM Central, an `ecosystem`-scope lesson from `/dsm-wrap-up` is written to the aggregation file and withheld from the local boot-primed file (which the aggregation file already carries for redistribution); a `/dsm-staa`-measured ecosystem lesson may stay local when it is high-value for boot priming. This was existing practice; it is now a stated rule rather than an emergent one.
+  **Spoke action:** None. This rule governs Central's own split; a spoke's local lessons file is its only one.
+
 ## [1.26.4] - 2026-09-30
 
 Patch: the public mirror's provenance corpus is de-identified — no specific project, client, or spoke name reaches it — and the standing rule that keeps it that way is codified as methodology.
