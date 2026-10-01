@@ -41,6 +41,8 @@ Execute the DSM session wrap-up checklist without feedback push. Use this varian
    - Keep concise; MEMORY.md must stay under 200 lines
    - **Do NOT write a "Pending next session" list.** Step 1.5 (Checkpoint) owns pending items.
 
+1.4. **Memory tiering size check (BACKLOG-544):** after updating MEMORY.md above, measure the sessions zone (the bytes below the `<!-- SESSIONS ZONE` marker). If it exceeds ~4 KB, invoke `/dsm-memory-decommission` to move the oldest session group to `MEMORY-long-term.md`. Then, if `MEMORY-long-term.md` exceeds 10 KB, invoke `/dsm-memory-archive` to move its oldest group to `MEMORY-archived.md`. Both skills are move-only and auto-create their destination; skip silently if MEMORY.md has no `<!-- SESSIONS ZONE` marker (project not tiered). The threshold is on the sessions zone, not total MEMORY.md, because the evergreen zone alone can exceed a small total target (BACKLOG-544).
+
 1.5. **Checkpoint:** Create a minimal checkpoint in `dsm-docs/checkpoints/` recording the session state. This step is the primary owner of "pending next session" items — do not duplicate them in MEMORY.md (Step 1).
 
    **Filename:** `YYYY-MM-DD_sN_checkpoint.md` where N is the session number.
