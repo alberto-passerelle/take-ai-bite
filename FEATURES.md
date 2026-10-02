@@ -6,11 +6,13 @@ Methodology (DSM), the human-AI collaboration framework behind
 feature is numbered for easy reference (F-000 is the first, newest entries
 appear at the top).
 
-**Current count:** 177 features.
+**Current count:** 180 features.
 
 ---
 
 ## September 2026
+
+- **F-179 (2026-10-02) The always-loaded memory file's permanent zone now gets a size-review flag so it stops growing unchecked (BACKLOG-568, `/dsm-wrap-up`)** — The memory file an agent reads in full on every turn is split into a permanent zone that never ages and a session zone that does. Machinery added earlier keeps the session zone small by ageing its oldest notes out of the file, and once that runs the permanent zone is the larger half and the only one still growing, with nothing watching it. Wrap-up now measures the permanent zone and, when it passes a soft size target, raises a non-blocking flag recommending a review: trim lines that are resolved, or move durable-but-not-boot-critical lines somewhere less costly to load and then remove them — moved before removed, never silently dropped. The flag only recommends; a person or the deeper analysis pass does the trimming, because the permanent zone holds high-value context that should not be aged automatically the way the session zone is.
 
 - **F-178 (2026-10-01) Session memory ages itself down a three-tier chain so the always-loaded file stays small (BACKLOG-544, `/dsm-memory-decommission`, `/dsm-memory-archive`)** — The file an agent reads in full on every turn had been growing with every session it recorded, because the one-time split that separated permanent context from session notes left nothing to stop the session half from re-filling. Two move-only skills now age it. The oldest session's notes move from the always-loaded file to an on-demand long-term file once the session zone passes a size threshold, and from there to a deepest archive once the long-term file passes its own. They run at wrap-up, move a whole session's notes at a time, never touch the permanent zone, back up before writing, and check that nothing was lost. The threshold watches the session zone rather than the whole file, because the permanent zone on its own can be larger than a naive whole-file target would allow, which would have made the trigger fire on every wrap-up and never clear.
 

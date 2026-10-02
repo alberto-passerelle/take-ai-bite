@@ -5,6 +5,23 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.6] - 2026-10-02
+
+Patch: a review flag for the always-loaded memory file's permanent (evergreen) zone, plus a correction to a feature count that had drifted.
+
+### Added
+
+- **Evergreen-zone review flag — `/dsm-wrap-up` Step 2.4a (BACKLOG-568).** Wrap-up now measures the MEMORY.md evergreen zone (the bytes above the sessions-zone marker, the complement of the BACKLOG-544 tiering check) and raises a non-blocking flag when it exceeds a soft ~6 KB target. After the tiering machinery drains the sessions zone, the evergreen zone becomes the dominant and only-growing half of the always-loaded cost, and nothing watched it. The flag recommends a judgement-executed review — trim resolved lines, or promote durable-but-not-boot-critical lines to CLAUDE.md, a guide, or `MEMORY-long-term.md` and then remove them (promote before remove, never a silent drop) — but performs no automatic move, because the evergreen zone has no timestamp groups to age and is high-value always-loaded context.
+  **Spoke action:** The updated wrap-up skill arrives with the next mirror sync and deploys via `sync-commands.sh --deploy`. Once present it reports the evergreen size at every wrap-up and flags when your `MEMORY.md` evergreen zone exceeds ~6 KB; the trim/promote is yours to perform by judgement.
+
+### Fixed
+
+- **FEATURES.md and README feature count had drifted (surfaced at the S269 boot; BACKLOG-569 is the prevent).** The v1.26.5 release added two F-entries (F-177, F-178) without bumping the FEATURES "Current count" header or the README's mirrored count, so both read 177 against 179 actual entries. The counts are corrected, and with F-179 added this release they now read 180.
+
+### Spawned
+
+- **BACKLOG-569** (Medium): assert the FEATURES "Current count" equals the actual F-entry count at wrap-up/release so the count cannot silently drift again — the prevent half of the §22 response to the stale count this release fixes.
+
 ## [1.26.5] - 2026-10-01
 
 Patch: two flow controls on the always-loaded boot context — a per-entry size ceiling plus a codified split for the reasoning-lessons file, and generational memory-tiering skills that keep MEMORY.md lean across sessions.
