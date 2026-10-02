@@ -80,6 +80,25 @@ At the start, run `git rev-parse --is-inside-work-tree 2>/dev/null`. Cache the r
 
 2.4. **Memory tiering size check (BACKLOG-544):** after updating MEMORY.md above, measure the sessions zone (the bytes below the `<!-- SESSIONS ZONE` marker). If it exceeds ~4 KB, invoke `/dsm-memory-decommission` to move the oldest session group to `MEMORY-long-term.md`. Then, if `MEMORY-long-term.md` exceeds 10 KB, invoke `/dsm-memory-archive` to move its oldest group to `MEMORY-archived.md`. Both skills are move-only and auto-create their destination; skip silently if MEMORY.md has no `<!-- SESSIONS ZONE` marker (project not tiered). This keeps the always-loaded MEMORY.md lean across sessions. The threshold is on the sessions zone, not total MEMORY.md, because the evergreen zone alone can exceed a small total target (BACKLOG-544).
 
+2.4a. **Evergreen zone review flag (BACKLOG-568):** after the tiering check above, measure the EVERGREEN zone — the bytes ABOVE the `<!-- SESSIONS ZONE` marker, the complement of Step 2.4's sessions-zone measurement. The tiering skills deliberately never touch this zone (it has no timestamp groups to age), so nothing otherwise bounds the always-loaded cost it adds on every turn, and after tiering drains the sessions zone it becomes the dominant and only-growing half. If the evergreen zone exceeds ~6 KB (6,144 B), emit a non-blocking review flag. Skip silently only if MEMORY.md has no `<!-- SESSIONS ZONE` marker (project not tiered), consistent with Step 2.4.
+
+   ```bash
+   M="$HOME/.claude/projects/$(pwd | sed 's#[/_]#-#g')/memory/MEMORY.md"
+   MARK=$(grep -nF '<!-- SESSIONS ZONE' "$M" 2>/dev/null | head -1 | cut -d: -f1)
+   if [ -z "$MARK" ]; then
+     echo "SKIP: no SESSIONS ZONE marker (project not tiered)"
+   else
+     EVER=$(head -n $((MARK-1)) "$M" | wc -c)
+     if [ "$EVER" -gt 6144 ]; then
+       echo "FLAG: evergreen zone ${EVER} B > ~6 KB (6144 B) target — review recommended"
+     else
+       echo "OK: evergreen zone ${EVER} B within ~6 KB (6144 B) target"
+     fi
+   fi
+   ```
+
+   **Advisory means non-blocking, never silent** (per the §8.1 mirror-flag precedent in Step 0): report the measured evergreen size against the ~6 KB target in EVERY case — over, under, or skipped — so a breach and a pass produce different output rather than a pass producing silence. On a flag, the review is judgement-executed, never an automatic move (evergreen is high-value always-loaded context with no timestamp groups to age, unlike the sessions-zone tiering): **trim** resolved or superseded evergreen lines (a resolved Current Focus item, a Common Pitfall now codified in CLAUDE.md, a spoke status long superseded), or **promote** durable-but-not-boot-critical lines to CLAUDE.md, a guide, or `MEMORY-long-term.md` and then remove the original — **promote before remove, never a silent drop** (the §8 Maintenance prune-action model). The flag recommends the review; the operator or `/dsm-staa` performs it.
+
 2.5. **Checkpoint:** Create a minimal checkpoint in `dsm-docs/checkpoints/` recording the session state. This step is the primary owner of "pending next session" items — do not duplicate them in MEMORY.md (Step 2).
 
    **Filename:** `YYYY-MM-DD_sN_checkpoint.md` where N is the session number.
