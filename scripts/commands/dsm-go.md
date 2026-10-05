@@ -497,8 +497,19 @@ After branch setup, clean up stale refs from prior sessions:
    This catches orphaned worktree branches (`worktree-agent-*`) and old task
    branches that were merged but not deleted.
 3. **If stale branches found:** Report: "Found N stale local branches merged
-   into main: [list]. Delete them? (y/n)". On approval, delete with
-   `git branch -d {branch}` for each. On rejection, skip silently.
+   into main: [list]. Delete them? (y/n)". If the user declines, skip silently.
+   On approval, delete each with `git branch -d {branch}`.
+   **A per-branch `-d` refusal is surfaced, never skipped silently, and
+   `git branch -D` is never used (Destructive Command Protocol).** Every
+   candidate came from `git branch --merged main`, so it IS merged to main; a
+   `-d` refusal therefore means its upstream ref lags or differs from `HEAD`
+   (the §20.4 criterion `-d` actually tests), not that it is unmerged. Item 1's
+   `git fetch --prune` already clears the upstream-*deleted* sub-case (the S266 /
+   `session-263` leftover, where a PR merge deleted the remote branch and the
+   stale local tracking ref made `-d` refuse); a surviving refusal is the
+   upstream-*lags* sub-case , surface it: "`{branch}` is merged to main but
+   `git branch -d` refused (upstream lags/differs); it is safe but was not
+   deleted , push it to refresh its upstream, or delete it manually."
 4. **If no stale branches:** Skip silently.
 
 ### 0e. Ensure hooks are executable

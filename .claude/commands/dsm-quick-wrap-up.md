@@ -138,13 +138,29 @@ Execute the DSM session wrap-up checklist without feedback push. Use this varian
    - Files in the baseline with unchanged checksums = pre-existing, not touched this session (skip them)
    - If `.claude/session-baseline.txt` does not exist (session started without `/dsm-go`), fall back to staging all changed files
 
-   **Mirror self-detection inbox guard:** If
-   `scripts/take-ai-bite-sync.txt` does NOT exist in the current
-   working tree, this repo is a mirror (not the hub). Exclude any
-   `_inbox/*` path from the stage-set except `_inbox/README.md` and
-   `_inbox/.gitkeep`. Log each excluded path: "Mirror inbox guard:
-   skipped `_inbox/{file}` (mirror inbox guard)." Parity with `/dsm-wrap-up`
-   Step 9.
+   **Mirror self-detection inbox guard (BL-566; reuses the DSM_0.2.A §25.1 /
+   `/dsm-go` Step 0.8a role signals):** Decide whether this repo is the read-only
+   public mirror before staging `_inbox/*`. It is the mirror ONLY when it carries
+   NONE of the DSM-role signals: `scripts/take-ai-bite-sync.txt` is absent AND
+   `.claude/dsm-ecosystem.md` has no `dsm-central` row. In that mirror case,
+   exclude every `_inbox/*` path from the stage-set except `_inbox/README.md` and
+   `_inbox/.gitkeep`, logging each: "Mirror inbox guard: skipped `_inbox/{file}`."
+   Otherwise stage `_inbox/*` normally. The two signals, grounded (BL-566) against
+   the real public mirror (take-ai-bite) and a git clone of Central:
+   - `take-ai-bite-sync.txt` present: this is DSM Central or a git clone of it (the
+     file is TRACKED, so a clone inherits it); both track their own `_inbox`, so stage.
+   - a `dsm-central` row present: a configured spoke (row points at its hub) or a
+     self-registered clone (row points at itself); both own a real `_inbox`, so stage.
+   - neither signal: the read-only public mirror, whose selective file-sync copies
+     neither the sync file nor a `dsm-central` registry, so stage nothing but the
+     README bootstrap.
+   The absence of `take-ai-bite-sync.txt` ALONE no longer implies mirror: every
+   spoke also lacks it, which was the BL-566 defect (a two-state read of a
+   three-state world that put every spoke in the mirror branch and silently dropped
+   its tracked `_inbox` from the wrap-up commit). A repo with no role signals at all
+   takes the mirror branch (default-skip): the only real repo in that bucket is the
+   public mirror, because a configured spoke always carries a `dsm-central` row by
+   wrap-up time.
 
    Then `git commit` and `git push` in sequence. If no session changes exist, skip the commit.
    After committing, delete `.claude/session-baseline.txt` (consumed).

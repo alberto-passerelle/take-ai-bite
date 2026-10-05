@@ -5,6 +5,17 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.8] - 2026-10-05
+
+Patch: two correctness fixes to session-lifecycle commands — the `/dsm-go` stale-branch cleanup now surfaces (instead of silently skipping) a main-merged branch whose upstream lags, and the wrap-up mirror self-detection guard no longer misclassifies every spoke as a mirror and drops its inbox.
+
+### Fixed
+
+- **`git branch -d` merge-criterion wording and the `/dsm-go` stale-cleanup silent-skip (BACKLOG-565, DSM_0.2 §20.4, `/dsm-go` Step 0d).** DSM_0.2 §20.4 described `git branch -d`'s guard as refusing "a commit not in its base"; the criterion `-d` actually tests is the branch's upstream (or `HEAD` if none), now corrected. Operationally, the stale-branch cleanup selected branches already merged to main and ran `git branch -d`, but a `-d` refusal was skipped silently — and because `-d` tests the upstream, a branch genuinely merged to main whose upstream ref lags refuses and was swallowed, so it was never cleaned. The cleanup now surfaces such a branch as a leftover rather than skipping it; `-D` is never introduced.
+  **Spoke action:** The updated `/dsm-go` arrives with the next mirror sync and deploys via `sync-commands.sh --deploy`.
+- **Wrap-up mirror self-detection guard classified every spoke as a mirror (BACKLOG-566, `/dsm-wrap-up` Step 9, `/dsm-quick-wrap-up` Step 7).** Both guards excluded a repo's `_inbox/*` from the wrap-up commit whenever `scripts/take-ai-bite-sync.txt` was absent, reading that absence as "this repo is a mirror." Every spoke also lacks that file, so every spoke was placed in the mirror branch and its tracked `_inbox` renames were dropped from the commit while logged as deliberate skips (a wrong result that looked exactly like a right one). Replaced with a role-signal predicate (DSM_0.2.A §25.1): a repo is the read-only public mirror only when it has no sync file AND no `dsm-central` row; Central, a git clone of Central, a spoke, and a self-registered clone all stage their own `_inbox` normally. The identical block lands in both skills.
+  **Spoke action:** The updated wrap-up skills arrive with the next mirror sync and deploy via `sync-commands.sh --deploy`; a spoke that tracks and processes its `_inbox` now stages it correctly at wrap-up.
+
 ## [1.26.7] - 2026-10-05
 
 Patch: a boot-time assertion that the FEATURES/README feature count matches the actual number of entries, so the count cannot silently drift onto main or the public mirror.
