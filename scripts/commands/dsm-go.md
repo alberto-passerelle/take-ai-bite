@@ -654,6 +654,35 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
      **Known limit:** F-numbers are compared as zero-padded three-digit strings, so the ordering breaks at F-1000. Stated rather than solved; at the current cadence that is years away and the fix is a numeric sort.
 
+   - **2f. FEATURES count-equality assertion (per BL-569):** Step 2e above reconciles the downstream NOTIFICATION half of FEATURES maintenance; this reconciles the COUNT half, which had no guard. `FEATURES.md` carries a self-describing `**Current count:** N features.` header and `README.md` mirrors it ("full timeline of N features"), both maintained by hand at release time, so a release that adds F-entries without bumping the header leaves both numbers wrong on main AND on the public mirror until a later session happens to measure , the S268 -> S269 drift this step exists to surface, which Step 2e caught only as a side effect. Like Step 2e it REPORTS at boot and never fixes or blocks; when it fires, the recompute-and-correct is the agent's or user's, surfaced like any §22 at boot.
+
+     Run the snippet and report its single line in the boot report. The absent-`FEATURES.md` guard is INSIDE the snippet, per the Step 2e lesson that a prose-only guard prints a clean bill of health for a comparison it never made:
+
+     ```bash
+     if [ ! -f FEATURES.md ]; then
+       echo "SKIP: no FEATURES.md in this project"
+     else
+       ACTUAL=$(grep -cE '^- \*\*F-[0-9]+' FEATURES.md)
+       HDR=$(grep -m1 -oE '\*\*Current count:\*\* [0-9]+' FEATURES.md | grep -oE '[0-9]+' | head -1)
+       RME=$(grep -m1 -oE '[0-9]+ features' README.md 2>/dev/null | grep -oE '[0-9]+' | head -1)
+       if [ -z "$HDR" ]; then
+         echo "UNRESOLVED: FEATURES '**Current count:** N' header not found - count NOT compared"
+       elif [ -z "$RME" ]; then
+         echo "UNRESOLVED-README: no 'N features' line in README.md - FEATURES header=$HDR vs actual=$ACTUAL ($([ "$HDR" = "$ACTUAL" ] && echo match || echo MISMATCH)); README NOT compared"
+       elif [ "$ACTUAL" = "$HDR" ] && [ "$ACTUAL" = "$RME" ]; then
+         echo "OK: FEATURES/README count == $ACTUAL actual F-entries"
+       else
+         echo "MISMATCH: FEATURES header=$HDR, README=$RME, actual F-entries=$ACTUAL (recompute, never increment)"
+       fi
+     fi
+     ```
+
+     **Recompute, never increment (MEMORY zero-index pitfall).** `ACTUAL` counts `^- **F-` entry lines, which is what the header's "features" means. FEATURES is zero-indexed (F-000..F-N is N+1 entries), but the count LINE states the TOTAL, so the entry-line count IS the total and no +1 applies; never trust or increment the stated header.
+
+     **What a wrong result looks like (§19.1's second question).** A match prints `OK: ... == N`; a drift prints `MISMATCH:` naming all three numbers (header claim, README claim, measured count); an unparseable header or README prints `UNRESOLVED`/`UNRESOLVED-README` and says the comparison was NOT made. The branches never print the same line, so a wrong count cannot read as a right one. The mirror (take-ai-bite) carries its own copy of both numbers and is not checked here; it inherits the corrected source at the next §18 mirror sync (the BL-569 Risks accept this , this step guards the source, which is the mirror's upstream).
+
+     **Known limit:** the README matcher takes the first `N features` occurrence; if README ever gains an earlier "<number> features" phrase before the timeline line, anchor the match on "timeline of". Stated rather than solved; the current README has exactly one such line.
+
    - Any other session-start protocols added to DSM_0.2 in the future
 3. **Handoff consumption and lifecycle:** Check `dsm-docs/handoffs/` for handoffs awaiting consumption. Any handoff file (not in `done/`) that predates this session was written FOR this session. **This step is its consumer.** Read, surface, then archive, in that order:
    - **Read the file in full, before any move.** Handoffs are authored by `/dsm-wrap-up` Step 5 and `/dsm-quick-wrap-up` Step 4 only when there is "complex pending work that requires detailed context for the next session", and `dsm-docs/handoffs/README.md` says the same. DSM_0.2.A §18 goes further and parses a DSM version field out of the most recent handoff at session start, which is a read no other step performs.

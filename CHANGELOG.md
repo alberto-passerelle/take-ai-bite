@@ -5,6 +5,15 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.7] - 2026-10-05
+
+Patch: a boot-time assertion that the FEATURES/README feature count matches the actual number of entries, so the count cannot silently drift onto main or the public mirror.
+
+### Added
+
+- **FEATURES/README count-equality assertion — `/dsm-go` Step 2f (BACKLOG-569).** Session start now recomputes the actual F-entry count and compares it against the `FEATURES.md` `**Current count:**` header and the README's "N features" line, reporting a mismatch that names all three numbers (header claim, README claim, measured count) and staying silent/OK when they agree. It is the count-side sibling of the Step 2e notification reconciliation: the notification half of FEATURES maintenance had a guard, the count half had none, so a release that added entries without bumping the header (the S268 → S269 drift this closes) sat wrong on main and the public mirror until a later session happened to measure. Report-not-block, every session; placement at the boot was chosen over wrap-up because an autonomous wrap-up would log a mismatch and still proceed to ship it. The recompute-and-correct is surfaced like any other boot finding.
+  **Spoke action:** The updated `/dsm-go` arrives with the next mirror sync and deploys via `sync-commands.sh --deploy`. Once present it reports the count check at every boot and, if your `FEATURES.md`/README feature counts have drifted, flags them with both the claimed and the measured number.
+
 ## [1.26.6] - 2026-10-02
 
 Patch: a review flag for the always-loaded memory file's permanent (evergreen) zone, plus a correction to a feature count that had drifted.
