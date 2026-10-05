@@ -461,6 +461,10 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-560 | De-identify the public TAB provenance corpus — reword every specific project name to a project-agnostic form | v1.26.4 | 2026-09-30 | DSM_0.2.C §5.7 Public Mirror Project-Name Exclusion (public corpus de-identified; scanner BL-561/564 enforces; §21.4 sweep clean) |
 | BACKLOG-561 | Extend the mirror-sync content scanner to block client and project names, not only operator identity | — | 2026-09-24 | scripts/check-mirror-sync-content.sh (two-tier project-name detection; primary confidentiality gate under BL-558 B-mirror boundary) |
 | BACKLOG-564 | Extend the mirror-sync scanner to catch project-name variants and reclassify dual-use slugs | — | 2026-09-30 | scripts/check-mirror-sync-content.sh (boundary-robust Tier-1b + dual-use Tier-2 + discovered names; sibling to BL-561) |
+| BACKLOG-565 | Correct the git branch -d merge-criterion wording (§20.4) and fix the dsm-go stale-cleanup silent-skip of main-merged branches | v1.26.8 | 2026-10-05 | DSM_0.2 §20.4 (upstream/HEAD wording) + /dsm-go Step 0d item 3 (surface-on-rejection) |
+| BACKLOG-566 | Fix the wrap-up mirror self-detection inbox guard that classifies every spoke as a mirror | v1.26.8 | 2026-10-05 | /dsm-wrap-up Step 9 + /dsm-quick-wrap-up Step 7 (role-signal predicate, DSM_0.2.A §25.1) |
+| BACKLOG-568 | The MEMORY.md evergreen zone is the larger half of the always-loaded boot cost | v1.26.6 | 2026-10-02 | /dsm-wrap-up Step 2.4a (evergreen review flag) |
+| BACKLOG-569 | Assert FEATURES Current count equals actual F-entry count at wrap-up/release | v1.26.7 | 2026-10-05 | /dsm-go Step 2f (count-equality boot assertion, sibling to Step 2e; placed at boot not wrap-up) |
 
 ---
 
