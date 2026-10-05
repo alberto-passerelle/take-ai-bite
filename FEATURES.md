@@ -6,11 +6,13 @@ Methodology (DSM), the human-AI collaboration framework behind
 feature is numbered for easy reference (F-000 is the first, newest entries
 appear at the top).
 
-**Current count:** 180 features.
+**Current count:** 181 features.
 
 ---
 
 ## September 2026
+
+- **F-180 (2026-10-05) Session start now checks the FEATURES and README feature counts against the real number of entries, so a stale total can't slip onto the public page (BACKLOG-569, `/dsm-go`)** — The feature timeline and the README both carry a running total that is kept current by hand, and a release that added entries without updating it left both numbers wrong until someone happened to notice. Session start now recomputes the real count and compares it against both stated totals, flagging a mismatch with both the claimed and the measured number and staying quiet when they agree, so the drift is caught at the next boot instead of sitting on the public timeline. It is the counting-side companion to the existing check that already watched the related downstream notification, which had a guard while the count had none.
 
 - **F-179 (2026-10-02) The always-loaded memory file's permanent zone now gets a size-review flag so it stops growing unchecked (BACKLOG-568, `/dsm-wrap-up`)** — The memory file an agent reads in full on every turn is split into a permanent zone that never ages and a session zone that does. Machinery added earlier keeps the session zone small by ageing its oldest notes out of the file, and once that runs the permanent zone is the larger half and the only one still growing, with nothing watching it. Wrap-up now measures the permanent zone and, when it passes a soft size target, raises a non-blocking flag recommending a review: trim lines that are resolved, or move durable-but-not-boot-critical lines somewhere less costly to load and then remove them — moved before removed, never silently dropped. The flag only recommends; a person or the deeper analysis pass does the trimming, because the permanent zone holds high-value context that should not be aged automatically the way the session zone is.
 
