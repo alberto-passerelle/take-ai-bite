@@ -768,3 +768,44 @@ by the operator directive that the rule covers removal *and* prevention of new
 incoming references (including generic descriptors that reproduce a slug). Removal was
 implemented under BL-560; prevention is enforced by the mirror-sync scanner (BL-561,
 matching hardened by BL-564) and backstopped by the discovery sweep (BL-563).
+
+### 5.8. Egress Leak-Scan Generic Reporting Rule
+
+Projects that handle sensitive data treat the session transcript, `MEMORY.md`, and the
+reasoning-lessons files as an **egress zone**: local content that can later cross an
+air-gap to the hub (`/dsm-wrap-up` pushes new lessons to Central's inbox, and `/dsm-go`
+Step 1.5 reads the compact mirror at every boot) and must stay free of personal data.
+The standard control is a **leak-scan**: grep the egress zone for person-name tokens
+before close-out.
+
+**The scan must not become the leak.** When scanning an egress artifact — or any local
+file — for sensitive data, report the result **generically**: "scan clean", or
+"N matches at lines X–Y". **Never echo the matched values, or a scan/grep pattern that
+contains those values, into the transcript, `MEMORY.md`, the reasoning-lessons files,
+or any other egress artifact.** The control meant to protect egress otherwise becomes
+the vector for it, and the matched values travel exactly where the scan was meant to
+keep them out.
+
+**Append-only is why the prohibition sits upstream.** The transcript is append-only
+(§7), so a matched name echoed into an Output block cannot be rewritten in place and
+persists until a separate scrub. A pre-existing leak is therefore handled by **flagging
+it by line number only** for the transcript-processing / pre-remote scrub, never by
+reproducing it to describe it.
+
+**Generic reporting keeps the honesty requirement.** "Scan clean" and "N matches at
+lines X–Y" still distinguish *checked and clean* from *did not check* (Earn Your
+Assertions), so reporting without the values costs no auditability.
+
+**Relationship to §5.7.** §5.7 bounds *specific project names* reaching the *public
+mirror*; this rule bounds *personal data* in the *egress zone to the hub*. They are
+different boundaries — a reasoning-lessons file is private to the public mirror yet is
+still egress to Central — so both apply independently to the same file.
+
+**Spoke inheritance.** Spoke CLAUDE.md templates and project PII-handling references
+point here, so every spoke with an egress zone inherits the rule rather than
+re-deriving it locally.
+
+**Origin:** take-ai-bite issue #118, from a spoke whose close-out leak-scan reproduced
+the matched tokens into an append-only transcript block — the control became the vector.
+The STAA-specific application of this rule lives in the `/dsm-staa` command file (its
+read-PII-then-write-lessons shape), added under BL-572. Implemented under BL-571.
