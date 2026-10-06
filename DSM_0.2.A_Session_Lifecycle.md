@@ -871,6 +871,18 @@ outputs a STAA recommendation after each auto extraction.
 - **Pruning cadence:** Every 5 sessions, review the file
 - **File size target:** ~100 entry lines (excluding headers and comments); if
   exceeded, trigger a prune pass regardless of cadence, maximum 200 lines hard cap
+- **Per-entry size ceiling:** soft target of ~600 characters of body text per
+  entry. This keeps the two stock targets mutually reachable: 61,440 B (the §8.1
+  byte bound) divided by 100 entries (the file size target above) is ~614 B per
+  entry, so an average entry longer than ~600 characters makes the count target and
+  the byte bound impossible to satisfy together. That is the state BACKLOG-495
+  measured: an 866 B average, with most entries already over the ceiling. The
+  ceiling is soft:
+  an entry that earns the length may exceed it, but the default when an entry runs
+  over is to compress it, or split it into two cross-referenced entries, and never
+  to silently drop the surplus. Both append paths are governed: `/dsm-wrap-up`
+  Step 0 and `/dsm-staa` Steps 6-7. The ceiling bounds the per-entry flow; the
+  entry-count target and the pruning cadence bound the accumulated stock.
 - **Prune actions:**
   1. **Promote to memory:** entries reinforced across 3+ sessions graduate to
      MEMORY.md (as Key Patterns or Common Pitfalls) or CLAUDE.md (as protocol
@@ -1177,6 +1189,18 @@ Example: `- [auto] S12 [ecosystem]: When placing DSM infrastructure, confirm pro
 - Deduplication: if a lesson already exists in DSM Central's aggregation file
   or in a DSM_0.2 protocol, acknowledge in the push notification but do not
   re-add
+- **Local-file retention at DSM Central (BACKLOG-495 flow control):** at DSM
+  Central, an `ecosystem`-scope lesson extracted by `/dsm-wrap-up` Step 0 is written
+  to the aggregation file `dsm-docs/reasoning-lessons-ecosystem.md` and withheld from
+  the local boot-primed `.claude/reasoning-lessons.md`. The aggregation file already
+  carries it for redistribution, and the local file is the size-bounded boot primer
+  (§8.1), so retaining ecosystem lessons in both re-accumulates the local file with
+  content it does not need to prime a session. The one exception is an `ecosystem`
+  lesson that `/dsm-staa` derives from its own analysis: STAA may retain it locally
+  when it is high-value for boot priming, because those are few and are the ones most
+  worth keeping visible. `pattern` and `project` lessons are retained locally as
+  before. This rule is the flow control on the local file's growth; spokes are
+  unaffected, since a spoke's local file is its only lessons file.
 
 **When to classify:**
 - `[auto]` extraction at wrap-up: the agent assigns a scope based on

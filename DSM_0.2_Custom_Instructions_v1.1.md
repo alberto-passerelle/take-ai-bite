@@ -1266,8 +1266,9 @@ is a fact about the repository requiring no interpretation, in the same spirit a
 BL-489 replacing prose-signal detection with `git log main..branch`.
 
 **Git already implements this guard and `gh` bypasses it.** Measured 2026-08-20:
-`git branch -d` on a branch holding a commit not in its base **refuses**, exit 1,
-with "The branch is not fully merged"; `git branch -D` force-deletes. Because
+`git branch -d` on a branch holding a commit not in its upstream branch (or `HEAD`
+if no upstream was set) **refuses**, exit 1, with "The branch is not fully merged";
+`git branch -D` force-deletes. Because
 `gh pr merge --delete-branch` does delete such branches, it uses force semantics.
 So the check must sit **before** the `gh` call and can never rely on the tool
 declining , the tool will not decline.

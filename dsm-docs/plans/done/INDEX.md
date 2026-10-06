@@ -416,6 +416,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-489 | The closed-session-leftover remedy strands the leftover branch's commits | v1.20.0 | 2026-08-05 | — (needs review) |
 | BACKLOG-491 | Both stated byte caps on the reasoning-lessons compact mirror are unenforceable | v1.22.0 | 2026-08-20 | DSM_0.2.A §8.1 Size bound + /dsm-go Step 1.5 |
 | BACKLOG-493 | /dsm-go Step 5.8's incomplete-wrap-up detection fires on every fresh session | v1.21.0 | 2026-08-05 | /dsm-go Step 5.8 |
+| BACKLOG-495 | Reasoning-lessons intake outpaces pruning, so no size target holds without a rate control | v1.26.5 | 2026-10-01 | DSM_0.2.A §8 Maintenance (per-entry size ceiling) + §8.2 (R2 ecosystem-split retention) |
 | BACKLOG-498 | The done/INDEX.md currency audit is Central-only but lives inside a skill Central almost never runs | — | 2026-09-12 | /dsm-align Step 11b both-tree audit + BL-547 reachability |
 | BACKLOG-501 | Research-file status labels may not exceed their verification pass | v1.21.0 | 2026-08-12 | DSM_0.2 §10.1 |
 | BACKLOG-502 | The roadmap covers 26% of the backlog it claims to map, and work selection is routed through it | v1.21.0 | 2026-08-12 | plan/roadmap.md curation criterion |
@@ -446,6 +447,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-534 | `/dsm-go` and `/dsm-light-go` count nine scaffold folders where the specification and the scaffolder both say eight, so a correct project can never report a complete count | v1.26.0 | 2026-08-25 | /dsm-go Step 0.5 + /dsm-light-go Scaffold Pre-Check (folder census, DSM_0.1 §10 named as authority) |
 | BACKLOG-535 | /dsm-wrap-up Step 11's mirror-sync PR filter is an exact branch match, so the safety net never fires | v1.25.0 | 2026-08-25 | /dsm-wrap-up Step 11 (client-side prefix filter + session-created positive guard) |
 | BACKLOG-543 | A wording pattern in the always-loaded Session Transcript reinforcement block correlates with a model-side session-start refusal on newer models | v1.26.0 | 2026-09-03 | DSM_0.2 §17.1 alignment template + `.claude/CLAUDE.md` reinforcement block (rewording); localized by manual ablation |
+| BACKLOG-544 | Generational memory tiering: decommission + archive skills to keep auto-loaded MEMORY.md bounded | v1.26.5 | 2026-10-01 | `/dsm-memory-decommission` + `/dsm-memory-archive` skills + `/dsm-wrap-up` Step 2.4 / `/dsm-quick-wrap-up` Step 1.4 triggers (sessions-zone 4 KB, long-term 10 KB) |
 | BACKLOG-545 | Reframe the Session Transcript Protocol delimiter from "thinking" to a plan entry ecosystem-wide | v1.26.0 | 2026-09-04 | DSM_0.2 §6 delimiter label (`Start Plan`), §7, DSM_0.2.G, the §17.1 template, and `transcript-reminder.sh` |
 | BACKLOG-546 | The document-metrics script writes to the folder renamed away in S138, creates it on the way, and reports success either way | v1.26.3 | 2026-09-04 | `scripts/document_structure_metrics.py` (REFERENCE_FILE path + assert-never-create) |
 | BACKLOG-547 | The Central align exception is a procedure that exists only inside the markers it writes, and the template it reads has moved | — | 2026-09-12 | `/dsm-go` Step 1.8 (no-Central-exception + measured cost) and `/dsm-align` Step 1 Hub fast-path + Step 13 marker `note:` rule |
@@ -458,6 +460,11 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-559 | Retroactively reword redistributed reasoning-lesson and feedback entries to remove project/client identity, count-preserving | — | 2026-09-24 | superseded: moot under the B-mirror boundary (2026-09-24 envelope/payload operational design) |
 | BACKLOG-560 | De-identify the public TAB provenance corpus — reword every specific project name to a project-agnostic form | v1.26.4 | 2026-09-30 | DSM_0.2.C §5.7 Public Mirror Project-Name Exclusion (public corpus de-identified; scanner BL-561/564 enforces; §21.4 sweep clean) |
 | BACKLOG-561 | Extend the mirror-sync content scanner to block client and project names, not only operator identity | — | 2026-09-24 | scripts/check-mirror-sync-content.sh (two-tier project-name detection; primary confidentiality gate under BL-558 B-mirror boundary) |
+| BACKLOG-564 | Extend the mirror-sync scanner to catch project-name variants and reclassify dual-use slugs | — | 2026-09-30 | scripts/check-mirror-sync-content.sh (boundary-robust Tier-1b + dual-use Tier-2 + discovered names; sibling to BL-561) |
+| BACKLOG-565 | Correct the git branch -d merge-criterion wording (§20.4) and fix the dsm-go stale-cleanup silent-skip of main-merged branches | v1.26.8 | 2026-10-05 | DSM_0.2 §20.4 (upstream/HEAD wording) + /dsm-go Step 0d item 3 (surface-on-rejection) |
+| BACKLOG-566 | Fix the wrap-up mirror self-detection inbox guard that classifies every spoke as a mirror | v1.26.8 | 2026-10-05 | /dsm-wrap-up Step 9 + /dsm-quick-wrap-up Step 7 (role-signal predicate, DSM_0.2.A §25.1) |
+| BACKLOG-568 | The MEMORY.md evergreen zone is the larger half of the always-loaded boot cost | v1.26.6 | 2026-10-02 | /dsm-wrap-up Step 2.4a (evergreen review flag) |
+| BACKLOG-569 | Assert FEATURES Current count equals actual F-entry count at wrap-up/release | v1.26.7 | 2026-10-05 | /dsm-go Step 2f (count-equality boot assertion, sibling to Step 2e; placed at boot not wrap-up) |
 
 ---
 
