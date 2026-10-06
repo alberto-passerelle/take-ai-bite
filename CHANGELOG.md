@@ -5,6 +5,33 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.0] - 2026-10-06
+
+Minor: adds a core egress-safety rule and a `/dsm-staa` PII safeguard (both from sensitive-data spoke experience), plus a cluster of Cloned-Mirror Kick-off / fork-init improvements. Resolves take-ai-bite issues #118, #119, and #113; #117 (new-spoke bootstrap) has a recorded design pass and is deferred to its own release.
+
+### Added
+
+- **Egress Leak-Scan Generic Reporting Rule (BACKLOG-571, DSM_0.2.C §5.8 + a §7 pointer).** A scan of an egress artifact (the session transcript, `MEMORY.md`, the reasoning-lessons files) for sensitive data must report generically ("scan clean", or "N matches at lines X–Y") and never echo a matched value, or a scan/grep pattern containing it, into those append-only files; a pre-existing leak is flagged by line number for the scrub, never reproduced. An always-loaded §7 DO-NOT pointer keeps it visible at the transcript. Resolves #118.
+  **Spoke action:** none required — the rule is inherited through the `@` reference; sensitive-data spokes should point their PII-handling references at §5.8.
+- **`/dsm-staa` PII/egress safeguard (BACKLOG-572, `/dsm-staa`, core §7).** The analysis command gains an IMPORTANT block requiring name-free (role-not-name) excerpts and lessons, a statement of the reasoning-lessons propagation chain (wrap-up push + boot read), and a scrub-before-analyse recommendation for projects with a PII/egress policy; core §7's STAA-exception clause now points to it. Resolves #119.
+  **Spoke action:** the updated `/dsm-staa` arrives with the next mirror sync and deploys via `sync-commands.sh --deploy`.
+- **Fork-init readiness checklist at Cloned-Mirror Kick-off (BACKLOG-577, DSM_0.2.A §25.2 step 15 + `/dsm-go` Step 0.8d).** Kick-off now ends by listing the environment tools the boot gates depend on (`git`, `gh`) with present/absent status, report-only. Part of #113.
+  **Spoke action:** the updated `/dsm-go` deploys via `sync-commands.sh --deploy`.
+
+### Changed
+
+- **Cloned-Mirror Kick-off `.git/info/exclude` handling (BACKLOG-573, DSM_0.2.A §25.2 step 12 + §25.5, `/dsm-go` Step 0.8c).** When the `.claude/` blanket ignore rule is absent on a fresh fork and generated files show as untracked, Kick-off now PRINTS the exact line for the user to add themselves — it still never edits `.git/info/exclude`, so §25.3's anti-requirement holds (printing is not editing). Part of #113.
+  **Spoke action:** the updated `/dsm-go` deploys via `sync-commands.sh --deploy`.
+- **`sync-commands.sh --check` orphan wording is mirror-aware (BACKLOG-575).** On a mirror or fresh clone the tracked `.claude/commands/dsm-*.md` copies are load-bearing, so the check no longer labels them "ORPHANED … Delete"; the Central (hub) wording and the exit behavior are unchanged. Part of #113.
+  **Spoke action:** none — `sync-commands.sh` arrives with the next mirror sync.
+
+### Fixed
+
+- **Non-executable cross-repo-write guard on the mirror (BACKLOG-574).** The mirror's `.claude/hooks/validate-cross-repo-write.sh` shipped as mode 644 while its siblings were 755, leaving the cross-repo-write guard dead on a fresh fork until the first chmod; the committed mode is corrected to 755 at the mirror. Part of #113.
+  **Spoke action:** none — the corrected mode arrives with the mirror sync.
+
+Also: BACKLOG-576 (#113 template placeholders) was found already resolved in the corpus (DSM_0.2.A §25.2 step 5) and needs no change; BACKLOG-578 (#117 new-spoke bootstrap) carries a design pass and is held for its own release.
+
 ## [1.26.8] - 2026-10-05
 
 Patch: two correctness fixes to session-lifecycle commands — the `/dsm-go` stale-branch cleanup now surfaces (instead of silently skipping) a main-merged branch whose upstream lags, and the wrap-up mirror self-detection guard no longer misclassifies every spoke as a mirror and drops its inbox.

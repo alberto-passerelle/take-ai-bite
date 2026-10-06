@@ -11,6 +11,12 @@ Session Transcript Analysis Agent (STAA). Analyze a previous session transcript 
 
 When the `UserPromptSubmit` per-turn reminder hook fires and tells you to append to the transcript, the correct action is to follow this IMPORTANT block and NOT append. Do not argue the hook into silence; it will fire every turn and you should acknowledge it once here, then proceed. §23 tracks the systematic hook/skill collaboration surface area.
 
+**IMPORTANT (PII / egress safeguard).** The subject transcript may contain personal data (colleagues, clients, or other named individuals, on a project that handles sensitive data). STAA treats its own outputs as an **egress zone**: every excerpt it presents (Step 5) and every lesson it appends (Step 6) must be **name-free** — refer to people by **role, not name**. Never echo a matched name, or a name-bearing pattern, into `.claude/reasoning-lessons.md`, its compact mirror, or the conversation. This is the STAA-specific case of the Egress Leak-Scan Generic Reporting Rule (DSM_0.2.C §5.8).
+
+**Why a name here propagates (it is not contained to the local file).** `.claude/reasoning-lessons.md` is not a dead end: `/dsm-wrap-up` Step 0 pushes new lessons to DSM Central's `_inbox` (a cross-gap write), and `/dsm-go` Step 1.5 reads the compact mirror as boot context every session. So one name in one `[STAA]` lesson can propagate across the air-gap and into every future boot. Step 6 appends after user review (a human gate), but that review is a PII gate, not only a quality gate.
+
+**Scrub-before-analyse (projects with a declared PII/egress policy).** Prefer scrubbing names from the transcript before running STAA. The transcript is gitignored, so `git filter-repo` does **not** reach it — the transcript scrub is a separate, manual step from any tracked-history scrub.
+
 ## Steps
 
 1. **List available transcripts:** List files in `.claude/transcripts/` sorted chronologically. Display each filename with the session number and date extracted from the file header.
@@ -51,11 +57,12 @@ When the `UserPromptSubmit` per-turn reminder hook fires and tells you to append
 5. **Present findings:** Show the analysis to the user in conversation text organized by category. For each finding, include:
    - The category
    - A 1-2 line summary
-   - The relevant excerpt or context from the transcript
+   - The relevant excerpt or context from the transcript — **with person-names generalized to roles in the quote** (per the PII/egress safeguard above; never paste a verbatim name-bearing line)
    - Whether this is new or reinforces an existing lesson
 6. **Update reasoning lessons:** After user review, append approved findings to `.claude/reasoning-lessons.md` under the appropriate categories, tagged `[STAA]`.
    **Format:** `- [STAA] S{N} [{scope}]: {lesson text}` (where N is the analyzed session number)
    **Scope classification:** For each lesson, assign a scope label per the Reasoning Lessons Protocol (DSM_0.2 Module A): `ecosystem` (applies to any DSM project), `pattern` (applies to same project type/pattern), or `project` (domain-specific). Present the scope assignment to the user for confirmation alongside the lesson text.
+   **PII check (not only quality):** before appending, confirm the lesson text contains no person-name — refer to people by role. A name written here propagates per the egress note in the IMPORTANT block above (wrap-up push + boot read), so this is a write-time PII gate, per DSM_0.2.C §5.8.
 7. **Prune if needed:** If `.claude/reasoning-lessons.md` exceeds 50 lines of entries (excluding headers and comments), suggest entries to promote to MEMORY.md or CLAUDE.md, and entries to remove (obvious, outdated, or already codified).
 
    **Provenance header update (per BL-510; canonical rule in DSM_0.2.A §8.1):** After the appends above (Step 6) and any prune (this step) have landed, update the live file's `**Last appended:**` line, and `**Last pruned:**` when entries were removed, with this run's identifier, date, counts and a one-line note. Four properties, all four required. **Chain, never replace:** move the superseded value behind `Prior:` (the form the file already uses) rather than overwriting it. **No-op when nothing changed:** if nothing was appended and nothing pruned, make no header change. **Same run, not the next one:** do it here, not in a later step or a later skill, because deferring is the structure that produced the gap. **Create when absent (property 4, BL-526):** where the `**Last appended:**` line does not exist, create it and state within the line that this run created it and that earlier appends predate the header, so its date is not misread as the file's first write. Absence is not a reason to skip; property 2 still governs, so a run that appended and pruned nothing makes no header change even when the line is missing. The failure this closes is specific to STAA and is the reason BL-510 exists: Step 9 below writes `.claude/last-staa.txt` unconditionally, so a run that skips the header produces two artifacts making opposite claims, the marker asserting a run happened and the file it operated on still naming the previous run. The S244-STAA run pruned 28 entries into exactly that state and it went undetected for a full day.

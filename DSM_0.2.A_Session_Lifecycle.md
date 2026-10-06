@@ -2720,15 +2720,28 @@ a previous partial Kick-off should be skipped without error.
     Re-chmod every Kick-off because copy operations (including Edit/Write
     tools) can strip the executable bit.
 12. **Inspect `.git/info/exclude` for the blanket rule.** Claude Code
-    auto-adds `.claude/` as a blanket ignore rule on fresh clones. Kick-off
-    does NOT remove this line. Instead, the shipped `.gitignore` provides
-    the fine-grained rules for `.claude/*` and the files that matter for
-    cross-clone propagation (hooks, templates) are already tracked in the
-    repo, so they remain tracked regardless of the exclude rule. Kick-off
-    reports this as informational: "Claude Code's `.git/info/exclude`
-    retains `.claude/` blanket rule. Tracked files stay tracked; new
-    session-scoped `.claude/*` files (transcripts, baselines) remain hidden
-    from `git status` by this rule, which is the intended behavior."
+    usually adds `.claude/` as a blanket ignore rule when it recognizes a
+    repo, but that rule is per-clone local state and is never cloned, so a
+    fresh fork may start WITHOUT it. Kick-off never edits `.git/info/exclude`
+    (§25.3, §25.5); it reports, and branches on what it finds:
+    - **Rule present (or `.claude/` already covered by `.gitignore`):** report
+      informational: "Claude Code's `.git/info/exclude` retains the `.claude/`
+      blanket rule. Tracked files stay tracked; new session-scoped `.claude/*`
+      files (transcripts, baselines) remain hidden from `git status`, which is
+      the intended behavior."
+    - **Rule absent AND generated runtime files (`.claude/CLAUDE.md`,
+      `skills-registry.md`, `kickoff-done.txt`, `memory/`, …) show as
+      untracked in `git status`:** report that this fresh fork lacks the
+      blanket rule, and PRINT the exact line the user can add themselves —
+      Kick-off does not run it:
+      ```
+      echo '.claude/' >> .git/info/exclude
+      ```
+      State that adding it is optional (the shipped `.gitignore` already keeps
+      session state out of history; the blanket rule only quiets `git status`),
+      and that Kick-off does not add it automatically because the file is
+      local, un-synced per-clone state the user alone should own (§25.5).
+      Printing a line the user runs is not an edit, so §25.3 holds.
 13. **Scaffold `_inbox/` and `dsm-docs/` folders.** Delegate to `/dsm-align`
     Step 3 (Canonical dsm-docs folder check). Either invoke `/dsm-align`
     now or defer to `/dsm-go` Step 1.8 which will run `/dsm-align`
@@ -2742,7 +2755,18 @@ a previous partial Kick-off should be skipped without error.
     ```
     This marker prevents re-running Kick-off on subsequent sessions. Users
     can delete the marker to re-run Kick-off intentionally.
-15. **Report completion.** Tell the user:
+15. **Report completion, with a fork-init readiness checklist.** First emit a
+    short readiness checklist of the environment tools the boot gates depend
+    on, each with its present/absent status, derived from the gates that
+    consume them (report-only, never a hard gate):
+    - `git` — required; present (Kick-off ran).
+    - `gh` — recommended; enables `/dsm-go` gates 2a.6 (default-branch
+      verification) and 2a.7 (open-PR CI). If absent, those gates skip with a
+      one-line note; install `gh` to enable them.
+    Extend the list only with tools a boot gate actually consumes, so the
+    checklist cannot drift from the gates; for general toolchain setup, point
+    to the Environment Preflight Protocol (Module D) rather than duplicating it.
+    Then tell the user:
     "Cloned-Mirror Kick-off complete. This clone is now self-registered as
     `dsm-central` in `.claude/dsm-ecosystem.md`, pointing to `{REPO_ROOT}`.
     `/dsm-align` will now populate the CLAUDE.md alignment section from the
@@ -2801,9 +2825,10 @@ owns its methodology going forward.
 
 ### 25.5. Handling Claude Code's `.git/info/exclude`
 
-Claude Code automatically adds `.claude/` as a blanket ignore rule to
+Claude Code usually adds `.claude/` as a blanket ignore rule to
 `.git/info/exclude` when it recognizes a repo. This rule is **per-clone
-local state** (not in git, not synced, not shared).
+local state** (not in git, not synced, not shared) — so a fresh fork may
+start without it, since the rule was never cloned.
 
 The interaction with shipped `.claude/*` content:
 
@@ -2817,9 +2842,20 @@ The interaction with shipped `.claude/*` content:
    session-scoped files. Both the blanket rule and the line-specific rules
    keep session state out of git; they are complementary, not conflicting.
 
-**Kick-off does not edit `.git/info/exclude`.** The default behavior is
-correct: session state is protected, shared infrastructure is tracked, no
-action needed.
+**Kick-off does not edit `.git/info/exclude`.** It reports, and where the
+blanket rule is present the default behavior is correct: session state is
+protected, shared infrastructure is tracked, no action needed.
+
+**Fresh-fork case (rule absent).** Because the rule is per-clone local state
+and is never cloned, a fresh fork may start without it. The shipped
+`.gitignore`'s line-specific rules still keep session state out of history,
+but the generated runtime files (`.claude/CLAUDE.md`, `skills-registry.md`,
+`kickoff-done.txt`, `memory/`) can then show as untracked noise in
+`git status`. Kick-off step 12 detects this and PRINTS the exact line
+(`echo '.claude/' >> .git/info/exclude`) for the user to add if they want a
+quieter status; it still does not add the line itself. Printing a line the
+user chooses to run is not an edit, so §25.3's "no `.git/info/exclude` edits"
+anti-requirement holds — the file stays something the user alone owns.
 
 ### 25.6. Relation to `/dsm-align` and `/dsm-go`
 
