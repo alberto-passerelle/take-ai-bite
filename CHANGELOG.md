@@ -5,6 +5,59 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.8] - 2026-10-05
+
+Patch: two correctness fixes to session-lifecycle commands — the `/dsm-go` stale-branch cleanup now surfaces (instead of silently skipping) a main-merged branch whose upstream lags, and the wrap-up mirror self-detection guard no longer misclassifies every spoke as a mirror and drops its inbox.
+
+### Fixed
+
+- **`git branch -d` merge-criterion wording and the `/dsm-go` stale-cleanup silent-skip (BACKLOG-565, DSM_0.2 §20.4, `/dsm-go` Step 0d).** DSM_0.2 §20.4 described `git branch -d`'s guard as refusing "a commit not in its base"; the criterion `-d` actually tests is the branch's upstream (or `HEAD` if none), now corrected. Operationally, the stale-branch cleanup selected branches already merged to main and ran `git branch -d`, but a `-d` refusal was skipped silently — and because `-d` tests the upstream, a branch genuinely merged to main whose upstream ref lags refuses and was swallowed, so it was never cleaned. The cleanup now surfaces such a branch as a leftover rather than skipping it; `-D` is never introduced.
+  **Spoke action:** The updated `/dsm-go` arrives with the next mirror sync and deploys via `sync-commands.sh --deploy`.
+- **Wrap-up mirror self-detection guard classified every spoke as a mirror (BACKLOG-566, `/dsm-wrap-up` Step 9, `/dsm-quick-wrap-up` Step 7).** Both guards excluded a repo's `_inbox/*` from the wrap-up commit whenever `scripts/take-ai-bite-sync.txt` was absent, reading that absence as "this repo is a mirror." Every spoke also lacks that file, so every spoke was placed in the mirror branch and its tracked `_inbox` renames were dropped from the commit while logged as deliberate skips (a wrong result that looked exactly like a right one). Replaced with a role-signal predicate (DSM_0.2.A §25.1): a repo is the read-only public mirror only when it has no sync file AND no `dsm-central` row; Central, a git clone of Central, a spoke, and a self-registered clone all stage their own `_inbox` normally. The identical block lands in both skills.
+  **Spoke action:** The updated wrap-up skills arrive with the next mirror sync and deploy via `sync-commands.sh --deploy`; a spoke that tracks and processes its `_inbox` now stages it correctly at wrap-up.
+
+## [1.26.7] - 2026-10-05
+
+Patch: a boot-time assertion that the FEATURES/README feature count matches the actual number of entries, so the count cannot silently drift onto main or the public mirror.
+
+### Added
+
+- **FEATURES/README count-equality assertion — `/dsm-go` Step 2f (BACKLOG-569).** Session start now recomputes the actual F-entry count and compares it against the `FEATURES.md` `**Current count:**` header and the README's "N features" line, reporting a mismatch that names all three numbers (header claim, README claim, measured count) and staying silent/OK when they agree. It is the count-side sibling of the Step 2e notification reconciliation: the notification half of FEATURES maintenance had a guard, the count half had none, so a release that added entries without bumping the header (the S268 → S269 drift this closes) sat wrong on main and the public mirror until a later session happened to measure. Report-not-block, every session; placement at the boot was chosen over wrap-up because an autonomous wrap-up would log a mismatch and still proceed to ship it. The recompute-and-correct is surfaced like any other boot finding.
+  **Spoke action:** The updated `/dsm-go` arrives with the next mirror sync and deploys via `sync-commands.sh --deploy`. Once present it reports the count check at every boot and, if your `FEATURES.md`/README feature counts have drifted, flags them with both the claimed and the measured number.
+
+## [1.26.6] - 2026-10-02
+
+Patch: a review flag for the always-loaded memory file's permanent (evergreen) zone, plus a correction to a feature count that had drifted.
+
+### Added
+
+- **Evergreen-zone review flag — `/dsm-wrap-up` Step 2.4a (BACKLOG-568).** Wrap-up now measures the MEMORY.md evergreen zone (the bytes above the sessions-zone marker, the complement of the BACKLOG-544 tiering check) and raises a non-blocking flag when it exceeds a soft ~6 KB target. After the tiering machinery drains the sessions zone, the evergreen zone becomes the dominant and only-growing half of the always-loaded cost, and nothing watched it. The flag recommends a judgement-executed review — trim resolved lines, or promote durable-but-not-boot-critical lines to CLAUDE.md, a guide, or `MEMORY-long-term.md` and then remove them (promote before remove, never a silent drop) — but performs no automatic move, because the evergreen zone has no timestamp groups to age and is high-value always-loaded context.
+  **Spoke action:** The updated wrap-up skill arrives with the next mirror sync and deploys via `sync-commands.sh --deploy`. Once present it reports the evergreen size at every wrap-up and flags when your `MEMORY.md` evergreen zone exceeds ~6 KB; the trim/promote is yours to perform by judgement.
+
+### Fixed
+
+- **FEATURES.md and README feature count had drifted (surfaced at the S269 boot; BACKLOG-569 is the prevent).** The v1.26.5 release added two F-entries (F-177, F-178) without bumping the FEATURES "Current count" header or the README's mirrored count, so both read 177 against 179 actual entries. The counts are corrected, and with F-179 added this release they now read 180.
+
+### Spawned
+
+- **BACKLOG-569** (Medium): assert the FEATURES "Current count" equals the actual F-entry count at wrap-up/release so the count cannot silently drift again — the prevent half of the §22 response to the stale count this release fixes.
+
+## [1.26.5] - 2026-10-01
+
+Patch: two flow controls on the always-loaded boot context — a per-entry size ceiling plus a codified split for the reasoning-lessons file, and generational memory-tiering skills that keep MEMORY.md lean across sessions.
+
+### Added
+
+- **Generational memory tiering — `/dsm-memory-decommission` and `/dsm-memory-archive` skills (BACKLOG-544).** Two move-only skills age session-tagged content down a three-tier chain: `MEMORY.md` (always loaded) → `MEMORY-long-term.md` (on demand) → `MEMORY-archived.md` (deepest). They auto-run at wrap-up when a tier is over threshold and move the oldest session group whole, never touching the evergreen zone, with a backup and before/after validation. The decommission trigger is on the sessions-zone size (~4 KB), not total `MEMORY.md`, because the evergreen zone alone can exceed a small total target.
+  **Spoke action:** The two commands arrive with the next mirror sync and deploy via `sync-commands.sh --deploy`. Once present they auto-run at your wrap-up when your `MEMORY.md` sessions zone exceeds ~4 KB; no manual step is required.
+- **Soft per-entry size ceiling on reasoning lessons (BACKLOG-495), DSM_0.2.A §8 Maintenance.** Each lesson entry targets ~600 characters of body text — the figure that keeps the 100-entry count target and the 61,440 B byte bound mutually reachable. The ceiling is soft: an over-length entry is compressed or split into two cross-referenced entries, never silently dropped.
+  **Spoke action:** The ceiling applies to your own local reasoning-lessons file; it arrives with the next mirror sync. Existing entries are not retrofitted — it governs new entries at `/dsm-wrap-up` and `/dsm-staa`.
+
+### Changed
+
+- **The ecosystem-split flow control is codified (BACKLOG-495), DSM_0.2.A §8.2.** At DSM Central, an `ecosystem`-scope lesson from `/dsm-wrap-up` is written to the aggregation file and withheld from the local boot-primed file (which the aggregation file already carries for redistribution); a `/dsm-staa`-measured ecosystem lesson may stay local when it is high-value for boot priming. This was existing practice; it is now a stated rule rather than an emergent one.
+  **Spoke action:** None. This rule governs Central's own split; a spoke's local lessons file is its only one.
+
 ## [1.26.4] - 2026-09-30
 
 Patch: the public mirror's provenance corpus is de-identified — no specific project, client, or spoke name reaches it — and the standing rule that keeps it that way is codified as methodology.
