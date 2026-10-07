@@ -5,6 +5,17 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.1] - 2026-10-08
+
+Patch: two methodology corrections — a portability fix to the canonical compact-mirror date transform, and a Cloned-Mirror Kick-off step-count drift fix. Both trivial, no behavior change beyond the corrected output.
+
+### Fixed
+
+- **Compact-mirror date transform used GNU-only `%:z` (BACKLOG-579, DSM_0.2.A §8.1).** The canonical regeneration transform (BL-447 single source of truth) formatted timestamps with `date +...%:z`, a GNU extension; on macOS/BSD `date` it emits a literal `:z` and drops the offset, writing a malformed timezone into the compact mirror's `**Last regenerated:**` / `**Source mtime at regeneration:**` headers. Replaced with the portable `%z` at both occurrences (offset format `+02:00` → `+0200`, both valid ISO-8601; the Step 1.5 staleness check compares at minute recency and is unaffected). Fixing the single canonical block fixes all three consuming skills (`/dsm-wrap-up` Step 0, `/dsm-quick-wrap-up` Step 0, `/dsm-staa` Step 8). Reported upstream as take-ai-bite issue #121 by an external contributor; fix verified on macOS Darwin 25.5.0.
+  **Spoke action:** none required — the corrected transform arrives with the next mirror sync; macOS/BSD spokes stop writing the malformed offset once re-synced.
+- **Cloned-Mirror Kick-off step-count drift: "14-step" → "15-step" (no BL, trivial).** §25.2 is canonically 15 numbered steps (step 14 = write marker, step 15 = report completion + readiness checklist); three stale references said "14-step": `DSM_0.2.A:2571`, `DSM_7.0:209`, and `scripts/commands/dsm-go.md:273`. Corrected with a `grep -rn '14-step'` sweep confirming no further sibling. The correct sites (`DSM_0.2.A:2640` "15-step", `:2648` "§25.2 step 14") were left untouched. Dropped §22 Prevent step recorded in S272's STAA notes, now actioned.
+  **Spoke action:** the corrected `/dsm-go` deploys via `sync-commands.sh --deploy`; documentation-only otherwise.
+
 ## [1.27.0] - 2026-10-06
 
 Minor: adds a core egress-safety rule and a `/dsm-staa` PII safeguard (both from sensitive-data spoke experience), plus a cluster of Cloned-Mirror Kick-off / fork-init improvements. Resolves take-ai-bite issues #118, #119, and #113; #117 (new-spoke bootstrap) has a recorded design pass and is deferred to its own release.

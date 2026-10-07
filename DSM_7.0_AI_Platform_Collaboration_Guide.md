@@ -206,7 +206,7 @@ write to their own per-PID files). Commit booking via
 mirror repos arrive with `.claude/*.template` files instead of live
 runtime files. `/dsm-go` Step 0.8 detects the un-kicked-off state
 (no `.claude/kickoff-done.txt`, no self-as-central registry row) and
-runs the 14-step Kick-off sequence: copy templates to runtime paths,
+runs the 15-step Kick-off sequence: copy templates to runtime paths,
 substitute `{REPO_ROOT}` / `{project_name}` / `{ISO_DATE}`,
 self-register the clone as `dsm-central`, deploy commands, chmod
 hooks, write the done marker (DSM_0.2.A §25). This is the mechanism
