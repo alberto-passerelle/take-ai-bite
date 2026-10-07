@@ -6,11 +6,15 @@ Methodology (DSM), the human-AI collaboration framework behind
 feature is numbered for easy reference (F-000 is the first, newest entries
 appear at the top).
 
-**Current count:** 183 features.
+**Current count:** 186 features.
 
 ---
 
 ## October 2026
+
+- **F-185 (2026-10-06) Setting up a fresh public-mirror fork is smoother and less misleading (BACKLOG-573/574/575/577, Cloned-Mirror Kick-off)** — Initializing a fresh fork surfaced several rough edges, now addressed together. Kick-off prints the exact one-line ignore rule a fresh fork needs (without editing the local git exclude file itself) when generated files would otherwise clutter `git status`; the drift check no longer labels a mirror's load-bearing command copies as orphaned-and-deletable; Kick-off ends with a readiness checklist of the environment tools the boot gates depend on; and a cross-repo-write guard that had shipped non-executable on the mirror is corrected so it actually runs.
+- **F-184 (2026-10-06) The session-analysis agent no longer carries personal names into durable, propagating lessons (BACKLOG-572, `/dsm-staa`)** — The analysis command reads a whole session transcript, which on a sensitive project can hold personal names, and appended its findings to a lessons file that propagates to the hub and into every future session's startup context. It now carries an explicit instruction to keep every quoted excerpt and every saved lesson name-free (role, not name), states that propagation chain so it is visible from inside the command, and recommends scrubbing names before analysis on projects that declare a privacy policy.
+- **F-183 (2026-10-06) Scanning for leaked personal data no longer risks leaking it (BACKLOG-571, DSM_0.2.C §5.8)** — When a project that handles sensitive data scans its transcript, memory, or reasoning-lessons for stray personal names before they can cross to the hub, the scan must now report only generically ("clean", or line numbers) and never echo a matched name, or a search pattern containing one, back into those same append-only files. A new core rule stops the control from becoming the leak itself, and an always-loaded pointer keeps the rule visible where the transcript is written.
 
 - **F-182 (2026-10-05) Wrap-up stops dropping a project's inbox by mistaking every project for the public mirror (BACKLOG-566, `/dsm-wrap-up`, `/dsm-quick-wrap-up`)** — Session wrap-up carried a guard meant to keep the read-only public mirror from committing its own inbox entries. It identified the mirror by the absence of a single file that lives only at the hub, but every ordinary project also lacks that file, so the guard treated every project as the mirror and quietly left each one's own inbox changes out of the wrap-up commit, logging the omission as if it were the intended protection. The guard now identifies the public mirror positively, by the absence of every role signal a real project carries, so the hub, a clone of it, and any spoke all commit their own inbox normally while the genuine mirror is still held back. The same corrected check now lives in both the full and the quick wrap-up.
 

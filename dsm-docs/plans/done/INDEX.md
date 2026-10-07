@@ -465,6 +465,12 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-566 | Fix the wrap-up mirror self-detection inbox guard that classifies every spoke as a mirror | v1.26.8 | 2026-10-05 | /dsm-wrap-up Step 9 + /dsm-quick-wrap-up Step 7 (role-signal predicate, DSM_0.2.A §25.1) |
 | BACKLOG-568 | The MEMORY.md evergreen zone is the larger half of the always-loaded boot cost | v1.26.6 | 2026-10-02 | /dsm-wrap-up Step 2.4a (evergreen review flag) |
 | BACKLOG-569 | Assert FEATURES Current count equals actual F-entry count at wrap-up/release | v1.26.7 | 2026-10-05 | /dsm-go Step 2f (count-equality boot assertion, sibling to Step 2e; placed at boot not wrap-up) |
+| BACKLOG-571 | Egress leak-scan must report generically, never echo matched PII | v1.27.0 | 2026-10-06 | DSM_0.2.C §5.8 (Egress Leak-Scan Generic Reporting Rule) + core §7 pointer |
+| BACKLOG-572 | Give /dsm-staa an explicit PII/egress safeguard | v1.27.0 | 2026-10-06 | /dsm-staa IMPORTANT PII block + Step 5/6 edits + core §7 exception-clause pointer |
+| BACKLOG-573 | Cloned-Mirror Kick-off should offer the .git/info/exclude blanket rule | v1.27.0 | 2026-10-06 | DSM_0.2.A §25.2 step 12 + §25.5 (detect + print the line, no auto-edit) + /dsm-go Step 0.8c |
+| BACKLOG-575 | Make sync-commands.sh --check orphan wording mirror-aware | v1.27.0 | 2026-10-06 | scripts/sync-commands.sh report_orphans() (IS_CENTRAL-aware header + non-central branch) |
+| BACKLOG-576 | Prune/prompt ecosystem-template placeholder rows for a standalone fork | v1.27.0 | 2026-10-06 | — already resolved in corpus (DSM_0.2.A §25.2 step 5); no change made |
+| BACKLOG-577 | Emit a fork-init readiness checklist at the end of Cloned-Mirror Kick-off | v1.27.0 | 2026-10-06 | DSM_0.2.A §25.2 step 15 + /dsm-go Step 0.8d |
 
 ---
 

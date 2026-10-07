@@ -244,6 +244,12 @@ read this paragraph first, then proceed without appending to the live
 transcript. Systematic resolution of the hook/skill collision is tracked
 under §23 (Skill/Hook Collaboration Protocol).
 
+STAA also carries a **PII/egress safeguard** in its command file: because it reads a
+possibly PII-bearing subject transcript and appends to the egress-zone reasoning-lessons
+files, every presented excerpt and every appended lesson must be name-free (role, not
+name), per the Egress Leak-Scan Generic Reporting Rule (DSM_0.2.C §5.8). See the
+IMPORTANT block in `scripts/commands/dsm-staa.md`.
+
 **Anti-Patterns:**
 
 **DO NOT:**
@@ -255,6 +261,7 @@ under §23 (Skill/Hook Collaboration Protocol).
 - Use Edit with `old_string` matching earlier content to insert entries mid-file; this causes out-of-order timestamps (observed in prior sessions). Use the mandatory append technique above
 - **Use Edit `replace_all: true` on `.claude/session-transcript.md`.** The append-anchor rule assumes a unique last-line anchor; `replace_all` duplicates the new content at every match and explodes the file (S17: 95 MB / 1.5M lines; S22: an Output block duplicated at every match). Recovery from a botched transcript Edit is a `[RETROACTIVE]` Bash-heredoc append, never a `replace_all` cleanup. The `validate-transcript-edit.sh` PreToolUse hook blocks this case (check 0/4)
 - Use reasoning delimiters in conversation text; VS Code collapses them after streaming
+- **Echo a matched sensitive-data value, or a grep/scan pattern containing one, into the transcript (or `MEMORY.md` or the reasoning-lessons files) when reporting a leak-scan.** The transcript is an egress artifact; report the scan generically ("scan clean", or "N matches at lines X–Y") per the Egress Leak-Scan Generic Reporting Rule (DSM_0.2.C §5.8). Append-only means an echoed value cannot be unwritten, so the prohibition is at write time, not a later scrub
 - **Use single-quoted heredoc (`<< 'EOF'`) when appending to the transcript via Bash** if the content contains shell expansions like `$(date +%H:%M)`. Single-quoted heredocs suppress expansion and write the literal string `$(date +%H:%M)` into the transcript instead of the timestamp. Observed in S69. Correct form: capture the timestamp into a variable first and use an unquoted heredoc:
   ```bash
   NOW=$(date +%H:%M)

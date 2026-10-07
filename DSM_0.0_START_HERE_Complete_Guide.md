@@ -1,8 +1,8 @@
 # Deliberate Systematic Methodology (DSM) - Start Here
 **A gentle introduction to working with AI on real projects**
 
-**Version:** 1.26.8
-**Last Updated:** 2026-10-05
+**Version:** 1.27.0
+**Last Updated:** 2026-10-06
 
 ---
 
