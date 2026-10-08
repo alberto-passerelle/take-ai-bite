@@ -457,6 +457,8 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-517 | Transcript delimiter timestamps are never checked against the wall clock | — | 2026-08-21 | validate-transcript-edit.sh check 4/4, DSM_0.2 §7 |
 | BACKLOG-536 | `/dsm-wrap-up` Step 6a's per-session feedback scan is suffix-specific, so topically-named feedback is never pushed | v1.26.2 | 2026-08-31 | /dsm-wrap-up Step 6a, /dsm-align Step 6a (scope widened in-flight), DSM_0.2.A §4 |
 | BACKLOG-537 | Central's six leftover project-level command copies are inert residue the deploy warning flags every run | v1.26.2 | 2026-08-31 | scripts/sync-commands.sh (delete + Central-only --check guard) |
+| BACKLOG-557 | The active backlog index has no currency audit, so a filed item can sit open and invisible indefinitely | v1.27.2 | 2026-10-08 | /dsm-align Step 11d (active-index currency audit, both directions; absorbs BL-498 active-README dead-link criterion) |
+| BACKLOG-558 | Design an envelope/payload split so redistributed lessons and feedback never carry client identity by default | — | 2026-09-24 | 2026-09-24 envelope/payload operational design (B-mirror boundary; Q1–Q5 resolved, no methodology edit / no impl BL needed; enforcement = BL-560/561); closed S274 |
 | BACKLOG-559 | Retroactively reword redistributed reasoning-lesson and feedback entries to remove project/client identity, count-preserving | — | 2026-09-24 | superseded: moot under the B-mirror boundary (2026-09-24 envelope/payload operational design) |
 | BACKLOG-560 | De-identify the public TAB provenance corpus — reword every specific project name to a project-agnostic form | v1.26.4 | 2026-09-30 | DSM_0.2.C §5.7 Public Mirror Project-Name Exclusion (public corpus de-identified; scanner BL-561/564 enforces; §21.4 sweep clean) |
 | BACKLOG-561 | Extend the mirror-sync content scanner to block client and project names, not only operator identity | — | 2026-09-24 | scripts/check-mirror-sync-content.sh (two-tier project-name detection; primary confidentiality gate under BL-558 B-mirror boundary) |
@@ -468,9 +470,12 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-571 | Egress leak-scan must report generically, never echo matched PII | v1.27.0 | 2026-10-06 | DSM_0.2.C §5.8 (Egress Leak-Scan Generic Reporting Rule) + core §7 pointer |
 | BACKLOG-572 | Give /dsm-staa an explicit PII/egress safeguard | v1.27.0 | 2026-10-06 | /dsm-staa IMPORTANT PII block + Step 5/6 edits + core §7 exception-clause pointer |
 | BACKLOG-573 | Cloned-Mirror Kick-off should offer the .git/info/exclude blanket rule | v1.27.0 | 2026-10-06 | DSM_0.2.A §25.2 step 12 + §25.5 (detect + print the line, no auto-edit) + /dsm-go Step 0.8c |
+| BACKLOG-574 | Correct the tracked mode of validate-cross-repo-write.sh to 755 | v1.27.0 | 2026-10-07 | Mirror committed mode 644→755 (confirmed on take-ai-bite main at the v1.27.0 sync, afcff19); Central source already 755 |
 | BACKLOG-575 | Make sync-commands.sh --check orphan wording mirror-aware | v1.27.0 | 2026-10-06 | scripts/sync-commands.sh report_orphans() (IS_CENTRAL-aware header + non-central branch) |
 | BACKLOG-576 | Prune/prompt ecosystem-template placeholder rows for a standalone fork | v1.27.0 | 2026-10-06 | — already resolved in corpus (DSM_0.2.A §25.2 step 5); no change made |
 | BACKLOG-577 | Emit a fork-init readiness checklist at the end of Cloned-Mirror Kick-off | v1.27.0 | 2026-10-06 | DSM_0.2.A §25.2 step 15 + /dsm-go Step 0.8d |
+| BACKLOG-579 | Fix GNU-only `date +%:z` in the §8.1 compact-mirror transform (macOS/BSD portability) | v1.27.1 | 2026-10-08 | DSM_0.2.A §8.1 canonical transform (`%:z` → portable `%z`); take-ai-bite #121/#122 |
+| BACKLOG-580 | A completed design can sit in a decision record while its parent BL stays active, and nothing cross-references the two | v1.27.2 | 2026-10-08 | /dsm-align Step 11e (decision-record completion marker vs active-BL status, best-effort) |
 
 ---
 
