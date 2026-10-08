@@ -5,6 +5,12 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Data-protection / compliance briefing by design (BACKLOG-001, DSM_0.2.C §5.9).** A project that processes personal or confidential data (§5.1 Restricted) owes a DP/compliance briefing of its data-handling model, requested by design rather than ad hoc. §5.9 defines a declarative-primary trigger (a `**Handles personal/confidential data:** yes` line in the project CLAUDE.md), a requirements checklist, an embedded A–G template placed at `dsm-docs/decisions/`, and project-type adaptation (Documentation = full/mandatory; Application-on-synthetic = lightweight "n/a with justification"; External Contribution = defer to the upstream regime). The briefing is a hand-off to human/expert review, asserts no legal conclusions, and is name-free. Not a hard blocker — a missing briefing surfaces at a session-start/scaffold completeness check (the operational wiring of that check is a deferred follow-up). Origin: downstream Documentation-spoke feedback.
+
 ## [1.27.1] - 2026-10-08
 
 Patch: two methodology corrections — a portability fix to the canonical compact-mirror date transform, and a Cloned-Mirror Kick-off step-count drift fix. Both trivial, no behavior change beyond the corrected output.

@@ -809,3 +809,78 @@ re-deriving it locally.
 the matched tokens into an append-only transcript block — the control became the vector.
 The STAA-specific application of this rule lives in the `/dsm-staa` command file (its
 read-PII-then-write-lessons shape), added under BL-572. Implemented under BL-571.
+
+### 5.9. Data-Protection / Compliance Briefing by Design
+
+§5.1–§5.8 protect sensitive data once it is in a tracked file. This rule adds the
+**review** half: a project that processes personal or confidential data owes a
+data-protection / compliance briefing of its data-handling model, requested **by design**
+rather than remembered ad hoc. The briefing is a hand-off to human / expert review, never
+a substitute for it, and asserts no legal conclusions.
+
+**Trigger (declarative-primary).** The briefing is owed when the project holds or
+processes personal or confidential data — i.e. §5.1 **Restricted** data. Detection is
+declarative: the project states it in its CLAUDE.md project-specific section, e.g.
+
+    **Handles personal/confidential data:** yes
+
+An optional heuristic may corroborate (a gitignored mandate/PII store present), but the
+declarative field is authoritative and human-confirmable, so the trigger does not fire on
+every project (the over-firing guard, DSM_0.2 §8.9.2).
+
+**Requirement.** When the trigger is active, the project produces a briefing at the
+conventional location `dsm-docs/decisions/`, following the checklist and template below.
+It is **idempotent** (silent once present) and **not a hard blocker**: its absence
+*surfaces* at a session-start / scaffold completeness check, like other DSM completeness
+checks, rather than locking in-flight work.
+
+**Requirements checklist (constant across project types).** Every briefing contains:
+Context · Data scope (subject categories, sensitivity, Art. 9 GDPR yes/no) · Data flows &
+storage (zones, boundary crossings, model-context processing, retention) · Control model &
+TOMs · Open review questions (legal basis, processor / third-country, controller role,
+retention / deletion, minimization / purpose, TOMs — phrased as questions, no invented
+conclusions) · Blocked steps / decision needs · References · Egress discipline (the
+briefing is itself name-free, potentially shareable).
+
+**Template (A–G skeleton).** Instances localize to the reviewer's language.
+
+```
+# <Project> — Data-Protection / Compliance Briefing
+
+Header: Purpose · Audience · Status (OPEN | APPROVED | CONDITIONS) · Date ·
+        Scope note (name-free; no legal conclusions) · References
+
+A. Context            — project, why PII arises, processing environment
+B. Data scope         — subject categories, affected groups, sensitivity; Art. 9 yes/no
+C. Data flows/storage — zones, boundary crossings, model-context processing, retention
+D. Control model/TOMs — protections in place; open TOM points
+E. Open review Qs     — legal basis / processor & third-country / controller role /
+                        retention & deletion / minimization & purpose / TOMs
+F. Blocked steps      — what stays provisional until sign-off; outcomes
+G. References         — operative rules, decision log, project governance
+```
+
+**Project-type adaptation.** The checklist is constant; the trigger and mandatory depth
+scale by project type:
+
+| Project type | Briefing |
+|--------------|----------|
+| Documentation / consulting with mandate PII | Full catalog, mandatory |
+| Application on synthetic / anonymous data | Lightweight: "not applicable, with justification" (a documented negative decision) |
+| External Contribution | Defer to the upstream project's data-protection / compliance regime; DSM does not duplicate it |
+
+For a "not applicable" case the template collapses to Header plus the justified negative
+decision.
+
+**Operational surfacing (deferred wiring).** The session-start / scaffold check that
+surfaces a missing briefing is specified here as behavior; its wiring into the boot
+sequence (the session-start skill and DSM_0.2.A) is a follow-up, because it is untestable
+in the authoring session (§21.3 untestable-by-design carve-out). Until wired, the
+requirement stands and is satisfied at project setup.
+
+**Relationship to §5.1 and §5.4.** §5.1 classifies the data and §5.4 handles PII in data
+science projects; §5.9 is the project-level **review** those controls feed into. A project
+can be §5.1-Restricted and still owe no briefing (e.g. synthetic-data Application) — the
+per-type table, not the classification alone, decides.
+
+**Origin:** BACKLOG-001 (fork-local; downstream Documentation-spoke feedback, name-free).
