@@ -5,6 +5,12 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Independent fork-local backlog line (BACKLOG-002, DSM_0.2 §21.5; cross-ref DSM_7.0 §2.1).** A DSM fork — a clone of the public mirror, including one promoted to a local hub by the Cloned-Mirror Kick-off — MAY maintain its own `BACKLOG-###` line numbered from 001, independent of Central's numbering, so forks develop enhancements without waiting on Central. Fork-local BL bodies must be name-free (public-repo egress discipline); Central stays canonical and assigns the real number on upstream absorption (the fork records the mapping); fork-sync (`git merge upstream/main`, additive) preserves fork-local BLs with no mirror-sync-manifest change. Upstream contribution (GitHub issue + cross-fork PR + attached BL) is optional but recommended.
+
 ## [1.27.1] - 2026-10-08
 
 Patch: two methodology corrections — a portability fix to the canonical compact-mirror date transform, and a Cloned-Mirror Kick-off step-count drift fix. Both trivial, no behavior change beyond the corrected output.
