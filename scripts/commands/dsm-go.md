@@ -270,7 +270,7 @@ Inspect manually."
 
 ### 0.8c. Execute Kick-off sequence
 
-Invoke the 14-step sequence documented in **DSM_0.2.A §25.2**. Step 0.8 is
+Invoke the 15-step sequence documented in **DSM_0.2.A §25.2**. Step 0.8 is
 the invocation point, not the specification. Key steps summarized:
 
 1. Auto-derive runtime values (no user prompt): `{REPO_ROOT}` from `pwd`,
