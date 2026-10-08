@@ -1036,8 +1036,8 @@ line, identified as the first `### ` category heading OR the first
 heading itself) is dropped.
 
 ```bash
-NOW=$(date +%Y-%m-%dT%H:%M%:z)
-SRC_MTIME=$(date -r .claude/reasoning-lessons.md +%Y-%m-%dT%H:%M%:z)
+NOW=$(date +%Y-%m-%dT%H:%M%z)
+SRC_MTIME=$(date -r .claude/reasoning-lessons.md +%Y-%m-%dT%H:%M%z)
 {
   printf '%s\n' \
     "# Reasoning Lessons (compact mirror)" "" \
@@ -2568,7 +2568,7 @@ Do not count "discussed" or "planned" as evidence of completion.
 ## 25. Cloned-Mirror Kick-off Protocol
 
 **Relationship to DSM_7.0 §2.1:** §A.25 defines the Kick-off sequence
-(detection signals, 14-step promotion, idempotency rules). DSM_7.0
+(detection signals, 15-step promotion, idempotency rules). DSM_7.0
 §2.1.5 covers the Claude-specific realization: `.claude/*.template`
 files promoted to runtime paths, `{REPO_ROOT}` / `{project_name}` /
 `{ISO_DATE}` substitution via the Edit tool (not shell `sed`), and the
