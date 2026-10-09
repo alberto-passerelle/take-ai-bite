@@ -1259,6 +1259,49 @@ the agent:
    `dsm-docs/reasoning-lessons-ecosystem.md` with attribution
 3. Moves the inbox entry to `_inbox/done/`
 
+**Aggregation file review-cost bound and prune (BACKLOG-567).** The aggregation file
+`dsm-docs/reasoning-lessons-ecosystem.md` is **not** boot-read (it is not read at
+`/dsm-go` Step 1.5, which reads only the local compact mirror) and is **not** in the
+public mirror manifest (`scripts/take-ai-bite-sync.txt`), so it carries neither a
+boot-priming token cost nor a confidentiality surface. Its governing cost is a full-file
+**review** read (inbox processing, redistribution, escalation review), so its bound is a
+review-cost bound, derived differently from §8.1's boot-priming byte bound. Do not
+transplant §8.1's 61,440 B number, which is sized to a cost this file does not incur.
+
+- **Bound (soft, advisory):** ~120 KB / ~30K tokens. This keeps a full review read under
+  ~15% of a 200K-token window while staying generous for a file read rarely. It is
+  **flagged, never blocking** (the §8.1 posture). The ~120 KB figure is a **long-term
+  target**, not a near-term reachable number: on a corpus of mostly-uncodified,
+  at-or-under-ceiling entries, archive-on-codification and the ~600-char ceiling yield only
+  modest immediate reductions (measured at the BACKLOG-567 build, S276: archival −3 KB,
+  compression ≤9 KB, against a ~175 KB irreducible floor of still-valuable entries). The
+  file approaches the bound gradually, as lessons get codified into protocols over
+  successive STAA runs and are then archived. A sustained large overage is therefore a
+  signal to **review which entries have since been codified** (and archive them), not to
+  compress valuable prose harder.
+- **Per-entry ceiling (soft):** ~600 characters of **body text only**, excluding the
+  attribution prefix (originating project + session + scope tag). The prefix's length is
+  justified by the cross-project attribution the file exists to carry; the body is held
+  to the same density discipline as the local file (BACKLOG-495). Compress or split,
+  never drop.
+- **Prune owner and cadence:** `/dsm-staa`, checked at STAA runs (not every run), pruning
+  only when the file is over the bound. This extends STAA's existing ownership of the
+  local file's prune and resumes the single S187-STAA archiving pass this file has
+  already had.
+- **Prune action set (each leaves a tombstone — no silent drop):**
+  1. **Archive-on-codification (primary):** a lesson escalated into a DSM protocol, BL, or
+     MEMORY is replaced by `<!-- Archived SNNN-STAA: {summary} codified in {destination} -->`.
+     A codified lesson is redundant with the protocol that absorbed it; this directly
+     targets the signal-degradation the bound exists to limit.
+  2. **Consolidate cross-spoke duplicates:** near-identical lessons from multiple spokes
+     merge into one with all attributions preserved (the Deduplication convention applied
+     retroactively; a 3+-spoke recurrence also triggers Escalation to `[E]`).
+  3. **Tombstone dead-project lessons:** a `project`-scope lesson whose originating
+     project no longer exists becomes `<!-- Archived SNNN: {summary}, project retired -->`.
+- **STAA does not commit the prune.** Consistent with STAA's no-commit design, the prune
+  edits the tracked file but leaves it **uncommitted**; the next `/dsm-wrap-up` commits it
+  with the session's other changes. STAA records the prune in `.claude/last-staa.txt`.
+
 **Anti-Patterns:**
 
 **DO NOT:**
