@@ -5,6 +5,12 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Clean-index-before-L3-branch rule + warn-not-block guard (BACKLOG-007, DSM_0.2 §20.9, `.claude/hooks/validate-l3-branch-index.sh`).** Creating a Level 3 task branch (`git checkout -b bl-*`) carries the session branch's staged index onto the new branch, and the first `git commit` there commits the ENTIRE index — so boot-staged session-artifact moves (from `/dsm-go` Steps 3/3.5) get absorbed into the task commit silently; the S7 §22 incident polluted a held methodology branch and left the session branch without the moves. §20.9 states the precondition (clean the index, or confirm it holds only what the branch should carry, before cutting the branch), cross-referenced from §20.3 and reinforced in the CLAUDE.md BL-implementation hand-off. A new PreToolUse(Bash) hook warns — never blocks — when `git checkout -b bl-*` / `git switch -c bl-*` runs with a non-empty staged index (an implementer may legitimately carry staged work, so it is a reminder, not a gate).
+
 ## [1.28.0] - 2026-10-09
 
 Minor: a review-cost bound and a prune mechanism for the ecosystem reasoning-lessons aggregation file, which had grown unbounded (BACKLOG-567). The bound is an honest long-term target — the build confirmed the file is mostly irreducible cross-project value, so it is approached as lessons get codified, not by one-shot pruning.

@@ -90,7 +90,7 @@ Every BL implementation that modifies methodology files (DSM_0 through DSM_6, DS
 
 **Exceptions (commit directly to session branch):** mechanical status updates (BL moved to done/), trivial fixes (typos, dates), session artifacts (handoffs, checkpoints, feedback).
 
-**Agent behavior:** When the user requests a BL implementation, the agent's first action is to create a Level 3 branch off the current session branch. During `/dsm-light-wrap-up`, check if the current branch is a task branch with unpushed commits; if so, push it to remote before wrapping up.
+**Agent behavior:** When the user requests a BL implementation, the agent's first action is to create a Level 3 branch off the current session branch — after confirming the session-branch index is clean of unrelated staged changes (per DSM_0.2 §20.9, so boot-staged session-artifact moves from `/dsm-go` Steps 3/3.5 are not absorbed into the first task commit; `git diff --cached --name-only` must be empty or hold only what the branch should carry). During `/dsm-light-wrap-up`, check if the current branch is a task branch with unpushed commits; if so, push it to remote before wrapping up.
 
 **Post-merge branch recreation (DSM_0.2 §20.8):** After any in-session `gh pr merge --delete-branch`, the working copy lands on main and the next commit silently violates the strategy. **Immediately create a new session branch before any further edits.** Chain pattern: `gh pr merge {N} --merge --delete-branch && git checkout -b session-{N}/{YYYY-MM-DD}-{purpose}`. Recovery if a commit lands on main: create a safety-net branch at HEAD, then `git update-ref refs/heads/main refs/remotes/origin/main` (do NOT use `git reset --hard`). See DSM_0.2 §20.8 for the full rule.
 

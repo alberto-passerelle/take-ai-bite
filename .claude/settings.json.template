@@ -25,6 +25,10 @@
           {
             "type": "command",
             "command": ".claude/hooks/validate-rename-staging.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/validate-l3-branch-index.sh"
           }
         ]
       }
