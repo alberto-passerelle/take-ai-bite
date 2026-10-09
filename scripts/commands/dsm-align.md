@@ -62,7 +62,7 @@ Before starting alignment, check if git is initialized:
 
    **Implementation note:** Use `test -d` for directory existence checks, not `ls -d` (which returns non-zero when paths don't exist, cancelling parallel tool calls).
 
-   **Hub fast-path:** If the project is DSM Central (has `scripts/commands/` directory), skip steps 2, 4, 5, 6, and 8c. These steps check spoke scaffold structure and validate CLAUDE.md paths against the filesystem, both of which are redundant on the hub that defines the templates. Run steps 1, **3 (canonical dsm-docs/ folder scaffold, idempotent)**, 7, 7b, 8, 8b, 9, 10, 10b, 11, 12, 13. Step 3 is included in the hub fast-path because a Kick-off'd mirror clone is functionally a hub (per DSM_0.2.A §25.4) but arrives with an empty scaffold; Step 3's idempotent check-then-create is a no-op for Central (scaffold already exists) and the missing piece for fresh clones. Step 10b is mandatory on the hub because hub-self-installs the session-transcript hooks (transcript-reminder + validate-transcript-edit) and applies `chmod +x`. Omitting 10b on hub fast-path was the S180 root cause of a full session of zero transcript appends in DSM Central, the hooks were present on disk but not executable, so Claude Code's hook subsystem silently dropped the per-turn reminder injection.
+   **Hub fast-path:** If the project is DSM Central (has `scripts/commands/` directory), skip steps 2, 4, 5, 6, and 8c. These steps check spoke scaffold structure and validate CLAUDE.md paths against the filesystem, both of which are redundant on the hub that defines the templates. Run steps 1, **3 (canonical dsm-docs/ folder scaffold, idempotent)**, 7, 7b, 8, 8b, 9, 10, 10b, 11, 11b, 11c, 11d, 11e, 12, 13. Step 3 is included in the hub fast-path because a Kick-off'd mirror clone is functionally a hub (per DSM_0.2.A §25.4) but arrives with an empty scaffold; Step 3's idempotent check-then-create is a no-op for Central (scaffold already exists) and the missing piece for fresh clones. Step 10b is mandatory on the hub because hub-self-installs the session-transcript hooks (transcript-reminder + validate-transcript-edit) and applies `chmod +x`. Omitting 10b on hub fast-path was the S180 root cause of a full session of zero transcript appends in DSM Central, the hooks were present on disk but not executable, so Claude Code's hook subsystem silently dropped the per-turn reminder injection.
 
    **This fast-path is the path DSM Central actually takes, and there is no alternative to it (BL-547).** `/dsm-go` Step 1.8 branch 6 routes a version mismatch here, at Central as at any spoke. Between roughly S233 and S259 Central instead performed a "marker-only refresh" that skipped the skill entirely; that practice was written down nowhere but in the `note:` field of the gitignored `.claude/last-align.txt` each run wrote, so it propagated by being copied forward between untracked artifacts and could not be reviewed. It is retired. Two consequences worth stating here rather than leaving to the BL: the template location must always be resolved by SEARCHING for the template rather than by a remembered line number or file, since it has already moved once (v1.26.0 relocated §17.1's base template into `DSM_0.2.T_Alignment_Templates.md`); and Steps 11, 11b and 11c are Central-only, so this branch is the only code path on which they ever execute, which is why skipping the skill made all three unreachable (BL-498).
 
@@ -432,6 +432,66 @@ Before starting alignment, check if git is initialized:
    - Do NOT auto-populate and do NOT recommend a hand-backfill; the trail is populated at blog-writing time.
    - Origin: BL-455 (S218). The per-blog-thread reconciliation needed a visibility mechanism so the soft "populate lazily" rule does not silently rot; this informational line is that mechanism.
 
+11d. **Check active-index currency, both directions (DSM Central only):**
+   - Skip this step if the project is not DSM Central (no `scripts/commands/` directory).
+   - Set-difference the `BACKLOG-NNN` in active files under `dsm-docs/plans/` against the `BACKLOG-NNN` rows in `dsm-docs/plans/README.md`, **both directions** — a dead link and an invisible item are different defects (BL-557):
+
+     ```bash
+     FILES=$( { ls dsm-docs/plans/BACKLOG-*.md plan/backlog/developments/BACKLOG-*.md ; } 2>/dev/null | grep -oE 'BACKLOG-[0-9]+' | sort -u)
+     ROWS=$(grep -oE 'BACKLOG-[0-9]+' dsm-docs/plans/README.md 2>/dev/null | sort -u)
+     if [ -z "$FILES" ] || [ -z "$ROWS" ]; then
+       echo "UNRESOLVED: collected $(printf '%s' "$FILES" | grep -c .) files and $(printf '%s' "$ROWS" | grep -c .) rows; currency NOT computed"
+     else
+       UNINDEXED=$(comm -23 <(printf '%s\n' "$FILES") <(printf '%s\n' "$ROWS"))
+       DEAD=""
+       while IFS= read -r href; do
+         case "$href" in /*) p=".${href}" ;; *) p="dsm-docs/plans/${href}" ;; esac
+         [ -f "$p" ] || DEAD="$DEAD$(printf '%s' "$href" | grep -oE 'BACKLOG-[0-9]+' | head -1) "
+       done < <(grep -oE '\]\([^)]*BACKLOG-[0-9]+[^)]*\.md\)' dsm-docs/plans/README.md | sed -E 's/^\]\(//; s/\)$//')
+       NU=$(printf '%s' "$UNINDEXED" | grep -c .); ND=$(printf '%s' "$DEAD" | tr -s ' ' '\n' | grep -c .)
+       if [ "$NU" -eq 0 ] && [ "$ND" -eq 0 ]; then
+         echo "OK: README indexes all $(printf '%s' "$FILES" | grep -c .) active BL files (plans/ + developments/), no dead links"
+       else
+         [ "$NU" -gt 0 ] && echo "UNINDEXED $NU (file present, no README row): $(printf '%s' "$UNINDEXED" | tr '\n' ' ')"
+         [ "$ND" -gt 0 ] && echo "DEAD-LINK $ND (README row link does not resolve): $DEAD"
+       fi
+     fi
+     ```
+
+     **Both active trees, not one (the BL-498 lesson applied to the active index).** `FILES` globs `dsm-docs/plans/` **and** `plan/backlog/developments/` (the legacy-but-active tree — 11 BLs at S274, which the README indexes with `../../plan/backlog/developments/` links). Scanning only `dsm-docs/plans/` reported 11 of those as false dead links when this step was first written single-tree at S274; the first test run surfaced it (§19.1's second question in action), exactly the both-trees defect Step 11b fixed for the done index.
+
+     **The two directions use different mechanisms, by design.** *Unindexed* (`comm -23`: an active-tree file whose number has no README row) is the BL-333/354 case — a BL filed without the `/dsm-backlog` Step 5 row, invisible to the index and to `/dsm-go` Step 8. *Dead-link* is **link resolution**, not number-membership: each README `](…BACKLOG-NNN….md)` href is resolved relative to `dsm-docs/plans/` and flagged only when it points to **no existing file** (the BL-569 case). Number-membership is wrong here because the README legitimately links across trees (`developments/`, `plan/archive/`): a row linking to a real `../../plan/archive/…` file resolves and must not flag, which a bare `comm -13` over `dsm-docs/plans/` alone would wrongly report (it did, at S274, until the test caught it).
+
+     **The empty guard is the point, not padding (BL-557, mirroring 11b).** If `dsm-docs/plans/` or the README is relocated or unreadable, both sets collapse, both differences are empty, and a version without the guard reports a false "no drift" indistinguishable from a real clean (§19.1's second question). `UNRESOLVED` and `OK` are never the same line.
+
+     **Non-BL files are excluded by construction.** `ls BACKLOG-*.md` matches only `BACKLOG-NNN` files, so a non-BL plan (e.g. `Literate-CQRS-knowledge-architecture-plan.md`) is never collected and never flagged (BL-557 T-6).
+   - **Report-only, silent when clean, both directions (BL-557 Success Criteria).** Placing a missing row needs a section + ordering judgement, and a dead link needs a per-row disposition (delete / re-point / re-file); do NOT auto-fix. In the dead-link direction the BL may legitimately be in `done/`; report the number and let the user reconcile.
+   - **Reachability (BL-557 + BL-547):** this runs at Central because a version mismatch routes `/dsm-go` Step 1.8 through the Hub fast-path, which executes the Step 11 neighborhood. This is the resolution of BL-557's load-bearing open question — it inherits BL-547's reachability rather than the unreachable Step 11b-sibling placement BL-498 documents.
+   - Origin: BL-557 (S259). The active index had no currency audit; BL-333/354 sat filed-but-unindexed ~5 months, and BL-569 produced a dead link via a manual release. Complements 11b (done-index) and BL-498; the three are one active/done-BL-hygiene family.
+
+11e. **Check decision-record completion markers against active-BL status (DSM Central only, best-effort):**
+   - Skip this step if the project is not DSM Central.
+   - For each `dsm-docs/decisions/*.md` carrying a completion marker (a `**Status:**` line containing "complete") whose `**Backlog:** BACKLOG-NNN` names the resolved BL, flag BACKLOG-NNN if it is still an active file in `dsm-docs/plans/`:
+
+     ```bash
+     FLAG=""
+     for f in dsm-docs/decisions/*.md; do
+       [ -f "$f" ] || continue
+       grep -qiE '^\*\*Status:\*\*.*complet' "$f" || continue
+       bl=$(grep -m1 -oE '^\*\*Backlog:\*\* *BACKLOG-[0-9]+' "$f" | grep -oE 'BACKLOG-[0-9]+')
+       [ -n "$bl" ] || continue
+       ls "dsm-docs/plans/${bl}"*.md >/dev/null 2>&1 && FLAG="$FLAG ${bl}($(basename "$f"))"
+     done
+     [ -z "$FLAG" ] && echo "OK: no decision record marks a BL complete while it is still active" \
+                    || echo "COMPLETE-BUT-ACTIVE:$FLAG"
+     ```
+
+     **Best-effort, keyed on an explicit subject+status marker (BL-580).** The match requires BOTH a `**Status:** …complete` line AND a `**Backlog:** BACKLOG-NNN` subject, so a decision record that merely mentions a BL number, or resolves one question of a multi-question BL without the subject marker, does not flag it (BL-580 Risk #1). A bare BL-number grep would false-positive on every policy record that cross-references BLs.
+
+     **Known limitation — the convention is not enforced (BL-580 Risk #2).** Decision records have no required header schema; measured at S274, 2 of 9 records carry `**Backlog:**`. So this is a forward-looking guard (records following the convention are audited; others are missed) and is report-only. Establishing a light decision-record header convention is a companion improvement, out of scope here.
+   - **Report-only; do NOT auto-close.** Closing needs the Success-Criteria / Test-Plan reconciliation judgement (see the S274 BL-558 close); the check surfaces the candidate, the operator closes it.
+   - Origin: BL-580 (S274). BL-558's design completed in a S263 decision record ("Status: Design complete") but the BL was left Proposed/active ~10 sessions; nothing cross-referenced the two. Distinct axis from 11b/11d (membership): this is status-vs-completion-record.
+
 12. **Report** results in this format. The report header indicates whether changes were applied:
    - **Post-change report** (when any fixes were applied: folders created, `@` reference fixed, alignment section regenerated, files created): header reads `/dsm-align post-change report:` and all items reflect the **completed state**, not the pre-change assessment.
    - **Check-only report** (when no changes were needed, all items already correct): header reads `/dsm-align check-only report:`
@@ -458,6 +518,8 @@ Before starting alignment, check if git is initialized:
    - CLAUDE.md paths: [OK | N stale path(s) found (list)]
    - .gitattributes: [OK | Created | Warning: missing LF enforcement | N/A (EC fast-path)]
    - Command sync: [conditional spec; see below]
+   - Active-index currency: [OK | N unindexed / M dead links (list) | UNRESOLVED | N/A (not DSM Central)]
+   - Decision-record status: [OK | N complete-but-active (list) | N/A (not DSM Central)]
    - Feedback pushed: [count of entries pushed to DSM Central, or "none pending"]
    - EC governance scaffold: [N/A (not EC) | OK (all folders present) | Created (list) | Skipped (reason)]
    ```

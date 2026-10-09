@@ -1,6 +1,6 @@
 # BACKLOG-004: Active-Session Detection for STAA and Non-/dsm-go Sessions
 
-**Status:** Proposed
+**Status:** Implemented (fork-local, S7); methodology held on `bl-004` branch, upstream PR deferred until #125/#128 reconcile
 **Priority:** High
 **Date Created:** 2026-10-09
 **Origin:** S6 concurrent-session incident (2026-10-09). A `/dsm-staa` session, started while this session (S6) was live and unwrapped, operated on the shared git working copy — created a branch, committed a BL, and moved this session's `HEAD` — because STAA runs no concurrent-session detection.
@@ -97,8 +97,25 @@ upstream like any fork-local BL.
 
 ## 7. Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented._
+Implemented S7 (2026-10-09) on `bl-004/non-main-session-active-detection` (commit `14a2f45`).
+Edits: `scripts/commands/dsm-staa.md` (new `## Step 0: Active-Session Detection` + write-scope
+Notes clause, Option A) and `DSM_0.2.A_Session_Lifecycle.md` §26.2 (one additive lifecycle-table
+row). Runtime deployed via `scripts/sync-commands.sh --deploy` (exit 0); user-level
+`~/.claude/commands/dsm-staa.md` verified carrying Step 0 + the scope clause.
+
+- **T-1 (structural) — PASS.** `grep` on `scripts/commands/dsm-staa.md`: `## Step 0:
+  Active-Session Detection (per BL-004)` (line 20), `Read \`.claude/session.lock\`` (line 29),
+  the `kill -0 "$LOCK_PID" … ps … grep -q claude` probe and `VERDICT=LIVE` (lines 37-38).
+- **T-3 (structural) — PASS.** No lock *write* path added: `grep -E '>+ *\.claude/session\.lock|cat *> *…'`
+  returns nothing; the only three `session.lock` references in STAA are reads/prose (lines 29, 34, 52),
+  including the explicit "STAA reads, never writes, the lock."
+- **T-4 (structural) — PASS.** `git diff DSM_0.2.A` is exactly one added table row; §26.5 parallel
+  exemption text unchanged (still at the `### 26.5.` heading).
+- **T-2 (behavioral) — DEFERRED** (§21.3 untestable-by-design carve-out). Requires a second LIVE
+  `.claude/session.lock` + a concurrent window, which the implementing session cannot stage.
+  **Trigger:** next time two sessions are open on this clone, start `/dsm-staa` and confirm the
+  non-suppressible LIVE halt fires. Added to Pending verification below.
 
 ### Pending verification
 
-- [ ] All Test Plan items (deferred: Proposed, not implemented)
+- [ ] T-2: behavioral LIVE-halt test (needs a concurrent live session; deferred with named trigger above)

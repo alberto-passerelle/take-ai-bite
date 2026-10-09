@@ -1,3 +1,5 @@
+**Consumed at:** Session 7 start (2026-10-09)
+
 # Session 6 Checkpoint
 **Date:** 2026-10-09
 **Branch:** session-6/2026-10-08-post8
