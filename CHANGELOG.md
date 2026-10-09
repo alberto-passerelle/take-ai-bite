@@ -5,6 +5,26 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0] - 2026-10-09
+
+Minor: a review-cost bound and a prune mechanism for the ecosystem reasoning-lessons aggregation file, which had grown unbounded (BACKLOG-567). The bound is an honest long-term target — the build confirmed the file is mostly irreducible cross-project value, so it is approached as lessons get codified, not by one-shot pruning.
+
+### Added
+
+- **Review-cost bound + STAA prune for the ecosystem reasoning-lessons file (BACKLOG-567, DSM_0.2.A §8.3, `/dsm-staa` Step 7b).** `dsm-docs/reasoning-lessons-ecosystem.md` — the cross-project lesson aggregation (not boot-read, not mirrored) — had conventions for attribution/dedup/escalation but no size bound and no prune, and had grown to ~196 KB, larger than the boot-primed local file it feeds. §8.3 now states a soft ~120 KB review-cost bound (explicitly NOT §8.1's boot-priming bound), a per-entry ~600-char body-only ceiling, STAA as prune owner at STAA-run cadence, and a three-action prune set (archive-on-codification / consolidate-cross-spoke-duplicates / tombstone-dead-project), each leaving a tombstone so no lesson is silently dropped. `/dsm-staa` gains Step 7b to run the prune when the file is over bound — editing the one tracked file it touches while still committing nothing (the next wrap-up commits), and a no-op on spokes (the file is Central-only). The ~120 KB figure is a long-term target: a build-time prune confirmed archival (−3 KB) and compression (≤9 KB) cannot cross the ~175 KB irreducible floor of still-valuable entries, so the file approaches the bound only as lessons get codified into protocols over time. Build also walked one over-bound prune (6 archived + 1 consolidated, every tombstone citing a verified destination).
+  **Spoke action:** none — the bound and prune govern a Central-only, non-mirrored aggregation file; the `/dsm-staa` Step 7b change arrives with the next mirror sync and deploys via `sync-commands.sh --deploy` (and is a no-op where the aggregation file is absent).
+
+## [1.27.2] - 2026-10-08
+
+Patch: two report-only active-BL-hygiene audits added to `/dsm-align` (Central-only), closing the gap where a filed backlog item can sit open-and-invisible, or a completed design can stay mis-statused as active, with nothing checking.
+
+### Added
+
+- **Active-index currency audit, both directions (BACKLOG-557, `/dsm-align` Step 11d).** The active backlog index (`dsm-docs/plans/README.md`) had no currency check, so a BL file with no index row was invisible to every planning pass and `/dsm-go` Step 8 — BACKLOG-333/354 sat that way ~5 months. Step 11d set-differences active BL files against README rows across both active trees (`plans/` + `plan/backlog/developments/`); an unindexed file and a dead link (a row whose linked file does not resolve) are reported distinctly. Report-only, silent when clean (§8.9.2), empty-guarded. Absorbs BACKLOG-498's active-README dead-link criterion (one index, two directions).
+  **Spoke action:** none — Central-only audit; the updated `/dsm-align` arrives with the next mirror sync and deploys via `sync-commands.sh --deploy`.
+- **Decision-record completion vs active-BL status audit (BACKLOG-580, `/dsm-align` Step 11e).** A design/formalize BL whose decision record is marked complete could stay `Proposed` and listed active indefinitely (BACKLOG-558 did, ~10 sessions). Step 11e cross-references `dsm-docs/decisions/` completion markers (a `**Status:**…complete` keyed to a `**Backlog:**` subject) against active-BL status, reporting any BL marked resolved in a record but still in `plans/`. Best-effort (keyed on an explicit marker, not a bare BL mention, so a multi-BL policy record flags none); report-only, silent when clean. The third axis of active-BL hygiene (498 = done-index membership, 557 = active-index membership, 580 = status-vs-evidence).
+  **Spoke action:** none — Central-only audit; arrives with the next mirror sync.
+
 ## [1.27.1] - 2026-10-08
 
 Patch: two methodology corrections — a portability fix to the canonical compact-mirror date transform, and a Cloned-Mirror Kick-off step-count drift fix. Both trivial, no behavior change beyond the corrected output.
