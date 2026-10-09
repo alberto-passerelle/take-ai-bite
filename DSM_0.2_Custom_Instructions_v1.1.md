@@ -1733,6 +1733,67 @@ session incident, 2026-10-09).
 
 ---
 
+### 21.6. Fork Non-Contradiction and Free-Contribution Principle
+
+A fork's relationship to upstream TAB is governed by two clauses that pull in opposite
+directions and are stated together so neither is read alone: a fork is constrained in
+*what* it may place on its own `main`, but not in *whether* it may develop or contribute.
+
+**(a) Non-contradiction.** A fork-local addition MUST NEVER contradict upstream TAB
+methodology. A fork may **add** (a new section, rule, or template) or **propose a change**
+(via an upstream contribution), but it may not place on the fork's `main` a rule that
+conflicts with an existing upstream rule. Upstream is canonical; on conflict the fork
+reconciles toward upstream. The contradiction would otherwise surface at fork-sync
+(`git merge upstream/main`) as a late conflict — the principle is that it never gets that
+far, because the addition was checked against upstream before it landed.
+
+**(b) Free contribution.** A fork is free to draft, track, implement, and contribute
+without building restrictions. No gate blocks a fork from developing a BL or opening a
+contribution; the independent fork-local backlog (§21.5) is the sanctioned vehicle, and
+its use is encouraged, not rationed. Clause (a) constrains the *content* a fork places on
+its `main`; it is never a reason to discourage development or contribution.
+
+**(c) Reconciliation on conflict.** Where a fork-local addition and a later upstream
+change collide, upstream wins the base and the fork re-expresses its addition on top of it
+(or drops it). Fork-sync (`git merge upstream/main`, additive) is the mechanism, and
+§21.5's on-`main` visibility rule keeps the fork's additions auditable, so a collision is
+caught at the sync rather than lived with silently.
+
+**The Non-Contradiction Check.** This is the drafting-step check that the §21.5 fork-local
+BL workflow (step 2) requires. Before a fork-local BL's change lands on the fork's `main`,
+the author writes a short **Non-Contradiction Check** block in the BL body asserting that
+the change:
+
+- **adds or proposes** rather than contradicts — it introduces a new rule or proposes a
+  change through a contribution, and places no rule on fork `main` that conflicts with an
+  existing upstream rule; and
+- **names the upstream surface** it relates to — the section it extends, or the
+  contribution it will ride — so a reviewer can see the relationship is additive.
+
+A check that cannot honestly assert both is the signal to reconcile the change toward
+upstream (clause a) before filing, or to route it as a proposed upstream change rather
+than a fork-`main` addition. As with §21.2's Risks and §21.3's test evidence, an empty or
+reflexive assertion ("does not contradict anything") defeats the check; the test is that
+the author engaged the question and named the surface.
+
+**Agent behavior:** when drafting a fork-local BL (§21.5 workflow step 2), write the
+Non-Contradiction Check block. When a fork-local addition would conflict with an upstream
+rule, surface the conflict and reconcile toward upstream rather than placing the
+conflicting rule on the fork's `main`. Never treat non-contradiction as grounds to
+discourage a contribution (clause b).
+
+**Cross-references:** §21.5 (the fork-local backlog line and workflow that requires this
+check), §21.2 (Risks — the distinct negative-space check at filing time), §21.3 (test
+evidence — the same anti-reflexive-assertion guard); DSM_0.2.C (egress discipline for
+name-free fork bodies); DSM_0.2.A §25 (Cloned-Mirror Kick-off).
+
+**Origin:** BACKLOG-006 (fork non-contradiction and free-contribution principle;
+generalizes BACKLOG-002's "Central stays canonical" clause into a governing principle;
+user directive S6, 2026-10-09).
+
+
+---
+
 ## 22. Protocol Violation Triage Response
 
 When the agent discovers that a DSM protocol was not followed, whether in the
