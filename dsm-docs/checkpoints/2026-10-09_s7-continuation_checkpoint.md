@@ -2,11 +2,11 @@
 
 **Date:** 2026-10-09
 **Branch:** session-7/2026-10-09 (pushed `b63d708`; NOT merged to main — light wrap-up defers merge)
-**Wrap-up type:** light (next session continues; `/dsm-go` will offer `/dsm-light-go`)
+**Wrap-up type:** full (S7 fully closed; session-7 merged to main; `/dsm-go` next session)
 
-Second light wrap-up of S7. Carries the branch/PR topology in lieu of a handoff. The live index of
-fork→Central contributions is upstream issue **#130**; full reasoning is in the preserved session
-transcript.
+Full wrap-up of S7 (upgraded from the earlier light wrap-up). Carries the branch/PR topology in lieu
+of a handoff. The live index of fork→Central contributions is upstream issue **#130**; full reasoning
+is in the preserved session transcript. Reasoning lessons extracted (6, S7), MEMORY reconciled.
 
 ## Work completed this continuation
 
@@ -63,12 +63,15 @@ transcript.
 4. **Branch cleanup** (destructive — needs explicit go): the 5 candidates above.
 5. At a **full** wrap-up: merge `session-7` to main, update #130, reconcile MEMORY, extract reasoning lessons.
 
-**Deferred to next full session:**
-- [ ] Inbox check (note: `_inbox/done/2026-10-01_dsm-align-update.md` + `_inbox/done/2026-10-06_AISA-work.md` untracked; `_inbox/AISA-work.md` pending)
-- [ ] Version check / `/dsm-align`
-- [ ] Reasoning lessons extraction (candidates: unquoted-heredoc backtick exec = BL-009; new-`.claude/`-file `git add -f` + `git show --stat` discipline; §20.9 dogfooding)
-- [ ] Feedback push
-- [ ] Full MEMORY.md update
-- [ ] README change notification check
-- [ ] Contributor profile check
-- [ ] Merge `session-7` to main
+**Full wrap-up resolution (this session):**
+- [x] Reasoning lessons extracted (6 S7 lessons; compact mirror regenerated, 22 KB / 60 KB bound)
+- [x] Full MEMORY.md update + backup
+- [x] Merge `session-7` → main (full wrap-up)
+- [x] Feedback push — none pending (`dsm-docs/feedback-to-dsm/` empty)
+- [x] README/FEATURES notification — changes were upstream-sync version bumps (internal-only), skipped
+- STAA recommended: **yes** (complex multi-option packaging + two §22 course corrections)
+
+**Still carried forward (next session):**
+- Inbox: `_inbox/AISA-work.md` pending; two untracked `_inbox/done/*` archives (2026-10-01, 2026-10-06) — not this session's processing, left for an inbox pass
+- `/dsm-align` not run (fork at 1.28.0 via sync; align optional)
+- Contributor profile not updated (skipped)
