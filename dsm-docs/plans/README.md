@@ -17,6 +17,6 @@ parallel — files here using the next fork-local number, not a guessed Central 
 | BACKLOG-001 | Data-Protection / Compliance Briefing by Design | Medium | Implemented (fork-local, v1); upstream PR #128 |
 | BACKLOG-002 | Independent Fork-Local Backlog Line | Medium | Implemented (fork-local); upstream PR #125 |
 | BACKLOG-003 | /dsm-go boot plan displaced into prior transcript archive | Low | Proposed (renumbered from BL-580) |
-| BACKLOG-004 | Active-Session Detection for STAA and Non-/dsm-go Sessions | High | Proposed |
+| BACKLOG-004 | Active-Session Detection for STAA and Non-/dsm-go Sessions | High | Implemented (fork-local, S7); methodology on `bl-004`, upstream PR deferred |
 | BACKLOG-005 | Complete Fork-Local BL Workflow for All Session Types | High | Proposed |
 | BACKLOG-006 | Fork Non-Contradiction and Free-Contribution Principle | Medium | Proposed |
