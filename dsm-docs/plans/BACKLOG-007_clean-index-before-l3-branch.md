@@ -1,6 +1,6 @@
 # BACKLOG-007: Clean Index Before Creating a Level 3 Task Branch
 
-**Status:** Proposed
+**Status:** Implemented (fork-local, S7); methodology on `bl-007/clean-index-before-l3-branch` (commit `8167a0b`), upstream PR deferred until #125 reconciles
 **Priority:** Medium
 **Date Created:** 2026-10-09
 **Origin:** S7 §22 incident (2026-10-09). The `/dsm-go` boot (Steps 3/3.5) staged the consumed handoff + checkpoint moves on the session branch. A BL implementation then created a Level 3 `bl-004` branch off that session branch **while the index still held those staged moves**, and the first `git commit` on the task branch — which commits the whole index, not only freshly `git add`ed paths — absorbed the two unrelated session-artifact renames into the methodology commit. The methodology branch (destined for an upstream PR) was polluted with session artifacts, and the session branch lost the consumption.
@@ -80,8 +80,21 @@ commit-booking model (§26.5 / §7). No upstream rule is contradicted; contribut
 
 ## 7. Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented._
+Implemented S7 (2026-10-09) on `bl-007/clean-index-before-l3-branch` (commit `8167a0b`);
+BL body + index on `main` (session-7).
+
+- **T-1 (structural, precondition in prose)** — PASS. §20.9 ("Clean Index Before Creating a
+  Level 3 Task Branch") added to DSM_0.2 core; §20.3 gains a cross-reference; the
+  `.claude/CLAUDE.md.template` BL-implementation hand-off reinforces the precondition.
+- **T-2 (behavioral, guard warns)** — PASS. `.claude/hooks/validate-l3-branch-index.sh`
+  tested 5 ways in a throwaway repo: `checkout -b bl-*` and `switch -c sprint-*` with a
+  dirty index emit the JSON warning at exit 0; a `feature/*` branch, a non-branch command,
+  and a clean index are all silent at exit 0. Warns, never blocks.
+- **T-3 (structural, §20 unchanged)** — PASS. §20.1–§20.8 headings and the §20.3
+  levels/naming/merge-conditions table are unchanged; the only §20.3 edit is the added
+  cross-reference.
 
 ### Pending verification
 
-- [ ] All Test Plan items (deferred: Proposed, not implemented)
+- None. All Test Plan items satisfied in-session (T-2's guard was built, so it is not
+  deferred).

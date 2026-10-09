@@ -20,6 +20,6 @@ parallel — files here using the next fork-local number, not a guessed Central 
 | BACKLOG-004 | Active-Session Detection for STAA and Non-/dsm-go Sessions | High | Implemented (fork-local, S7); methodology on `bl-004`, upstream PR deferred |
 | BACKLOG-005 | Complete Fork-Local BL Workflow for All Session Types | High | Implemented (fork-local, S7); methodology on `bl-005-006` cluster, upstream PR deferred |
 | BACKLOG-006 | Fork Non-Contradiction and Free-Contribution Principle | Medium | Implemented (fork-local, S7); methodology on `bl-005-006` cluster, upstream PR deferred |
-| BACKLOG-007 | Clean Index Before Creating a Level 3 Task Branch | Medium | Proposed |
+| BACKLOG-007 | Clean Index Before Creating a Level 3 Task Branch | Medium | Implemented (fork-local, S7); methodology on `bl-007`, upstream PR deferred |
 | BACKLOG-008 | Fork-to-Central Contribution Mechanics | Medium | Proposed |
 | BACKLOG-009 | Unquoted-Heredoc Backtick/Command-Substitution Hazard in Transcript Appends | Medium | Proposed |
