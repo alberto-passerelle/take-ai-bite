@@ -5,6 +5,15 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0] - 2026-10-09
+
+Minor: a review-cost bound and a prune mechanism for the ecosystem reasoning-lessons aggregation file, which had grown unbounded (BACKLOG-567). The bound is an honest long-term target — the build confirmed the file is mostly irreducible cross-project value, so it is approached as lessons get codified, not by one-shot pruning.
+
+### Added
+
+- **Review-cost bound + STAA prune for the ecosystem reasoning-lessons file (BACKLOG-567, DSM_0.2.A §8.3, `/dsm-staa` Step 7b).** `dsm-docs/reasoning-lessons-ecosystem.md` — the cross-project lesson aggregation (not boot-read, not mirrored) — had conventions for attribution/dedup/escalation but no size bound and no prune, and had grown to ~196 KB, larger than the boot-primed local file it feeds. §8.3 now states a soft ~120 KB review-cost bound (explicitly NOT §8.1's boot-priming bound), a per-entry ~600-char body-only ceiling, STAA as prune owner at STAA-run cadence, and a three-action prune set (archive-on-codification / consolidate-cross-spoke-duplicates / tombstone-dead-project), each leaving a tombstone so no lesson is silently dropped. `/dsm-staa` gains Step 7b to run the prune when the file is over bound — editing the one tracked file it touches while still committing nothing (the next wrap-up commits), and a no-op on spokes (the file is Central-only). The ~120 KB figure is a long-term target: a build-time prune confirmed archival (−3 KB) and compression (≤9 KB) cannot cross the ~175 KB irreducible floor of still-valuable entries, so the file approaches the bound only as lessons get codified into protocols over time. Build also walked one over-bound prune (6 archived + 1 consolidated, every tombstone citing a verified destination).
+  **Spoke action:** none — the bound and prune govern a Central-only, non-mirrored aggregation file; the `/dsm-staa` Step 7b change arrives with the next mirror sync and deploys via `sync-commands.sh --deploy` (and is a no-op where the aggregation file is absent).
+
 ## [1.27.2] - 2026-10-08
 
 Patch: two report-only active-BL-hygiene audits added to `/dsm-align` (Central-only), closing the gap where a filed backlog item can sit open-and-invisible, or a completed design can stay mis-statused as active, with nothing checking.
