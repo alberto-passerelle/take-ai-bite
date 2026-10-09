@@ -21,3 +21,4 @@ parallel — files here using the next fork-local number, not a guessed Central 
 | BACKLOG-005 | Complete Fork-Local BL Workflow for All Session Types | High | Proposed |
 | BACKLOG-006 | Fork Non-Contradiction and Free-Contribution Principle | Medium | Proposed |
 | BACKLOG-007 | Clean Index Before Creating a Level 3 Task Branch | Medium | Proposed |
+| BACKLOG-008 | Fork-to-Central Contribution Mechanics | Medium | Proposed |
