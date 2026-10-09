@@ -1666,6 +1666,14 @@ it cannot see (Central's line lives in the private hub).
   claim on Central's namespace. A fork `BACKLOG-001` and Central's `BACKLOG-001` are
   different items, distinguished by repository. Forks do not coordinate numbering with
   each other.
+- **Visibility: fork-local plans live on `main`.** The fork-local `dsm-docs/plans/`
+  bodies and the `plans/README.md` index are kept on the fork's `main`, visible to every
+  session type, carrying the next-number and status. The methodology-document edits a BL
+  implements stay on their own `bl-NNN/*` branches (or upstream PRs); only the plans
+  bodies and the index are the always-visible part. This visibility is what lets a
+  non-`main` session find the line and its next number instead of guessing Central's
+  (the S6 collision, where a session on `main` saw only the de-identified index and
+  minted a number in Central's namespace).
 - **Central stays canonical.** The fork line never overrides Central's numbering or
   decisions. On upstream absorption Central assigns the canonical number; the
   fork-local BL records the mapping (a `**Central BL:**` field, added when known) so
@@ -1685,6 +1693,28 @@ it cannot see (Central's line lives in the private hub).
   pipeline — so a change that helps every fork reaches Central. A fork is free to keep a
   BL purely local; the recommendation is a nudge, not a gate.
 
+**Fork-local BL workflow (any session type):** the procedure below is followed by any
+session that files a fork-local BL — a `/dsm-go` session, a parallel session, a
+`/dsm-staa` run, or any skill that may formalize an issue it finds:
+
+1. **Find the next number** from the fork's `plans/README.md` index on `main` — never
+   guess Central's line.
+2. **Draft a name-free body** with the standard required fields (Status, Priority, Date
+   Created, Origin, Author), a §21.2 Risks section, a Test Plan, and a **Non-Contradiction
+   Check** (§21.6).
+3. **Track it** by adding a row to the `plans/README.md` index on `main`.
+4. **Implement** on a `bl-NNN/*` branch (Three-Level Branching Strategy, §20).
+5. **Offer it upstream** — optional but recommended, via the contribution routing in the
+   Rules above.
+
+**Discoverability for non-`main` sessions:** a session that is not operating on `main` (a
+`/dsm-staa` run, a parallel session, any filing skill) consults the on-`main`
+`plans/README.md` index to derive the next fork-local number *before* minting one, rather
+than improvising a number in Central's namespace. The visibility rule above is what makes
+that consult possible; this workflow is what the filing session follows. (Whether a given
+skill such as STAA may file at all is a separate question, settled by that skill's own
+write-scope rather than here.)
+
 **Agent behavior:** on a fork (a Kick-off'd clone, or any non-Central repo maintaining
 its own `dsm-docs/plans/`), when the user formalizes a proposal, mint it in the
 fork-local line from `BACKLOG-001` rather than guessing a Central number; keep the body
@@ -1692,10 +1722,13 @@ name-free; and when the work is complete, offer the upstream contribution per th
 routing above.
 
 **Cross-references:** §21.1 (naming), §21.2 (risks), §21.4 (resolver sweep after a
-contributed change lands); DSM_0.2.A §25 (Cloned-Mirror Kick-off, which creates the
-fork-as-hub state); DSM_7.0 §2.1 (platform-side fork/mirror mechanics).
+contributed change lands), §21.6 (the Non-Contradiction Check the workflow above requires);
+DSM_0.2.A §25 (Cloned-Mirror Kick-off, which creates the fork-as-hub state); DSM_7.0 §2.1
+(platform-side fork/mirror mechanics).
 
-**Origin:** BACKLOG-002 (fork-local backlog governance; surfaced S6, 2026-10-08).
+**Origin:** BACKLOG-002 (fork-local backlog governance; surfaced S6, 2026-10-08);
+BACKLOG-005 (the on-`main` visibility rule and the fork-local BL workflow; S6 concurrent-
+session incident, 2026-10-09).
 
 
 ---
