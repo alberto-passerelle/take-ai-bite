@@ -1,6 +1,6 @@
 # BACKLOG-005: Complete, Discoverable Fork-Local BL Workflow for All Session Types
 
-**Status:** Proposed
+**Status:** Implemented (fork-local, S7); methodology on `bl-005-006/fork-governance-cluster` (commit `de1b913`), upstream PR deferred until #125 reconciles
 **Priority:** High
 **Date Created:** 2026-10-09
 **Origin:** S6 concurrent-session incident (2026-10-09). A `/dsm-staa` session found a real BL-worthy issue, but could not file it correctly: it guessed a Central-style number (BL-580, "highest observed was 579") and committed ad hoc, because the fork-local line was invisible to it.
@@ -91,10 +91,21 @@ fork's own `main`, not upstream's. Contributed upstream as a §21.5 extension.
 
 ## 7. Test Execution Log (per DSM_0.2 §21.3)
 
-_Partially satisfied at filing: fork-local plans visibility on `main` is in place
-(BL-001/002/003 + index, this session). The written-workflow half is unimplemented._
+Implemented S7 (2026-10-09) on `bl-005-006/fork-governance-cluster` (commit `de1b913`);
+BL body + index live on `main` (session-7).
+
+- **T-1 (index on `main`)** — PASS. `plans/README.md` on `main` carries the "Fork-local
+  line (§21.5)" header, the BL-001..008 table with status, and the next-fork-local-number
+  rule.
+- **T-2 (workflow written in §21.5)** — PASS. The five-step workflow is written in §21.5
+  as an explicit numbered procedure (`grep` of the five step labels at DSM_0.2 lines
+  1700–1707).
+- **T-3 (worked example)** — PASS. This session's BL-001..008 are filed under the
+  workflow; the session is the acceptance instance.
+- **T-4 (non-`main` session derives next number)** — DEFERRED to a real non-`main` run.
 
 ### Pending verification
 
-- [ ] T-2 (written workflow in §21.5) — unimplemented
-- [ ] T-4 (non-main session derives next number) — deferred to a real run
+- [ ] T-4 (non-`main` session derives next fork-local number) — deferred to a real
+  `/dsm-staa` or parallel-session run; the §21.5 discoverability clause is the mechanism
+  to verify.

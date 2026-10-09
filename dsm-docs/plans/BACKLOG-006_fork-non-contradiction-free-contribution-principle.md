@@ -1,6 +1,6 @@
 # BACKLOG-006: Fork Non-Contradiction and Free-Contribution Principle
 
-**Status:** Proposed
+**Status:** Implemented (fork-local, S7); methodology on `bl-005-006/fork-governance-cluster` (commit `6110aee`), upstream PR deferred until #125 reconciles
 **Priority:** Medium
 **Date Created:** 2026-10-09
 **Origin:** User directive (S6, 2026-10-09): "fork additions must never contradict main TAB; forks are allowed to contribute without building restrictions — analyze this rule and make it a BL." Generalizes BL-002's "Central stays canonical" clause into a full governing principle.
@@ -113,8 +113,17 @@ addition.
 
 ## 9. Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented (principle not yet written into methodology)._
+Implemented S7 (2026-10-09) on `bl-005-006/fork-governance-cluster` (commit `6110aee`);
+§21.6 added to DSM_0.2 core (between §21.5 and §22).
+
+- **T-1 (clauses a/b/c in §21.6)** — PASS. (a) Non-contradiction, (b) Free contribution,
+  and (c) Reconciliation on conflict are all written as labeled clauses in §21.6 (DSM_0.2
+  lines 1742 / 1750 / 1756).
+- **T-2 (Non-Contradiction Check named as required section)** — PASS. §21.6 defines the
+  Check; §21.5's workflow step 2 and its Cross-references both require it.
+- **T-3 (worked example)** — PASS. BL-003/004/005 each carry a Non-Contradiction Check
+  block (1 / 1 / 3 occurrences).
 
 ### Pending verification
 
-- [ ] T-1, T-2 (principle + required-section text in §21.5) — unimplemented
+- None. All Test Plan items satisfied in-session.
