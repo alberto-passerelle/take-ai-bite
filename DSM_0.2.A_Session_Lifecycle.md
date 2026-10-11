@@ -2528,6 +2528,16 @@ user through completion:
 Each section follows the Pre-Generation Brief Protocol (Gate 1 concept,
 Gate 2 implementation review).
 
+**Related session-start CLAUDE.md-driven check (distinct from this gate).** Separately
+from the four-section new-project gate above, and running at *every* session start rather
+than only on new or incomplete projects, `/dsm-go` Step 2g surfaces the DSM_0.2.C §5.9
+data-protection and compliance briefing: when the project CLAUDE.md declares
+`**Handles personal/confidential data:** yes` and no briefing exists at `dsm-docs/decisions/`,
+the boot report **warns** (report-not-block, silent once the briefing exists). It is
+cross-referenced here because it is the other session-start check keyed on a CLAUDE.md
+declaration; its specification, requirements, and template live in DSM_0.2.C §5.9 (wired by
+BL-583). This is a surfacing reminder, not a hard gate — it never blocks implementation.
+
 ---
 
 ## 24. Sprint Plan Cross-Reference Before Completion

@@ -5,6 +5,15 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.0] - 2026-10-11
+
+Minor: wire the §5.9 data-protection / compliance briefing surfacing check into session start, so a project that declares it handles personal or confidential data is actually warned when its briefing is missing — the mechanical follow-up v1.31.0 deferred (BACKLOG-583).
+
+### Added
+
+- **DP/compliance briefing surfacing check (BACKLOG-583, `/dsm-go` Step 2g; DSM_0.2.C §5.9, DSM_0.2.A §23).** §5.9 (v1.31.0) defined the briefing and a surfacing *convention* — "warns at the scaffold / session-start completeness check" — but nothing performed the check, so a project with the trigger set and no briefing received no warning. The new `/dsm-go` Step 2g performs it: when the project CLAUDE.md declares `**Handles personal/confidential data:** yes` and no briefing exists at `dsm-docs/decisions/`, the boot report warns (report-not-block, silent once a briefing exists). Detection is declarative-primary (the CLAUDE.md line), with the briefing matched by the title §5.9's template defines; the optional heuristic stays advisory and is deliberately not wired (§8.9.2 over-firing guard). §5.9's "deferred follow-up" note is reconciled to the built wiring, and DSM_0.2.A §23 cross-references the check for discoverability.
+  **Spoke action:** none required — Step 2g is silent unless a project sets the §5.9 `**Handles personal/confidential data:** yes` trigger; a project that handles Restricted data should ensure a briefing exists at `dsm-docs/decisions/`. The updated `/dsm-go` reaches projects at the next command deploy / mirror sync.
+
 ## [1.31.0] - 2026-10-10
 
 Minor: a by-design data-protection and compliance briefing for projects that handle personal or confidential data, so the review need is requested up front in a uniform form rather than surfacing ad hoc after a PII-handling model is already running (BACKLOG-582, take-ai-bite issue #127 / reference PR #128, alberto-passerelle fork).
