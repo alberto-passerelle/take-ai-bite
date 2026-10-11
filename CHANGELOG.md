@@ -5,6 +5,33 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.31.0] - 2026-10-10
+
+Minor: a by-design data-protection and compliance briefing for projects that handle personal or confidential data, so the review need is requested up front in a uniform form rather than surfacing ad hoc after a PII-handling model is already running (BACKLOG-582, take-ai-bite issue #127 / reference PR #128, alberto-passerelle fork).
+
+### Added
+
+- **Data-Protection and Compliance Briefing by Design (BACKLOG-582, DSM_0.2.C §5.9).** DSM requested no data-protection or compliance review by design for projects handling personal data, so the need surfaced ad hoc — usually after a PII-handling model was already in operation — and was recorded, if at all, in no uniform form. The new §5.9 makes DSM request a standard briefing: a declarative-primary trigger (a `**Handles personal/confidential data:** yes` line in the project CLAUDE.md, on the §5.1-Restricted basis, with an optional heuristic), a constant requirements checklist, an A–G template placed at `dsm-docs/decisions/`, and per-project-type adaptation (Documentation and Data Science full; Application lightweight-with-justification on synthetic data; Hybrid conditional; External Contribution deferred to the upstream regime). The briefing is a name-free hand-off to human or expert review that asserts no legal conclusions, and a missing one warns at the scaffold / session-start completeness check rather than blocking work. Central authored §5.9 grounding against the fork's reference PR #128, not merging it (the issue/PR is INPUT to the planning pipeline, per Actionable Work Items).
+  **Spoke action:** none required — §5.9 is a new opt-in section arriving at the next mirror sync; a project handling Restricted data may adopt the briefing, but nothing is mandated and the session-start surfacing wiring is a deferred follow-up.
+
+## [1.30.0] - 2026-10-09
+
+Minor: a sanctioned independent backlog line for public-mirror forks, so a fork — including one promoted to a local hub by the Cloned-Mirror Kick-off — can develop methodology enhancements without waiting on the private Central or guessing a BL number it cannot see (BACKLOG-581, take-ai-bite issue #124 / reference PR #125, alberto-passerelle fork).
+
+### Added
+
+- **Independent fork-local backlog line (BACKLOG-581, DSM_0.2 §21.5; cross-ref DSM_7.0 §2.1).** A fork of a DSM repository could not develop methodology enhancements independently: BL numbering is owned by the private Central (a fork cannot see or safely guess the next number) and a de-identified public fork ships `dsm-docs/plans/` as a `README` plus an INDEX-only `done/`, so it carries no active BL bodies of its own. The new §21.5 permits a fork to maintain its own `BACKLOG-###` line numbered from 001, independent of Central's numbering: fork numbers are a local identity (not a claim on Central's namespace); Central stays canonical and assigns the real number on upstream absorption, with the fork recording the mapping; fork-local BL bodies must be name-free (public-repo egress discipline, DSM_0.2.C §5.7/§5.8); an additive `git merge upstream/main` preserves fork-local BLs with no mirror-sync-manifest change; and upstream contribution (issue + cross-fork PR + attached BL) is optional but recommended. Central authored §21.5 grounding against the fork's reference PR #125, not merging it (the issue/PR is INPUT to the planning pipeline, per Actionable Work Items).
+  **Spoke action:** none required — §21.5 is a new methodology section arriving at the next mirror sync; it enables a fork to open its own backlog line but mandates no change to an existing spoke.
+
+## [1.29.0] - 2026-10-09
+
+Minor: a first-class bootstrap path for turning an uninitialized directory into a new DSM spoke, so a fresh spoke no longer has to misuse the Cloned-Mirror Kick-off path (which self-registers the directory as its own hub) or be hand-assembled (BACKLOG-578, take-ai-bite issue #117).
+
+### Added
+
+- **New-spoke bootstrap: the `/dsm-new-spoke` skill plus a `/dsm-go` Step 0.8 guard (BACKLOG-578, DSM_0.2.A §25.7).** `/dsm-go` on a fresh directory meant to become a spoke had no fitting path: Step 0.8's Cloned-Mirror Kick-off self-registers the directory as its own `dsm-central` and copies `.claude/*.template` files a hand-created spoke does not have, so it either failed or halted, and the workaround was undocumented. The new `/dsm-new-spoke <hub-path>` skill scaffolds the directory as a spoke of an existing hub: it validates the hub path, registers the real hub as `dsm-central` (never self), writes a minimal `@`-referenced CLAUDE.md, and runs the spoke `/dsm-align` path to build `dsm-docs/` + `_inbox/` and generate the alignment section — without copying templates or self-registering. A new `/dsm-go` Step 0.8c guard makes the wrong-path case a route rather than a failure: when `KICKOFF_NEEDED` fires against a directory with no `.claude/*.template` files, it does not run Kick-off (which would mis-register the directory as a hub) and instead points the user to `/dsm-new-spoke`. Spoke-vs-mirror is a user intent, not a directory property, so the skill invocation is the intent signal; DSM_0.2.A §25.7 documents the distinction at the §25 entry point.
+  **Spoke action:** none required — `/dsm-new-spoke` is a new command, available user-level wherever `scripts/sync-commands.sh --deploy` has run and arriving on mirror clones at the next sync; it is then available for bootstrapping further spokes.
+
 ## [1.28.0] - 2026-10-09
 
 Minor: a review-cost bound and a prune mechanism for the ecosystem reasoning-lessons aggregation file, which had grown unbounded (BACKLOG-567). The bound is an honest long-term target — the build confirmed the file is mostly irreducible cross-project value, so it is approached as lessons get codified, not by one-shot pruning.
