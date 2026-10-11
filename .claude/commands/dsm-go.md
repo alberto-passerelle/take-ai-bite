@@ -726,6 +726,45 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
      **Known limit:** the README matcher takes the first `N features` occurrence; if README ever gains an earlier "<number> features" phrase before the timeline line, anchor the match on "timeline of". Stated rather than solved; the current README has exactly one such line.
 
+   - **2g. DP/compliance briefing surfacing (per BL-583 / DSM_0.2.C §5.9):** §5.9 (v1.31.0) defines a
+     by-design data-protection briefing for a project that declares it handles Restricted data, and states
+     the condition "warns at the scaffold / session-start completeness check." That surfacing was a
+     **convention only** until this step wired it: a project with the trigger set and no briefing received
+     no warning. This step performs the check. It is **report-not-block and silent-when-clean**, the same
+     posture as the conditional checks 2a.6/2a.7/2a.8 (which pass or skip silently when N/A and speak only
+     when their condition fires) — so a project that does not handle personal data, and a project whose
+     briefing already exists, both produce NO line. A WARN appears only when the trigger is set AND no
+     briefing is present.
+
+     Run the snippet and, when it emits a line, surface it in the boot report like any other §22-class
+     finding. Detection is **declarative-primary**: the authoritative signal is the CLAUDE.md trigger line
+     (§8.9.2 over-firing guard — a heuristic firing on its own would flag synthetic-data projects and train
+     dismissal). The briefing is matched by the title phrase §5.9's template defines, because §5.9 fixes the
+     location (`dsm-docs/decisions/`) and the title but no filename (closes BL-583 Risk #3):
+
+     ```bash
+     if [ -f .claude/CLAUDE.md ] && grep -qiE '^\*\*Handles personal/confidential data:\*\* *yes' .claude/CLAUDE.md; then
+       if grep -rliE 'Data-Protection and Compliance Briefing' dsm-docs/decisions/ 2>/dev/null | grep -q .; then
+         : # briefing present -> silent (idempotent, §5.9 satisfied; a lightweight "not applicable" entry carries the same title)
+       else
+         echo "WARN (§5.9): .claude/CLAUDE.md declares personal/confidential-data handling but no DP/compliance briefing found at dsm-docs/decisions/ - add the A-G briefing (soft, report-not-block)"
+       fi
+     fi
+     ```
+
+     **What a wrong result looks like (§19.1's second question).** The WARN and the silent cases are
+     distinguishable by construction (the WARN prints; the clean cases print nothing). The accepted residual
+     — shared with 2a.6/2a.7/2a.8 — is that "ran, trigger absent" and "did not run" both print nothing; this
+     is tolerable here because the check is SOFT (a missed warn never blocks work and the briefing can be
+     added at any time), unlike the FEATURES snippets above where a silent pass could mask a broken grep over
+     a hard count. The trigger grep anchors on the literal §5.9 line, so a match is unambiguous.
+
+     **Over-firing guard (§8.9.2).** A project that never sets the trigger is never warned; the optional
+     heuristic §5.9 mentions (a gitignored mandate/PII store) stays advisory and is deliberately NOT wired
+     here. Full-boot integration (the warn actually appearing in a live boot report) is verified at the next
+     `/dsm-go` after the runtime deploy — §21.3 untestable-by-design, the implementing session arranges the
+     trigger in a scratch project rather than the authoring hub, which sets no trigger.
+
    - Any other session-start protocols added to DSM_0.2 in the future
 3. **Handoff consumption and lifecycle:** Check `dsm-docs/handoffs/` for handoffs awaiting consumption. Any handoff file (not in `done/`) that predates this session was written FOR this session. **This step is its consumer.** Read, surface, then archive, in that order:
    - **Read the file in full, before any move.** Handoffs are authored by `/dsm-wrap-up` Step 5 and `/dsm-quick-wrap-up` Step 4 only when there is "complex pending work that requires detailed context for the next session", and `dsm-docs/handoffs/README.md` says the same. DSM_0.2.A §18 goes further and parses a DSM version field out of the most recent handoff at session start, which is a read no other step performs.
