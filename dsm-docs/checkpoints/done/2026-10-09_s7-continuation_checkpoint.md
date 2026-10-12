@@ -1,3 +1,5 @@
+**Consumed at:** Session 9 start (2026-10-11)
+
 # Session 7 Continuation Checkpoint (lightweight wrap-up)
 
 **Date:** 2026-10-09
