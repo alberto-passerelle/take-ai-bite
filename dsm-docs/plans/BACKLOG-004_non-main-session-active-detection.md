@@ -1,6 +1,6 @@
 # BACKLOG-004: Active-Session Detection for STAA and Non-/dsm-go Sessions
 
-**Status:** Implemented (fork-local, S7); methodology held on `bl-004` branch, upstream PR deferred until #125/#128 reconcile
+**Status:** Implemented (fork-local, S7); methodology held on `bl-004` branch; upstream PR #136 (S10, open)
 **Priority:** High
 **Date Created:** 2026-10-09
 **Origin:** S6 concurrent-session incident (2026-10-09). A `/dsm-staa` session, started while this session (S6) was live and unwrapped, operated on the shared git working copy — created a branch, committed a BL, and moved this session's `HEAD` — because STAA runs no concurrent-session detection.

@@ -1,6 +1,6 @@
 # BACKLOG-006: Fork Non-Contradiction and Free-Contribution Principle
 
-**Status:** Implemented (fork-local, S7); methodology on `bl-005-006/fork-governance-cluster` (commit `6110aee`), upstream PR deferred until #125 reconciles
+**Status:** Implemented (fork-local, S7); methodology on `bl-005-006/fork-governance-cluster` (commit `6110aee`); upstream PR #140 (bundle, S10, open)
 **Priority:** Medium
 **Date Created:** 2026-10-09
 **Origin:** User directive (S6, 2026-10-09): "fork additions must never contradict main TAB; forks are allowed to contribute without building restrictions — analyze this rule and make it a BL." Generalizes BL-002's "Central stays canonical" clause into a full governing principle.

@@ -1,6 +1,6 @@
 # BACKLOG-005: Complete, Discoverable Fork-Local BL Workflow for All Session Types
 
-**Status:** Implemented (fork-local, S7); methodology on `bl-005-006/fork-governance-cluster` (commit `de1b913`), upstream PR deferred until #125 reconciles
+**Status:** Implemented (fork-local, S7); methodology on `bl-005-006/fork-governance-cluster` (commit `de1b913`); upstream PR #140 (bundle, S10, open)
 **Priority:** High
 **Date Created:** 2026-10-09
 **Origin:** S6 concurrent-session incident (2026-10-09). A `/dsm-staa` session found a real BL-worthy issue, but could not file it correctly: it guessed a Central-style number (BL-580, "highest observed was 579") and committed ad hoc, because the fork-local line was invisible to it.
