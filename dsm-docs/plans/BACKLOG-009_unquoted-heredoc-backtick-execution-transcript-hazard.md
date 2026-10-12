@@ -1,6 +1,6 @@
 # BACKLOG-009: Unquoted-Heredoc Backtick/Command-Substitution Hazard in Transcript Appends
 
-**Status:** Proposed
+**Status:** Implemented (fork-local, S10); methodology on `bl-009/unquoted-heredoc-execution-hazard` (commit `965e4fa`); upstream PR queued (open-PR window 3/3)
 **Priority:** Medium
 **Date Created:** 2026-10-09
 **Origin:** S7 §22 incident (2026-10-09). A session-transcript Output block was appended with an unquoted heredoc (`cat >> ... << EOF`). The block's prose contained a backtick-quoted example command, and an unquoted heredoc performs command substitution on backtick (and `$(...)`) spans in its body — so the shell executed the example, creating a stray branch and writing empty where the command text should have been. Every command exited 0; the corruption surfaced only because the branch-switch message printed.
@@ -92,8 +92,13 @@ Contributed upstream as a §7 clarification like any fork-local BL.
 
 ## 7. Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented (anti-pattern not yet written into §7)._
+**Implemented S10** on `bl-009/unquoted-heredoc-execution-hazard` (commit `965e4fa`): a companion anti-pattern bullet added to DSM_0.2 §7, paired bidirectionally with the existing single-quoted-heredoc hazard.
+
+- **T-1 (structural) — PASS.** `grep -c 'Do NOT use an unquoted heredoc'` on DSM_0.2 §7 returns 1.
+- **T-2 (structural) — PASS.** Both directions present: new→existing (`inverse ... single-quoted-heredoc hazard directly above`) = 1; existing→new (`inverse unquoted-heredoc hazard directly below`) = 1.
+- **T-3 (behavioral) — PASS.** Three-way scratchpad demo with a literal backtick span (`` `echo BACKTICK-EXECUTED` ``) in the heredoc body: (a) unquoted `<< EOF` executed it (the file held `BACKTICK-EXECUTED`; the backtick + command text were gone); (b) `<< 'EOF'` and (c) escaped-backtick preserved the span literally. (a) differs from (b)/(c), so the test discriminates a wrong result from a right one (§19.1). Nuance surfaced during the run: a backtick arriving via a pre-assigned single-quoted variable is safe (variable expansion does not re-trigger substitution); only literal body backticks execute — the bullet's "backtick span in its body" wording already scopes to this.
 
 ### Pending verification
 
-- [ ] All Test Plan items (deferred: Proposed, not implemented)
+- [x] All Test Plan items executed S10 (T-1 / T-2 / T-3 PASS; see above).
+- [ ] Upstream contribution: deferred until the open-PR window (<=2-3) frees; then cut `feature/*` off `upstream/main`, open issue + no-merge PR + name-free comment, update tracking issue #130 (BL-009 is not yet listed in #130's Queued; add it when submitting).
