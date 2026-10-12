@@ -888,13 +888,15 @@ G. References            — operative rules, decision log, governance
 work. When the trigger is set and no briefing exists, the condition **warns** at the
 scaffold / session-start completeness check — the same report-not-block posture as other
 DSM completeness checks — and is silent once the briefing exists. This section defines the
-convention; wiring it into the session-start skill and DSM_0.2.A is a deferred follow-up, so
-the convention can be used before the mechanical surfacing is built.
+convention; `/dsm-go` Step 2g performs the surfacing check (report-not-block, silent once a
+briefing exists) and DSM_0.2.A §23 references it (wired by BL-583). The briefing is detected by
+the title its template defines above (`Data-Protection and Compliance Briefing`) at
+`dsm-docs/decisions/`, since this section fixes the location and the title but no filename.
 
 This section builds on, and does not restate, the §5 rules it depends on: §5.1 supplies the
 Restricted class that is the trigger basis; §5.7 and §5.8 govern the briefing's name-free
 egress and its leak-scan; §8.9.2 is the over-firing guard the declarative-primary trigger
-honors; §21.3 governs the test evidence when the surfacing wiring is later built.
+honors; §21.3 governed the test evidence for the surfacing wiring, built by BL-583.
 
 **Origin:** take-ai-bite issue #127 with reference PR #128, an external fork contribution
 (credited). The direction was proposed externally and absorbed per BL-582; Central authored
