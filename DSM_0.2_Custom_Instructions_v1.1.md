@@ -270,7 +270,8 @@ IMPORTANT block in `scripts/commands/dsm-staa.md`.
   ...
   EOF
   ```
-  The Edit-tool append path (read last 3 lines, anchor on last non-empty line) is preferred and avoids heredoc quoting entirely. Use heredoc only when the Edit path is unavailable.
+  The Edit-tool append path (read last 3 lines, anchor on last non-empty line) is preferred and avoids heredoc quoting entirely. Use heredoc only when the Edit path is unavailable, and only for backtick-free content (see the inverse unquoted-heredoc hazard directly below).
+- **Do NOT use an unquoted heredoc (`<< EOF`) to append transcript content that contains backtick or `$(...)` spans.** An unquoted heredoc performs command substitution on every backtick span and `$(...)` span in its body, and transcript prose routinely contains backtick-quoted example commands (a git command, a path, a snippet under discussion) — so the shell **executes** them. The write still exits 0 and the body text is silently replaced by the command's stdout (usually empty); append-only means the corrupted line cannot be un-written (recovery is a `[RETROACTIVE]` note, never an in-place fix). This is the **inverse** of the single-quoted-heredoc hazard directly above, and the two are a matched pair: the fix for one must not reintroduce the other. Therefore the **Edit-tool append path is primary** (it has no shell); the heredoc fallback is used only when the Edit anchor is genuinely unavailable **and** the body contains no backtick or `$(...)` span. If a heredoc is unavoidable and the body must contain backticks, escape each backtick with a backslash — or quote the delimiter (`<< 'EOF'`), which blocks substitution but reintroduces the timestamp-suppression bug above, so the timestamp must then be inlined literally rather than via `$(date)`.
 
 **Enforcement, self-check, and retroactive recovery** (origins, rationale, and worked
 examples in [DSM_0.2.G_Transcript_Enforcement.md](DSM_0.2.G_Transcript_Enforcement.md),
