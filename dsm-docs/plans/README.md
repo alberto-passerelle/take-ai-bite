@@ -23,3 +23,4 @@ parallel — files here using the next fork-local number, not a guessed Central 
 | BACKLOG-007 | Clean Index Before Creating a Level 3 Task Branch | Medium | Implemented (fork-local); upstream PR #138 (S10, open) |
 | BACKLOG-008 | Fork-to-Central Contribution Mechanics | Medium | Proposed |
 | BACKLOG-009 | Unquoted-Heredoc Backtick/Command-Substitution Hazard in Transcript Appends | Medium | Implemented (fork-local, S10); methodology on `bl-009`; upstream PR queued |
+| BACKLOG-010 | Fork-Local BL Done-Criterion and Archival Step | Medium | Implemented (fork-local, S11); methodology on `bl-010`; upstream PR queued |
