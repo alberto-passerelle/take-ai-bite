@@ -5,6 +5,16 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.33.1] - 2026-10-13
+
+Patch: a migration guide for forks of the public mirror, so a fork maintainer can complete the v1.33.0 boot-safeguard fix on their own machine (BACKLOG-585 Phase 3).
+
+### Added
+
+- **Fork migration guide (`dsm-docs/guides/boot-safeguard-fork-migration.md`, BACKLOG-585 Phase 3).** Merging `upstream/main` brings a fork the v1.33.0 methodology files but not the files that live only on the maintainer's machine. The guide covers those in five steps: merge upstream; refresh the user-level commands with `scripts/sync-commands.sh --deploy` (stale user-level copies override the repo's own and were the cause of a refused fresh-clone boot during the rollout); realign with `/dsm-align`; retire the old live work-log file and update the boot-read memory, lessons and handoffs; verify with a grep plus a strict-model boot. It is trigger-gated in the guides index and never spells out the retired file name as one string.
+  **Fork action:** follow the guide on a non-strict model, then confirm with a strict-model boot.
+  **Spoke action:** none; Central's own spokes follow the internal spoke migration runbook.
+
 ## [1.33.0] - 2026-10-13
 
 Minor: fix the strict-model boot refusal, add a guard that keeps it from coming back, and ship that guard to the public mirror and its clones (BACKLOG-584, BACKLOG-585 Phase 0/2).
