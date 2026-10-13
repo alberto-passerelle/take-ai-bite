@@ -1,6 +1,7 @@
 # BACKLOG-001: Data-Protection / Compliance Briefing by Design (project-type-adaptive)
 
-**Status:** Implemented (fork-local, v1); session-start wiring deferred to v1b; upstream contribution pending
+**Status:** Done (fork-local) — absorbed upstream (PR #128 CLOSED); v1b session-start wiring also absorbed
+**Central BL:** BL-582 (DP/compliance briefing, DSM_0.2.C §5.9, v1.31.0) + BL-583 (§2g session-start surfacing, v1.32.0)
 **Priority:** Medium
 **Date Created:** 2026-10-08
 **Origin:** Downstream Documentation spoke feedback (project processing mandate PII); routed via hub inbox 2026-10-08. Name-free per egress discipline.

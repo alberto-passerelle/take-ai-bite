@@ -14,8 +14,8 @@ parallel — files here using the next fork-local number, not a guessed Central 
 
 | BL# | Title | Priority | Status |
 |-----|-------|----------|--------|
-| BACKLOG-001 | Data-Protection / Compliance Briefing by Design | Medium | Implemented (fork-local, v1); upstream PR #128 |
-| BACKLOG-002 | Independent Fork-Local Backlog Line | Medium | Implemented (fork-local); upstream PR #125 |
+| BACKLOG-001 | Data-Protection / Compliance Briefing by Design | Medium | Done (fork-local, in `done/`) — absorbed as Central BL-582 (§5.9, v1.31.0) + BL-583 (§2g, v1.32.0); PR #128 closed |
+| BACKLOG-002 | Independent Fork-Local Backlog Line | Medium | Done (fork-local, in `done/`) — absorbed as Central BL-581 (§21.5, v1.30.0); PR #125 closed |
 | BACKLOG-003 | /dsm-go boot plan displaced into prior transcript archive | Low | Implemented (fork-local, S11); methodology on `bl-003`; upstream PR queued (renumbered from BL-580) |
 | BACKLOG-004 | Active-Session Detection for STAA and Non-/dsm-go Sessions | High | Implemented (fork-local); upstream PR #136 (S10, open) |
 | BACKLOG-005 | Complete Fork-Local BL Workflow for All Session Types | High | Implemented (fork-local); upstream PR #140 (bundle, S10, open) |
