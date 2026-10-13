@@ -3,14 +3,14 @@
 **Status:** Implemented (fork-local, S10); methodology on `bl-009/unquoted-heredoc-execution-hazard` (commit `965e4fa`); upstream issue #141 filed (2026-10-13); PR pending (window 3/3)
 **Priority:** Medium
 **Date Created:** 2026-10-09
-**Origin:** S7 §22 incident (2026-10-09). A session-transcript Output block was appended with an unquoted heredoc (`cat >> ... << EOF`). The block's prose contained a backtick-quoted example command, and an unquoted heredoc performs command substitution on backtick (and `$(...)`) spans in its body — so the shell executed the example, creating a stray branch and writing empty where the command text should have been. Every command exited 0; the corruption surfaced only because the branch-switch message printed.
+**Origin:** S7 §22 incident (2026-10-09). A work-log Output block was appended with an unquoted heredoc (`cat >> ... << EOF`). The block's prose contained a backtick-quoted example command, and an unquoted heredoc performs command substitution on backtick (and `$(...)`) spans in its body — so the shell executed the example, creating a stray branch and writing empty where the command text should have been. Every command exited 0; the corruption surfaced only because the branch-switch message printed.
 **Author:** Alberto (with AI assistance)
 
 ---
 
 ## 1. Problem
 
-DSM_0.2 §7 (Session Transcript Protocol) warns about one heredoc hazard — a
+DSM_0.2 §7 (Worklog Protocol) warns about one heredoc hazard — a
 **single-quoted** heredoc (`<< 'EOF'`) suppressing `$(date +%H:%M)` expansion, writing the
 literal string instead of the timestamp (observed S69) — and its stated fix is "capture the
 timestamp into a variable first and use an **unquoted** heredoc."
