@@ -1691,6 +1691,23 @@ this line.
   attached for Central's backlog pipeline — so a change that helps every fork
   reaches Central. A fork MAY keep a BL purely local; the recommendation is a
   nudge, not a gate.
+- **Done and archival.** A fork-local BL is *done* when its upstream contribution
+  resolves — the reference PR is closed/absorbed and the change returns via
+  fork-sync (its held `bl-NNN` branch is then retired per §20.4) — or when the fork
+  explicitly keeps it local-only and its local work is complete. Fork-*implementation*
+  alone is **not** done: while the PR is open or queued the contribution is in flight,
+  so the BL stays in `dsm-docs/plans/`. On done: set status to
+  `Done (fork-local) — absorbed as Central BL-NNN (§X, vY.Z)`, record a
+  `**Central BL:**` mapping field, mark the `plans/README.md` row Done, and move the
+  name-free body to `dsm-docs/plans/done/`. Do **not** add the fork BL to
+  `dsm-docs/plans/done/INDEX.md`: that index is Central's namespace (a fork
+  `BACKLOG-001` and Central's are different items), and the absorbed change already
+  appears there under its Central number via fork-sync. The fork `README.md` row plus
+  the `Central BL:` field are the fork-side done record. The post-fork-sync
+  reconciliation that triggers archival (and retires the held branch, per the
+  branch-hygiene rule of the proposed §21.6 / fork-to-Central contribution mechanics)
+  is the operational companion's job — see
+  `dsm-docs/guides/fork-contribution-workflow.md` §6.
 
 **Agent behavior:** on a fork (a Kick-off'd clone, or any non-Central repo
 maintaining its own `dsm-docs/plans/`), when the user formalizes a proposal,
