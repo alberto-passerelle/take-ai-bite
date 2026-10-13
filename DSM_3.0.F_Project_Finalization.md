@@ -299,7 +299,7 @@ DSM-relevant lessons to Central's inbox.
 
 ### 5.4. Relationship to STAA
 
-The Session Transcript Analysis Agent (`/dsm-staa`) analyzes individual
+The Worklog Analysis Agent (`/dsm-staa`) analyzes individual
 transcripts. Finalization's project-level STAA applies the same analysis
 across all archived transcripts, looking for patterns that emerge only when
 sessions are considered together. For large projects, finalization may invoke

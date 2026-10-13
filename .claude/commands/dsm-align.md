@@ -62,7 +62,7 @@ Before starting alignment, check if git is initialized:
 
    **Implementation note:** Use `test -d` for directory existence checks, not `ls -d` (which returns non-zero when paths don't exist, cancelling parallel tool calls).
 
-   **Hub fast-path:** If the project is DSM Central (has `scripts/commands/` directory), skip steps 2, 4, 5, 6, and 8c. These steps check spoke scaffold structure and validate CLAUDE.md paths against the filesystem, both of which are redundant on the hub that defines the templates. Run steps 1, **3 (canonical dsm-docs/ folder scaffold, idempotent)**, 7, 7b, 8, 8b, 9, 10, 10b, 11, 11b, 11c, 11d, 11e, 12, 13. Step 3 is included in the hub fast-path because a Kick-off'd mirror clone is functionally a hub (per DSM_0.2.A §25.4) but arrives with an empty scaffold; Step 3's idempotent check-then-create is a no-op for Central (scaffold already exists) and the missing piece for fresh clones. Step 10b is mandatory on the hub because hub-self-installs the session-transcript hooks (transcript-reminder + validate-transcript-edit) and applies `chmod +x`. Omitting 10b on hub fast-path was the S180 root cause of a full session of zero transcript appends in DSM Central, the hooks were present on disk but not executable, so Claude Code's hook subsystem silently dropped the per-turn reminder injection.
+   **Hub fast-path:** If the project is DSM Central (has `scripts/commands/` directory), skip steps 2, 4, 5, 6, and 8c. These steps check spoke scaffold structure and validate CLAUDE.md paths against the filesystem, both of which are redundant on the hub that defines the templates. Run steps 1, **3 (canonical dsm-docs/ folder scaffold, idempotent)**, 7, 7b, 8, 8b, 9, 10, 10b, 11, 11b, 11c, 11d, 11e, 12, 13. Step 3 is included in the hub fast-path because a Kick-off'd mirror clone is functionally a hub (per DSM_0.2.A §25.4) but arrives with an empty scaffold; Step 3's idempotent check-then-create is a no-op for Central (scaffold already exists) and the missing piece for fresh clones. Step 10b is mandatory on the hub because hub-self-installs the worklog hooks (transcript-reminder + validate-transcript-edit) and applies `chmod +x`. Omitting 10b on hub fast-path was the S180 root cause of a full session of zero transcript appends in DSM Central, the hooks were present on disk but not executable, so Claude Code's hook subsystem silently dropped the per-turn reminder injection.
 
    **This fast-path is the path DSM Central actually takes, and there is no alternative to it (BL-547).** `/dsm-go` Step 1.8 branch 6 routes a version mismatch here, at Central as at any spoke. Between roughly S233 and S259 Central instead performed a "marker-only refresh" that skipped the skill entirely; that practice was written down nowhere but in the `note:` field of the gitignored `.claude/last-align.txt` each run wrote, so it propagated by being copied forward between untracked artifacts and could not be reviewed. It is retired. Two consequences worth stating here rather than leaving to the BL: the template location must always be resolved by SEARCHING for the template rather than by a remembered line number or file, since it has already moved once (v1.26.0 relocated §17.1's base template into `DSM_0.2.T_Alignment_Templates.md`); and Steps 11, 11b and 11c are Central-only, so this branch is the only code path on which they ever execute, which is why skipping the skill made all three unreachable (BL-498).
 
@@ -313,13 +313,13 @@ Before starting alignment, check if git is initialized:
    - Report result in the summary.
 
 10. **Check .claude/ files:**
-   - If `.claude/session-transcript.md` does not exist: create it (empty file).
+   - If `.claude/worklog.md` does not exist: create it (empty file).
    - If `.claude/dsm-ecosystem.md` does not exist: create it from the Ecosystem Pointers Template below. Resolve `dsm-central` path from the `@` reference in `.claude/CLAUDE.md`. Then read DSM Central's ecosystem registry (`{dsm-central}/.claude/dsm-ecosystem.md`) and copy the `portfolio` path from it. If DSM Central's registry does not exist or has no portfolio entry, leave as placeholder. Report: "Created `.claude/dsm-ecosystem.md` with ecosystem pointers."
    - If `.claude/reasoning-lessons.md` does not exist: create it from the Reasoning Lessons Template below. Report: "Created `.claude/reasoning-lessons.md` (empty scaffold for per-session lessons)."
    - If `.claude/reasoning-lessons.md` exists but is empty (zero bytes) or missing the `# Reasoning Lessons` header on line 1: prepend the template header without touching any existing content below. Report: "Added missing header to `.claude/reasoning-lessons.md`."
    - Otherwise leave the file untouched.
 
-10b. **Install session-transcript hooks:**
+10b. **Install worklog hooks:**
    Deliver the per-turn transcript append hook and the append-only edit validator to the project's `.claude/hooks/` and wire them into `.claude/settings.json`. Single source of truth: Central's own `.claude/hooks/*.sh` scripts. The hook entries come from `{dsm-central}/scripts/templates/settings-hooks.json`.
 
    **Applies to all project types, including DSM Central itself** (Central's `.claude/settings.json` is gitignored and must stay aligned with the template it ships).
@@ -822,7 +822,7 @@ Reference: DSM_0.2 Module D (Phase 0.5: Research and Grounding).
 ```markdown
 # Reasoning Lessons
 
-Per-session lessons extracted from session transcripts. Appended by
+Per-session lessons extracted from worklogs. Appended by
 the wrap-up skill at each session end. See DSM_0.2 Module A Reasoning
 Lessons Protocol for the extraction rules.
 

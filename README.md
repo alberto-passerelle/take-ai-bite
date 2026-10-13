@@ -45,7 +45,7 @@ These principles are operationalized by DSM, a living, versioned methodology tha
 
 DSM is not a static document. It evolves through a hub-spoke feedback loop where every session, every project, and every practitioner's experience feeds back into the methodology. Protocols are tested, refined, and propagated across the ecosystem. What one project discovers improves every future project.
 
-This is what makes TAB unique to your own experience. Session transcripts capture reasoning. Checkpoints preserve milestones. Memory files retain context across sessions. Feedback flows from individual projects to the central methodology and back. The result is an ecosystem that accumulates your expertise, not just your files.
+This is what makes TAB unique to your own experience. Worklogs capture reasoning. Checkpoints preserve milestones. Memory files retain context across sessions. Feedback flows from individual projects to the central methodology and back. The result is an ecosystem that accumulates your expertise, not just your files.
 
 ## Systems Prompt Engineering
 
@@ -109,7 +109,7 @@ They are not theoretical; they emerged from daily practice with AI agents across
 
 </details>
 
-See the full timeline of 192 features → [FEATURES.md](FEATURES.md)
+See the full timeline of 193 features → [FEATURES.md](FEATURES.md)
 
 ## What's Coming
 
