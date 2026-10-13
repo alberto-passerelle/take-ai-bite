@@ -4,7 +4,7 @@
 
 **What is DSM?** DSM stands for "Deliberate Systematic Methodology", TAB's power engine: A living, versioned methodology that governs the full lifecycle of human-AI collaboration: research, implementation, governance, and disclosure.
 
-**DSM is what makes TAB unique to you own experience:** Session transcripts capture your own reasoning lessons and Memory files retain context that persist across sessions. Checkpoints preserve milestones. Feedback flows from individual projects to the central methodology and back. The result is an ecosystem that build up your expertise, not just your files.
+**DSM is what makes TAB unique to you own experience:** Worklogs capture your own reasoning lessons and Memory files retain context that persist across sessions. Checkpoints preserve milestones. Feedback flows from individual projects to the central methodology and back. The result is an ecosystem that build up your expertise, not just your files.
 
 
 **Deliver only what the reviewer can chew.**

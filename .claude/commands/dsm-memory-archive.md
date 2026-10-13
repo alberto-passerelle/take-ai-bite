@@ -59,4 +59,4 @@ long-term tier exceeds its size threshold. The deepest memory tier. $ARGUMENTS
   index content, not a session group), not moved.
 - Companion: `/dsm-memory-decommission` (MEMORY.md -> MEMORY-long-term.md, 4 KB
   sessions-zone trigger).
-- Follow .claude/CLAUDE.md conventions and the Session Transcript Protocol.
+- Follow .claude/CLAUDE.md conventions and the Worklog Protocol.

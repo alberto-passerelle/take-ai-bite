@@ -1,8 +1,8 @@
 # Deliberate Systematic Methodology (DSM) - Start Here
 **A gentle introduction to working with AI on real projects**
 
-**Version:** 1.32.0
-**Last Updated:** 2026-10-11
+**Version:** 1.33.0
+**Last Updated:** 2026-10-13
 
 ---
 
@@ -267,7 +267,7 @@ session start and feedback generation at session end.
 ### Learning From a Session
 
 At the end of a session, `/dsm-wrap-up` sometimes tells you *"STAA recommended:
-yes."* STAA (Session Transcript Analysis Agent) is a look back at the reasoning
+yes."* STAA (Worklog Analysis Agent) is a look back at the reasoning
 behind a session: where choices were made, where the approach changed direction,
 what worked, and what slowed things down.
 

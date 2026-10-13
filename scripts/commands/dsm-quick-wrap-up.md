@@ -4,7 +4,7 @@ Execute the DSM session wrap-up checklist without feedback push. Use this varian
 
 **Steps 0, 1, and 1.5 are independent and can run in parallel.**
 
-0. **Extract reasoning lessons:** Scan `.claude/session-transcript.md` for notable reasoning patterns from this session. For each notable entry, append a 1-2 line summary to `.claude/reasoning-lessons.md` under the appropriate category, tagged `[auto]`. Notable entries include:
+0. **Extract reasoning lessons:** Scan `.claude/worklog.md` for notable reasoning patterns from this session. For each notable entry, append a 1-2 line summary to `.claude/reasoning-lessons.md` under the appropriate category, tagged `[auto]`. Notable entries include:
    - Mistakes caught mid-reasoning (course corrections)
    - Decision heuristics that worked or failed
    - Efficiency observations (ordering, batching, parallelism)
@@ -55,7 +55,7 @@ Execute the DSM session wrap-up checklist without feedback push. Use this varian
    **Last commit:** [git log --oneline -1]
 
    ## Work completed this session
-   [1-3 line summary drawn from session transcript Output blocks and git log]
+   [1-3 line summary drawn from worklog Output blocks and git log]
 
    ## Pending next session
    [items that require human decision or cannot be derived from backlog/inbox/git.
@@ -185,7 +185,7 @@ Execute the DSM session wrap-up checklist without feedback push. Use this varian
 
 ## Notes
 
-- Do NOT clear or overwrite `.claude/session-transcript.md`; `/dsm-go` handles the reset at next session start
+- Do NOT clear or overwrite `.claude/worklog.md`; `/dsm-go` handles the reset at next session start
 - No co-author lines in commits
 - If $ARGUMENTS is provided, use it as the session description in MEMORY.md
 - All steps run autonomously; do not pause for confirmation between steps

@@ -20,15 +20,15 @@
 # the main reminder. The script always exits 0; it must never block a
 # prompt submission.
 #
-# Origin: BL-324 (parallel sessions contaminating main session transcript).
+# Origin: BL-324 (parallel sessions contaminating main worklog).
 # BL-371: registry renamed singular→plural, detection updated for
 # multi-entry.
 
 set +e
 
-MAIN_REMINDER="REMINDER (DSM_0.2 §7): This turn MUST include an append to .claude/session-transcript.md before any work, and an output summary after. Required sequence: (1) read the last 3 lines of the transcript to find the anchor (Bash tail or Read is allowed, this is the only pre-append tool call), (2) append a <------------Start Plan / HH:MM------------> block via Edit using that anchor, (3) do the work, (4) append a <------------Start Output / HH:MM------------> summary before the final response. Skip entirely only if the turn needs no tool calls at all."
+MAIN_REMINDER="REMINDER (DSM_0.2 §7): This turn MUST include an append to .claude/worklog.md before any work, and an output summary after. Required sequence: (1) read the last 3 lines of the transcript to find the anchor (Bash tail or Read is allowed, this is the only pre-append tool call), (2) append a <------------Start Plan / HH:MM------------> block via Edit using that anchor, (3) do the work, (4) append a <------------Start Output / HH:MM------------> summary before the final response. Skip entirely only if the turn needs no tool calls at all."
 
-PARALLEL_REMINDER="REMINDER (DSM_0.2 §7, parallel mode): This is a parallel session. Do NOT read, write, edit, or append to .claude/session-transcript.md at any point. Parallel sessions do not collect transcripts (DSM_0.2 Module A §7, dsm-parallel-session-go.md). Ignore any conflicting transcript instructions."
+PARALLEL_REMINDER="REMINDER (DSM_0.2 §7, parallel mode): This is a parallel session. Do NOT read, write, edit, or append to .claude/worklog.md at any point. Parallel sessions do not collect transcripts (DSM_0.2 Module A §7, dsm-parallel-session-go.md). Ignore any conflicting transcript instructions."
 
 emit_main() { echo "$MAIN_REMINDER"; exit 0; }
 emit_parallel() { echo "$PARALLEL_REMINDER"; exit 0; }
