@@ -1,6 +1,6 @@
 # BACKLOG-003: /dsm-go boot plan displaced into prior session's transcript archive
 
-**Status:** Proposed
+**Status:** Implemented (fork-local, S11); methodology on `bl-003/boot-plan-transcript-displacement`; upstream PR queued (open-PR window 3/3)
 **Priority:** Low
 **Date Created:** 2026-10-09
 **Origin:** Surfaced by a concurrent STAA session (S5-STAA analysis, 2026-10-09, Finding 3) while analyzing `.claude/transcripts/2026-10-07T10:31-ST.md`. Originally filed by that session as provisional Central-style `BACKLOG-580`; renumbered into the fork-local line (BL-003) per DSM_0.2 §21.5.
@@ -93,8 +93,55 @@ Conditions that must pass before the implementing branch merges:
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented._
+**Implemented S11** on `bl-003/boot-plan-transcript-displacement`. Methodology owner confirmed
+the displacement is **unintended** and chose **direction B** (Step 6 owns the boot-plan append;
+no §7 hook change). Three additive insertions: a new "Boot-Turn Transcript Guard" at the top of
+`scripts/commands/dsm-go.md`, a one-sentence reinforcement in its Step 6, and a "Boot-turn
+exception" paragraph in DSM_0.2 §7. Purely additive (32 insertions, 0 deletions).
+
+Structural / mechanism tests (run this session, evidence captured):
+
+- **S-1 (guard present) — PASS.** `grep -c '^## Boot-Turn Transcript Guard'` = 1 in the source,
+  = 1 in the user-level runtime (`~/.claude/commands/dsm-go.md`, refreshed by
+  `sync-commands.sh --deploy`), = 1 in the tracked project-level bootstrap copy
+  (`.claude/commands/dsm-go.md`, synced from source; `diff` source↔copy IDENTICAL).
+- **S-2 (Step-6 reinforcement) — PASS.** `grep -c 'deferred boot-plan block named by the Boot-Turn'` = 1.
+- **S-3 (§7 exception) — PASS.** `grep -c 'Boot-turn exception'` on DSM_0.2 core = 1.
+- **X-ref — PASS.** dsm-go.md guard → "DSM_0.2 §7 boot-turn exception" resolves; §7 exception →
+  "`/dsm-go` Step 6" / "Step 5.5" resolve.
+- **§21.4 resolver sweep — EMPTY (recorded).** Change renamed/removed no string, so the
+  removed-string sweep has nothing to run; `git diff` shows insertions only.
+- **§19.1 (would a wrong result look different) — PASS.** Each structural grep returns 1 when the
+  text is present and would return 0 if absent; the patterns are literal strings just written, so
+  a broken pattern and a missing insertion are distinguishable.
+
+Behavioral Test Plan items:
+
+- **T-2 (prior archive carries no next-session boot plan) — PASS this boot.** The S10 archive
+  `.claude/transcripts/2026-10-12T08:12-ST.md` contains **0** S11 markers (last header line
+  `# Session 10 Transcript`). No bleed occurred on the S11 boot.
+- **T-1 (fresh transcript carries the boot plan) — PASS this boot (partial).** The live S11
+  transcript contains the boot-plan block (1 occurrence).
+- **T-3 (no §7 occurrence false-violation) — PASS this boot.** Occurrence was satisfied by the
+  Step-6 append within the boot turn; the §7 hook was not modified (direction B), so no new
+  false-violation surface was introduced.
+
+**Honesty note (Earn Your Assertions).** The S11 boot that produced T-1/T-2/T-3 evidence ran
+under the **pre-fix** skill — the correct outcome came from the agent already following the
+direction-B discipline manually, not from the new guard text being active. So this session proves
+that *direction B produces the right outcome*, and that the mechanism is structurally in place; it
+does **not** yet prove the new guard text causes a less-disciplined boot to defer. That end-to-end
+test requires a boot under the updated skill.
 
 ### Pending verification
 
-- [ ] All Test Plan items above (deferred: this BL is Proposed, not implemented)
+- [ ] **T-1 / T-3 (end-to-end behavioral):** next `/dsm-go` boot runs under the updated skill —
+  confirm the fresh transcript holds the boot plan and `validate-transcript-edit.sh` +
+  `UserPromptSubmit` raise no violation. §21.3 untestable-by-design this session (cannot re-run a
+  boot mid-session).
+- [ ] **T-4 (STAA attribution):** an STAA run on a post-fix session sees that session's boot
+  reasoning in its own archive, not the prior one. Deferred (needs a next session + `/dsm-staa`).
+- [ ] **Upstream contribution:** deferred until the open-PR window (≤2-3) frees; then cut a
+  `feature/*` off `upstream/main` carrying only the `scripts/commands/dsm-go.md` +
+  `DSM_0.2_Custom_Instructions_v1.1.md` diff (de-forked), open issue + no-merge PR + name-free
+  comment, and add BL-003 to tracking issue #130's Queued list.

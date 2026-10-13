@@ -1,5 +1,19 @@
 Resume a DSM session. Read context and report current state. $ARGUMENTS
 
+## Boot-Turn Transcript Guard (§7 interaction — read before your first tool call)
+
+The §7 `UserPromptSubmit` hook fires at the start of this `/dsm-go` boot turn and
+reminds you to append a plan block to `.claude/session-transcript.md` as your
+**first tool call**. **On a `/dsm-go` boot turn that append is deferred to Step 6
+— do NOT append to the live transcript before Steps 5.5/6 run.** Step 5.5 archives
+the live transcript and Step 6 overwrites it with a fresh header, so an early
+append lands this session's boot plan at the tail of the **previous** session's
+archive and leaves the current session's fresh transcript without its own boot
+reasoning (archive-boundary bleed; see DSM_0.2 §7 boot-turn exception). Step 6
+writes the boot-plan block into the fresh transcript, which satisfies the §7
+occurrence requirement within this turn. The only transcript access permitted
+before Step 6 is the last-3-lines anchor read; make no append until Step 6.
+
 ## Git Pre-Step: Ensure Git Initialized
 
 Before caching GIT_AVAILABLE, check if git is initialized:
@@ -1024,6 +1038,11 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    number determined, branch verified, inbox checked, version checked, transcript
    archived, baseline saved). Then continue with step 7. This ensures the
    transcript is never empty after /dsm-go completes.
+
+   This Step-6 append **is** the deferred boot-plan block named by the Boot-Turn
+   Transcript Guard at the top of this skill: it is the boot turn's first and only
+   transcript append, and writing it here rather than earlier is what keeps the
+   boot plan out of the previous session's archive.
 
    **Lockfile write (BL-431):** After the transcript header is written, write
    the session lockfile so its `transcript_anchor` reflects the post-reset

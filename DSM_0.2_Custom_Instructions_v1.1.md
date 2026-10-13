@@ -149,6 +149,19 @@ Two appends per turn: the plan before work, the output after work. The plan
 append must be the agent's **first tool call** in the turn, before any other
 tool calls or file edits.
 
+**Boot-turn exception (`/dsm-go`).** On a `/dsm-go` boot turn the plan append is
+deferred to the transcript-reset step (`/dsm-go` Step 6), not made at the literal
+first tool call. The boot turn archives the live transcript (Step 5.5) and
+overwrites it with a fresh header (Step 6) before any plan block is written; an
+append made earlier would land this session's boot plan at the tail of the
+*previous* session's archive and leave the fresh transcript without its own boot
+reasoning (archive-boundary bleed). Step 6 writes the boot-plan block into the
+fresh transcript, so the `UserPromptSubmit` occurrence requirement is still met
+within the boot turn. The only transcript access allowed before Step 6 is the
+last-3-lines anchor read. This exception is specific to `/dsm-go` (and its
+deferral entry from `/dsm-light-go`); every non-boot turn follows the
+first-tool-call rule above.
+
 **What goes where:**
 
 | Channel | Content |
