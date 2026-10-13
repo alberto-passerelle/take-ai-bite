@@ -43,7 +43,7 @@ The spoke-vs-mirror choice is a **user intent, not a directory property** (an un
    - Do NOT hand-write the `<!-- BEGIN/END DSM_0.2 ALIGNMENT -->` section; `/dsm-align` Step 7b generates it in the next step.
 
 7. **Run the spoke `/dsm-align`.**
-   - Invoke `/dsm-align`. Because `.claude/dsm-ecosystem.md` now points `dsm-central` at `{HUB}` (≠ repo root) and this directory has no `scripts/commands/`, `/dsm-align` takes the **spoke path** (not the hub fast-path, not the EC fast-path). It scaffolds the canonical `dsm-docs/` folders (Step 3), creates `_inbox/` (Step 2), creates `.claude/reasoning-lessons.md` and `.claude/session-transcript.md` (Step 10), installs the transcript hooks and wires `settings.json` (Step 10b), and generates the CLAUDE.md alignment section from the §17.1 template for the detected project type (Step 7b).
+   - Invoke `/dsm-align`. Because `.claude/dsm-ecosystem.md` now points `dsm-central` at `{HUB}` (≠ repo root) and this directory has no `scripts/commands/`, `/dsm-align` takes the **spoke path** (not the hub fast-path, not the EC fast-path). It scaffolds the canonical `dsm-docs/` folders (Step 3), creates `_inbox/` (Step 2), creates `.claude/reasoning-lessons.md` and `.claude/worklog.md` (Step 10), installs the transcript hooks and wires `settings.json` (Step 10b), and generates the CLAUDE.md alignment section from the §17.1 template for the detected project type (Step 7b).
    - This reuses all existing scaffold machinery; `/dsm-new-spoke` does not re-implement folder creation.
 
 8. **What this skill does NOT do (anti-requirements; mirror of §25.3):**

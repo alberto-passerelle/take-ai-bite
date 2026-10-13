@@ -64,4 +64,4 @@ zone exceeds its size threshold. Keeps the always-loaded MEMORY.md lean. $ARGUME
   exceed 4 KB on its own, so a total-file threshold would never clear (BACKLOG-544,
   S268 measurement: evergreen was 8 KB against a 5 KB total target).
 - Companion: `/dsm-memory-archive` (MEMORY-long-term.md -> MEMORY-archived.md, 10 KB).
-- Follow .claude/CLAUDE.md conventions and the Session Transcript Protocol.
+- Follow .claude/CLAUDE.md conventions and the Worklog Protocol.
