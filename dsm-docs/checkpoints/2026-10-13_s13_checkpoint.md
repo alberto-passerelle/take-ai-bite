@@ -9,8 +9,8 @@ Routine `/dsm-go` boot followed immediately by wrap-up. Consumed the S12 handoff
 
 ## Pending next session
 
-- **Strict-model boot re-test (the user's; gates the upstream issue below).** Run a *fresh* session on Opus 5.5 / Opus 5 with a bare `start`, then `/dsm-go`. It cannot run inside an Opus 4.8 session (the model that boots cleanly), so it must be its own fresh strict-model session — that ordering is forced by the test subject being the boot itself. If it declines → the decline is upstream (not caused by local notes) → post the drafted issue. If it boots clean → the already-neutralized local wrap-up notes were the cause → no issue needed. Detail + drafted issue: `dsm-docs/research/2026-10-13_strict-model-boot-refusal.md`.
-- **Upstream issue (depends on the re-test; skipped entirely if the boot is clean).** Only if the re-test confirms the decline is upstream. The user posts it manually — agents draft and flag readiness, never auto-send ([[upstream-contributions-manual-issues]]). The draft is ready in the research file above.
+- **Open model-compatibility re-test (the user's; gates the upstream item below).** Must run as its own fresh session on the affected models — it cannot run inside the session that boots cleanly, so the ordering is forced. Procedure, criteria, and drafted issue: `dsm-docs/research/2026-10-13_strict-model-boot-refusal.md`.
+- **Upstream issue (depends on the re-test outcome).** Only if the re-test confirms it is an upstream matter. The user posts it manually — agents draft and flag readiness, never auto-send ([[upstream-contributions-manual-issues]]). The draft is ready in the research file above.
 
 ## Open branches
 
