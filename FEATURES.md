@@ -6,11 +6,16 @@ Methodology (DSM), the human-AI collaboration framework behind
 feature is numbered for easy reference (F-000 is the first, newest entries
 appear at the top).
 
-**Current count:** 195 features.
+**Current count:** 199 features.
 
 ---
 
 ## October 2026
+
+- **F-198 (2026-10-15) Forks get a full lifecycle for their own backlog items (BACKLOG-588, BACKLOG-589, BACKLOG-591, DSM_0.2 §21.5)** — A fork's own backlog items are now visible from every session, follow a short workflow from creation to close, and are archived in a file the upstream sync never overwrites. A fork can add to the methodology but does not contradict it: when the two disagree at a sync, the upstream text wins and the fork's change is re-applied on top.
+- **F-197 (2026-10-15) Task branches start without someone else's staged changes (BACKLOG-587, DSM_0.2 §20.9)** — Before a backlog or sprint branch is created, the agent checks that nothing is already staged. Files that session start moved stay on the session branch instead of riding silently into the task branch and its pull request.
+- **F-196 (2026-10-15) Session start no longer files its first note in the previous session's log (BACKLOG-590)** — On a `/dsm-go` turn, the first work-log entry is now written into the fresh log after it is reset. Before this, it went into the old log just before that log was archived, so it was credited to the wrong session.
+- **F-195 (2026-10-15) Appending to the work log from the shell no longer runs code quoted in the notes (BACKLOG-554, BACKLOG-500)** — The documented shell append keeps code spans in the notes exactly as written. The old instruction left them to run as commands without any error, so text disappeared without a trace. It also records the real time instead of an estimate.
 
 - **F-194 (2026-10-15) Worklog rules cut to a third and readable in full on the strictest models (BACKLOG-592, DSM_0.2 §7)** — The always-loaded worklog rules keep every rule in a third of the space, and their detail now lives in an on-demand module that Opus 5.5 can read without being stopped.
 - **F-193 (2026-10-15) The session-analysis agent checks for a live session before it starts (BACKLOG-586, `/dsm-staa` Step 0)** — Run in a second window while a main session is still open, the analysis agent now notices the live session, asks before continuing, and stays read-only: it never touches the session lock, files no backlog item, and runs no git command that could move the main session's branch.

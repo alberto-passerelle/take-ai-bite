@@ -74,21 +74,40 @@ botched Edit is a `[RETROACTIVE]` Bash append, never a `replace_all` cleanup.
 **Why no batching:** the user follows the log live and cannot review work notes after
 the fact.
 
-**Appending with Bash (when the Edit path is unavailable):** a single-quoted heredoc
-(`<< 'EOF'`) suppresses shell expansion, so `$(date +%H:%M)` lands in the file as a
-literal string instead of the timestamp (observed in S69). Capture the timestamp into
-a variable first and use an unquoted heredoc:
+**Appending with Bash (when the Edit path is unavailable):** the Edit path (read the
+last 3 lines, anchor on the last non-empty line) is preferred and needs no shell
+quoting. It is unavailable in one known case: when the last non-empty line also
+occurs earlier in the file, the anchor rule and Edit's own uniqueness rule cannot
+both be met. The validator rejects any longer anchor, and Edit rejects the short one
+as ambiguous. That case calls for a Bash append (BACKLOG-500).
+
+The two heredoc forms fail in opposite directions:
+
+| Body contains | Unquoted `<< EOF` | Single-quoted `<< 'EOF'` |
+|---|---|---|
+| `$(date +%H:%M)` meant to expand | Expands (correct) | Written as literal text (S69) |
+| Backticks or `$` in prose, such as a code span | Runs the backticked text as a command and writes its output in place of the span | Kept as written (correct) |
+
+Bash substitutes both `$(...)` and backticks, so a code span in ordinary prose is the
+usual way to meet the second row. That failure exits 0 and the surrounding prose
+still reads normally with the span missing, which is why it recurred unnoticed (S145
+in a spoke, S249 and S258 at Central, take-ai-bite #141).
+
+Default form: write the delimiter with a fresh clock read, then the body through a
+single-quoted heredoc, in the same Bash call:
 
 ```bash
-NOW=$(date +%H:%M)
-cat >> .claude/worklog.md << EOF
-<------------Start Plan / ${NOW}------------>
-...
+printf '\n<------------Start Plan / %s------------>\n\n' "$(date +%H:%M)" >> .claude/worklog.md
+cat >> .claude/worklog.md << 'EOF'
+Body text; `code spans` and $VARS stay as written.
 EOF
 ```
 
-The Edit path (read the last 3 lines, anchor on the last non-empty line) is preferred
-and avoids heredoc quoting entirely.
+The timestamp comes from a clock read made as the line is written, not from a value
+typed into the body, so it is a reading rather than an estimate.
+`validate-transcript-edit.sh` check 4/4 detects a drifted timestamp (BACKLOG-517);
+this form prevents one (BACKLOG-554). Use an unquoted heredoc only when the body holds
+no backticks and no other `$`, as in the fixed header `/dsm-go` Step 6 writes.
 
 **Leak-scan rationale:** the worklog is an egress artifact and append-only, so an
 echoed value cannot be unwritten; the prohibition applies at write time, not as a
@@ -100,6 +119,14 @@ It is the third enforcement layer, alongside the per-turn hook (occurrence) and 
 PreToolUse shape validator, and it covers continuation sessions that defer from
 `/dsm-light-go` to `/dsm-go` mid-flight. The one authorized exception is `/dsm-staa`
 (see §7).
+
+**Boot-turn ordering:** on a `/dsm-go` turn, the turn's first entry is written after
+Step 6 resets the file, not before Step 5.5 archives it. Anything appended earlier is
+copied into the previous session's archive and later attributed to the wrong session
+(BACKLOG-590, take-ai-bite #142). Step 6 already writes that entry, so the session-start
+checks run first and nothing is owed before them. `transcript-reminder.sh` prints no
+reminder on a `/dsm-go` prompt for the same reason. `/dsm-light-go` appends a boundary
+marker instead of archiving, so the ordinary order applies there.
 
 ---
 

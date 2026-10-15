@@ -1078,6 +1078,8 @@ merge to the session branch, not directly to main.
 (BL moved to done/), trivial fixes (typos, dates), session artifacts (handoffs,
 checkpoints, feedback), parallel session commits (via commit booking).
 
+**Before creating one:** assert a clean staged index (§20.9).
+
 ### 20.4. Branch Push Policy
 
 **Default: local only.** Branches are not pushed to GitHub unless needed.
@@ -1197,6 +1199,33 @@ git checkout session-{N}/{YYYY-MM-DD}-recovery
 Then push the recovery branch and open a follow-up PR. The work is
 preserved on the recovery branch; main is rewound to its remote state
 without touching the working tree.
+
+**Origin:** see [DSM_0.2.E_Provenance.md](DSM_0.2.E_Provenance.md).
+
+### 20.9. Clean Staged Index Before a Level 3 Branch
+
+`git checkout -b` carries the index with it. Anything already staged on the
+session branch is committed by the first commit on the new Level 3 branch, so a
+task branch, and any PR built from it, can carry unrelated changes while every
+command exits 0. The ordinary source is `/dsm-go` itself: Steps 3 and 3.5 stage
+the consumed handoff and checkpoint moves with `git mv`.
+
+**Rule:** before creating a Level 3 branch (`bl-*` or `sprint-*`), assert the
+index is clean, reading the status directly rather than through a pipe (§19.2):
+
+```bash
+git diff --cached --quiet
+echo "staged-clean=$?"   # 0 = clean, 1 = something is staged
+```
+
+- `0`: create the branch.
+- `1`: list what is staged (`git diff --cached --name-status`). If it belongs on
+  the session branch (the §20.3 exceptions: session artifacts, status updates),
+  commit it there first. Otherwise stop and report it to the user. Never unstage
+  or stash it silently to make the check pass.
+
+Only the index is in scope. Unstaged and untracked changes follow the working
+tree to the new branch but are committed only when explicitly added.
 
 **Origin:** see [DSM_0.2.E_Provenance.md](DSM_0.2.E_Provenance.md).
 
@@ -1515,6 +1544,18 @@ this line.
   or decisions. On upstream absorption Central assigns the canonical number and
   the fork-local BL records the mapping (a `**Central BL:**` field, added when
   known) so provenance survives the renumber.
+- **Extend, do not contradict.** A fork may add methodology or narrow it for its
+  own use, but its main branch does not carry a rule that contradicts Central's.
+  Where a fork needs different behaviour, it proposes the change upstream (the
+  contribution route below) rather than diverging silently; if the two conflict
+  at a fork-sync, Central's text wins and the fork re-applies its change on top.
+  This limits contradiction, not contribution: forks stay free to develop and
+  contribute.
+- **Visible from every session.** A fork-local BL file and its row in the
+  fork's `dsm-docs/plans/README.md` are committed at creation to the branch
+  every session starts from (`main` by default), never only to a task branch. A
+  session on another branch (STAA, a parallel session) cannot see a BL that
+  lives only on a task branch, and may then guess a Central number.
 - **Name-free, always.** A public fork's `dsm-docs/plans/` ships publicly, so
   every fork-local BL body MUST be name-free: no client, mandate, or person
   names, no confidential content (the public-mirror egress discipline of
@@ -1533,13 +1574,35 @@ this line.
   attached for Central's backlog pipeline — so a change that helps every fork
   reaches Central. A fork MAY keep a BL purely local; the recommendation is a
   nudge, not a gate.
+- **Done and archive.** A fork-local BL is done when Central ships a change
+  covering it (record `**Central BL:** BACKLOG-NNN` and the version), when it is
+  kept local and its local work is complete, or when it is withdrawn. On done,
+  set the Status, move the body to `dsm-docs/plans/done/`, and move its row from
+  the README to `dsm-docs/plans/done/fork-INDEX.md`. Never add it to the
+  inherited `dsm-docs/plans/done/INDEX.md`: Central's mirror sync overwrites that
+  file with Central's numbering, while the sync never writes the plans README
+  (inherited once, as an empty table) or `fork-INDEX.md`, so a fork-sync leaves
+  them untouched.
+
+**Fork-local BL workflow (any session type):**
+
+1. Read the fork's `dsm-docs/plans/README.md` on the branch every session
+   starts from; the next number is the highest fork-local `BACKLOG-###` there
+   or in `done/fork-INDEX.md`, plus one.
+2. Write a name-free body with Risks (§21.2), a Test Plan, and one line naming
+   the upstream section it extends (the extend-not-contradict rule above).
+3. Add the README row and commit both to the starting branch.
+4. Implement on a `bl-NNN/*` branch from a clean index (§20.9) and merge back.
+5. Optionally offer it upstream (the contribution route above).
+6. Close it per the done-and-archive rule above.
 
 **Agent behavior:** on a fork (a Kick-off'd clone, or any non-Central repo
 maintaining its own `dsm-docs/plans/`), when the user formalizes a proposal,
 mint it in the fork-local line from `BACKLOG-001` rather than guessing a Central
 number, keep the body name-free, index it in the fork's
-`dsm-docs/plans/README.md`, and when the work is complete offer the upstream
-contribution per the routing above. This is INPUT to Central's planning pipeline,
+`dsm-docs/plans/README.md` on the starting branch, follow the workflow above,
+and when the work is complete offer the upstream contribution per the routing
+above. This is INPUT to Central's planning pipeline,
 not a bypass of it: Central still authors its own section or BL when it absorbs
 the change (the issue/PR is INPUT, per Actionable Work Items).
 
