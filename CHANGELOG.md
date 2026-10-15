@@ -5,6 +5,20 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.34.0] - 2026-10-15
+
+Minor: make the Worklog Protocol readable on strict models by trimming the always-loaded §7 and removing two Module G blocks that a strict model would not read (BACKLOG-592), plus a read-only live-session check for `/dsm-staa` (BACKLOG-586).
+
+### Changed
+
+- **Worklog Protocol trimmed and Module G cleaned (BACKLOG-592, DSM_0.2 §7, DSM_0.2.G).** §7 keeps every operational rule in condensed form and shrinks from 11,489 B to 3,497 B. The header schema, the Bash append procedure, the lifecycle detail and the rationale move to DSM_0.2.G, now titled "Worklog Protocol Detail". Two G blocks that stopped a strict-model read are deleted. Three stale passages in §7 are fixed (a "cleared at session end" claim that contradicted the lifecycle, a wrong §23 citation, a "see below" that pointed to Module A), and the worklog wording in `/dsm-go`, `/dsm-light-go`, `/dsm-refresh-all` and `/dsm-refresh-memory` now matches the new §7 definition. Acceptance: 12/12 clean Opus 5.5 boots of the final state (2 scripted, 10 operator), against a known-failing control that was refused.
+  **Spoke action:** none for the core (spokes import it); refresh the user-level commands on each machine (`scripts/sync-commands.sh --deploy` from Central).
+
+### Added
+
+- **`/dsm-staa` read-only active-session check (BACKLOG-586, `/dsm-staa` Step 0, DSM_0.2.A §26.2).** The analysis agent now runs `/dsm-go` §0.7a's lock probe before anything else: a live lock gets an explicit continue/stop question, a stale or unknown lock a one-line report, no lock nothing. It never writes or removes the lock, files no backlog item, and runs no git command that changes HEAD, the index, or refs.
+  **Spoke action:** covered by the same command refresh.
+
 ## [1.33.1] - 2026-10-13
 
 Patch: a migration guide for forks of the public mirror, so a fork maintainer can complete the v1.33.0 boot-safeguard fix on their own machine (BACKLOG-585 Phase 3).

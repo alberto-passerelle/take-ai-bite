@@ -379,7 +379,7 @@ cross-document catalog lives in §5; this subsection curates the
   heredoc (`<< 'EOF'`) suppresses `$(date ...)` expansion, writing
   literal strings into the transcript. Resolution: Edit-tool append
   path is preferred; Bash heredoc must be unquoted. Documented in
-  DSM_0.2 §7 anti-patterns.
+  DSM_0.2.G (Appending with Bash).
 
 Failure modes inherent to Claude Code that DSM should watch:
 

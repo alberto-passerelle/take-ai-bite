@@ -1,6 +1,6 @@
 Worklog Analysis Agent (STAA). Analyze a previous worklog for reasoning patterns. $ARGUMENTS
 
-**IMPORTANT:** This is NOT a regular collaboration session. Do NOT activate the Worklog Protocol. Do NOT run `/dsm-go` checks (no baseline, no inbox, no version check). Do NOT create a worklog. STAA is the sole authorized exception to DSM_0.2 §7 unconditional activation; see DSM_0.2 §7 "Authorized exception: `/dsm-staa`" for the governing clause.
+**IMPORTANT:** This is NOT a regular collaboration session. Do NOT activate the Worklog Protocol. Do NOT run `/dsm-go` checks (no baseline, no inbox, no version check); the one exception is Step 0's read-only lock check. Do NOT create a worklog. STAA is the sole authorized exception to DSM_0.2 §7 unconditional activation; see DSM_0.2 §7 "Authorized exception: `/dsm-staa`" for the governing clause.
 
 **Two files, do not confuse them.** STAA operates on two transcript-shaped files:
 
@@ -18,6 +18,34 @@ When the `UserPromptSubmit` per-turn reminder hook fires and tells you to append
 **Scrub-before-analyse (projects with a declared PII/egress policy).** Prefer scrubbing names from the transcript before running STAA. The transcript is gitignored, so `git filter-repo` does **not** reach it — the transcript scrub is a separate, manual step from any tracked-history scrub.
 
 ## Steps
+
+0. **Active-session check (read-only, per BL-586 / DSM_0.2.A §26.2):** before anything else, check whether a main session is live on this project. Run `/dsm-go` Step 0.7a's snippet verbatim (the liveness probe and its PID-reuse guard are not to be re-derived here):
+
+   ```bash
+   ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+   if [ -f "$ROOT/.claude/session.lock" ]; then
+     echo "LOCK_PRESENT"
+     cat "$ROOT/.claude/session.lock"
+     # Liveness probe (BL-487): is the recording process still running?
+     LOCK_PID=$(awk '/^pid:/ {print $2}' "$ROOT/.claude/session.lock")
+     case "$LOCK_PID" in
+       ''|unknown|*[!0-9]*) echo "VERDICT=UNKNOWN" ;;
+       *) if kill -0 "$LOCK_PID" 2>/dev/null && ps -p "$LOCK_PID" -o comm= 2>/dev/null | grep -q claude
+          then echo "VERDICT=LIVE"; else echo "VERDICT=STALE"; fi ;;
+     esac
+     echo "TRANSCRIPT_AGE_MIN=$(( ( $(date +%s) - $(stat -c %Y "$ROOT/.claude/worklog.md" 2>/dev/null || date +%s) ) / 60 ))"
+   else
+     echo "LOCK_ABSENT"
+   fi
+   ```
+
+   | Result | Action |
+   |---|---|
+   | `LOCK_ABSENT` | Silent. Continue to Step 1. |
+   | `VERDICT=LIVE` | Show the lock contents and verdict, then ask: "A main session (session {N}) is live on this project. Continue read-only, or stop?" Wait for an explicit answer; auto mode does not answer it (DSM_0.2 §8.9.1). If continuing, note that the live session's `.claude/worklog.md` is still being written and is a partial subject. |
+   | `VERDICT=STALE` / `VERDICT=UNKNOWN` | Report the verdict and `TRANSCRIPT_AGE_MIN` in one line, then continue. |
+
+   **Read-only, always.** STAA never creates, removes or rewrites `.claude/session.lock`, whatever the verdict. Stale-lock recovery belongs to `/dsm-go` §0.7d, not here. This is a question, not a block: STAA analyses an archived subject, so a live main session is a reason to stay out of its way, not to refuse.
 
 1. **List available transcripts:** List files in `.claude/transcripts/` sorted chronologically. Display each filename with the session number and date extracted from the file header.
 2. **Select subject transcript (per BL-509):** Selection is a decision over three markers, not a default plus a warning. Read all three before choosing:
@@ -102,6 +130,7 @@ When the `UserPromptSubmit` per-turn reminder hook fires and tells you to append
 - This agent produces NO worklog. The IMPORTANT block at the top of this file explains the two files involved (archived subject vs live work log) and the meta-recursion concern. Do not re-derive the rationale; read the IMPORTANT block.
 - This agent does NOT modify any project files except `.claude/reasoning-lessons.md`, its compact mirror `.claude/reasoning-lessons-compact.md` (Step 8), `.claude/last-staa.txt` (Step 9), and — only when over bound (Step 7b, BACKLOG-567) — the tracked aggregation file `dsm-docs/reasoning-lessons-ecosystem.md`. The first three are gitignored local-only artifacts. The aggregation file is the one tracked file STAA may edit; STAA still **commits nothing** (its no-commit property holds), so the prune is left uncommitted for the next `/dsm-wrap-up` to commit with the session's other changes.
 - The analysis session is lightweight; no git commits, no wrap-up needed
+- STAA files no BL, creates no branch, and runs no git command that changes HEAD, the index or refs (read-only `git log` / `git show` / `git diff` are fine). A finding that deserves a BL goes into the Step 5 report and, where it is a lesson, the lessons file; a later `/dsm-go` session files it. A STAA window running beside a live main session (Step 0) would otherwise move that session's branch.
 - If the transcript is very long (500+ lines), warn about context budget and offer to analyze in sections
 - Cross-reference findings with existing MEMORY.md entries to avoid redundancy
 - Be specific in lessons; "be more careful" is not actionable, "check file existence before editing" is
