@@ -49,6 +49,7 @@ informs an active BL but is not its primary deliverable.
 | 2026-04-14 | [LinkedIn post: JetBrains MCP refactoring vs Claude Code](2026-04-14_linkedin-post-jetbrains-mcp-refactoring.md) | File BL "AST-based refactoring tool integration evaluation" or move to done | Promoted from QA, no follow-up |
 | 2026-04-19 | [Deep memory retrieval feasibility](2026-04-19_deep-memory-retrieval-feasibility.md) | File BL on memory retrieval design | Self-marked "ready for promotion" |
 | 2026-04-19 | [Humanizer vs Wikipedia "Signs of AI writing"](2026-04-19_humanizer-vs-wikipedia-signs-of-ai-writing.md) | File BL "Humanizer alignment with Wikipedia AI-writing signs" | Self-marked "input for BL" |
+| 2026-10-15 | [Reference reading: checking claims against their source passage](2026-10-15_reference-reading.md) | File BL "Reference reading" (planned fork-local BACKLOG-011) or move to done | New finding |
 
 ### Tool / methodology assessments awaiting decision
 
