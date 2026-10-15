@@ -96,7 +96,9 @@ for m in re.finditer(r"<<-?\s*([\x27\x22]?)([A-Za-z_][A-Za-z0-9_]*)\1", cmd):
     rest = cmd[m.end():]
     end = re.search(r"^[ \t]*" + re.escape(delim) + r"[ \t]*$", rest, re.M)
     body = rest[:end.start()] if end else rest
-    if "<------------Start " not in body:
+    # A delimiter written earlier in the same command (the DSM_0.2.G default
+    # form: printf the delimiter, then a quoted heredoc body) counts.
+    if "<------------Start " not in body and "<------------Start " not in cmd[:m.start()]:
         out.append("B1|no timestamped delimiter in the appended block")
     if quote == "" and "\x60" in body:
         out.append("B2|unquoted heredoc whose body contains a backtick")
@@ -117,10 +119,10 @@ B1 , every appended entry must carry a delimiter:
 B2 , an UNQUOTED heredoc performs command substitution on backticks as well as
 on \$(...). A backtick-quoted term in ordinary prose is EXECUTED and replaced by
 its output, and the surviving text still reads as fluent English with the span
-missing. DSM_0.2 §7 names only the \$(...) direction; BACKLOG-500 is the
-protocol-text half of this gap.
-FIX: single-quote the heredoc (<< 'EOF') when the body contains backticks, or
-prefer the Edit append path, which this hook validates in full.
+missing. Both directions are described in DSM_0.2.G (Appending with Bash).
+FIX: single-quote the heredoc (<< 'EOF') when the body contains backticks, and
+printf the delimiter with a fresh \$(date +%H:%M) before it; or prefer the Edit
+append path, which this hook validates in full.
 WARNEOF
     exit 1
   fi

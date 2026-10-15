@@ -202,6 +202,20 @@ lands on main outside a session branch.
 
 ---
 
+## 20.9. Clean Staged Index Before a Level 3 Branch
+
+**Origin:** BL-587 (S283 filing from take-ai-bite issue #137 + reference PR
+#138, fork maintainer; S284 implementation). In the fork, the checkpoint and
+handoff moves that `/dsm-go` stages rode into a methodology commit on a new
+task branch, polluting the task PR and leaving the session branch without
+them; recovery meant splitting the moves out and rebuilding the branch. The
+S284 boot at Central reproduced the precondition (a staged checkpoint rename
+on the session branch) and committed it there before branching. Central
+authored its own section, grounded against PR #138 rather than merging it; the
+optional warning hook the PR mentions is left to a follow-on BL.
+
+---
+
 ## 21.2. Preemptive Risk Definition Rule
 
 **Origin:** BL-352. The user observed in S185 that several BLs in the
@@ -243,6 +257,14 @@ sanctioned place to develop it. The fork proposed a reference §21.5; Central
 authored its own, grounding against PR #125 rather than merging it (Actionable
 Work Items: the issue/PR is INPUT). Reference PR #125 closed unmerged with
 contributor credit; issue #124 closed.
+
+**Extended S284 (re-landed S286)** by BL-588 (visible-from-every-session rule + workflow),
+BL-591 (done-and-archive rule, `done/fork-INDEX.md`) and BL-589
+(extend-not-contradict), from take-ai-bite issues #139 and #144 and reference
+PR #140. In the fork, a session not on `main` could not see fork BLs that lived
+on an unmerged branch and guessed a Central-style number; absorbed fork BLs had
+no done state. Central authored its own text: the archive goes to a separate
+file because the mirror sync ships only `done/INDEX.md`.
 
 ---
 

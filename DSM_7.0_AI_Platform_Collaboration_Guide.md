@@ -171,7 +171,9 @@ Claude-specific mechanisms. Grouped by protocol.
 **Worklog and the UserPromptSubmit hook.**
 `.claude/hooks/transcript-reminder.sh` (UserPromptSubmit) injects a
 per-turn reminder that the agent must append the plan entry to
-`.claude/worklog.md` before work (per TAB/DSM patterns audit P-01). A second
+`.claude/worklog.md` before work (per TAB/DSM patterns audit P-01); it is
+silent on a `/dsm-go` turn, whose first entry follows the Step 6 reset
+(DSM_0.2.G, Boot-turn ordering). A second
 hook, `.claude/hooks/validate-transcript-edit.sh` (PreToolUse on
 Edit), enforces append-only shape with three checks: anchor is the
 last non-empty line of the file, new content is strictly appended,
@@ -232,9 +234,9 @@ without this rule.
   Destructive Command Protocol).
 - Do NOT skip the `PreToolUse` hook on transcript edits by
   appending via Bash heredoc. The `Edit` tool path is preferred; if
-  Bash is used, the heredoc must be unquoted (`<< EOF`, not
-  `<< 'EOF'`) to allow `$(date ...)` expansion (DSM_0.2 §7
-  heredoc anti-pattern).
+  Bash is needed, match the heredoc quoting to the body: unquoted
+  expands `$(date ...)` but also executes backticks in prose,
+  single-quoted keeps both literal (DSM_0.2.G, Appending with Bash).
 - Do NOT skip `/dsm-align` at session start. `/dsm-go` Step 1.8
   runs it unconditionally; the failure mode that justifies
   unconditional run (F-094, S180) is described in §5 and
@@ -377,9 +379,11 @@ cross-document catalog lives in §5; this subsection curates the
   alignment via Platform Alignment Protocol.
 - **Heredoc quoting anti-pattern (S69).** Single-quoted
   heredoc (`<< 'EOF'`) suppresses `$(date ...)` expansion, writing
-  literal strings into the transcript. Resolution: Edit-tool append
-  path is preferred; Bash heredoc must be unquoted. Documented in
-  DSM_0.2.G (Appending with Bash).
+  literal strings into the transcript. The opposite form fails too:
+  an unquoted heredoc executes backticks in prose (S249, S258).
+  Resolution: Edit-tool append path is preferred; for Bash, printf
+  the delimiter with a fresh clock read and write the body through a
+  single-quoted heredoc. Documented in DSM_0.2.G (Appending with Bash).
 
 Failure modes inherent to Claude Code that DSM should watch:
 
