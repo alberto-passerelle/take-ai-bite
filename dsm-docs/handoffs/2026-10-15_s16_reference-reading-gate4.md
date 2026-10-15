@@ -82,3 +82,25 @@
 Hub identity (registry and `@` import point at `/Users/alberto/TAB/HUB`), `origin`
 remote not found, S14 close-out, research README dangling links: see the S16
 checkpoint, items 2-4.
+
+## Addendum: STAA results (added after wrap-up, 2026-10-15)
+STAA analysed Session 16 the same evening; its 9 [STAA] lessons are in
+`.claude/reasoning-lessons.md`. Two results are not in the lessons:
+
+- **Trial data for BACKLOG-011 (input for Gate 4, section 4 or 5):** 28 quotes were
+  checked against their sources during drafting (counted from the worklog's
+  verification records). None differed; one check gave a false miss because the
+  quote wraps across two lines (DSM_6.0 L178-179), fixed by matching on
+  newline-joined text. The session's one substantive error, the merged §10/§10.1
+  row, was a compressed paraphrase in a table, not a quote. The trial should
+  therefore count checks of paraphrases and interpretations, not only of quotes.
+- **Three more candidate feedback items** (same status as the list above):
+  - `/dsm-go` reports inbox files as "entries", but a per-source file can hold
+    several entries, including processed ones (S16: "1 entry" was two, one already
+    BACKLOG-001).
+  - DSM_0.2.F numbers the gates 0-3, while §8.10 and CLAUDE.md number the prose
+    gates 1-4 (§8.10 Gate 2 is the §8.1 concept gate), so gate-numbered rules such
+    as §8.2.1 need mapping for prose work.
+  - DSM_0.2 §7 asks for a "[prompt summary]" in User blocks, which lets the agent's
+    reading of a terse prompt be logged as the prompt itself; keeping the literal
+    words and marking the reading separately would close that.
