@@ -351,7 +351,7 @@ when those tools come online), cross-repo notifications (spoke→Central inbox
 appends, hub→spoke notifications), and internal DSM artifacts (commit messages,
 inbox notifications, feedback files, reasoning-lesson entries , already
 file-write-gated, covered here for consistency). Excluded: agent-internal
-artifacts the user does not byline (session transcripts in agent voice, command
+artifacts the user does not byline (worklogs in agent voice, command
 outputs, debug traces).
 
 **Distinction from Cross-Repo Write Safety.** Cross-Repo Write Safety (§17.1
@@ -771,7 +771,7 @@ matching hardened by BL-564) and backstopped by the discovery sweep (BL-563).
 
 ### 5.8. Egress Leak-Scan Generic Reporting Rule
 
-Projects that handle sensitive data treat the session transcript, `MEMORY.md`, and the
+Projects that handle sensitive data treat the worklog, `MEMORY.md`, and the
 reasoning-lessons files as an **egress zone**: local content that can later cross an
 air-gap to the hub (`/dsm-wrap-up` pushes new lessons to Central's inbox, and `/dsm-go`
 Step 1.5 reads the compact mirror at every boot) and must stay free of personal data.

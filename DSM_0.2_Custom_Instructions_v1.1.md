@@ -12,8 +12,8 @@
 3. [Session-Start Inbox Check](#3-session-start-inbox-check) → Module A
 4. [Session-Start GitHub Issue Check](#4-session-start-github-issue-check) → Module A
 5. [Read-Only Access Within Repository](#5-read-only-access-within-repository)
-6. [Session Transcript Delimiter Format](#6-session-transcript-delimiter-format)
-7. [Session Transcript Protocol](#7-session-transcript-protocol)
+6. [Worklog Delimiter Format](#6-worklog-delimiter-format)
+7. [Worklog Protocol](#7-worklog-protocol)
 8. [Pre-Generation Brief Protocol](#8-pre-generation-brief-protocol)
 9. [Experiment Execution Protocol](#9-experiment-execution-protocol)
 10. [Web Research Capture Protocol](#10-web-research-capture-protocol)
@@ -69,10 +69,10 @@ a change, or performing any other task:
 
 ---
 
-## 6. Session Transcript Delimiter Format
+## 6. Worklog Delimiter Format
 
-Standard delimiters for all entry types in the session transcript file.
-See Session Transcript Protocol below for when and where to use them.
+Standard delimiters for all entry types in the worklog file.
+See Worklog Protocol below for when and where to use them.
 
 **Three delimiter types:**
 
@@ -84,7 +84,7 @@ See Session Transcript Protocol below for when and where to use them.
 
 | Type | When to use |
 |------|-------------|
-| Plan | What is about to be done and why: the approach, the options weighed, the decision taken (before acting) |
+| Plan | What is about to be done and why (before acting) |
 | Output | Summary of completed work (after acting) |
 | User | Summary of the user's prompt (start of each turn) |
 
@@ -94,11 +94,11 @@ implicitly closes the previous block. No explicit end delimiter is needed.
 **Rules:**
 - HH:MM is the time of day when the block begins (24-hour, local timezone)
 - Blank line after the delimiter for readability
-- These delimiters are used exclusively inside `.claude/session-transcript.md`
+- These delimiters are used exclusively inside `.claude/worklog.md`
 - Do NOT output delimiters in conversation text; the VS Code extension
   collapses them after streaming (microsoft/vscode#287658)
 - All three types follow the same format; only the type label differs
-- **`Plan` was named `Thinking` before v1.26.0, and both validate.** The shape validator
+- **`Plan` carried an earlier label before v1.26.0, and both validate.** The shape validator
   matches the general `<------------Start ` form rather than a list of type names, and it
   inspects only the content being appended, so a transcript carrying the old label is never
   re-validated and needs no migration. Existing transcripts are working state and are not
@@ -107,7 +107,7 @@ implicitly closes the previous block. No explicit end delimiter is needed.
 
 ---
 
-## 7. Session Transcript Protocol
+## 7. Worklog Protocol
 
 **Relationship to DSM_7.0 §2.1:** §7 defines the transcript protocol
 shape (append-only, first-tool-call plan entry, last-tool-call output,
@@ -117,22 +117,22 @@ reminder and the `PreToolUse` validator that enforces anchor shape on
 Edit tool calls. The protocol stays here; the Claude execution layer
 lives in DSM_7.0 §2.1.
 
-The session transcript is the **primary and only** channel for the agent's
-working notes. The user keeps `.claude/session-transcript.md` open in VS Code
+The worklog is the **primary and only** channel for the agent's
+working notes. The user keeps `.claude/worklog.md` open in VS Code
 and follows the work there in real time. Conversation text is for results,
 summaries, and questions only, never for working notes.
 
-**File:** `.claude/session-transcript.md`
+**File:** `.claude/worklog.md`
 **Lifecycle:** The file lives permanently in `.claude/`. `/dsm-go` overwrites its
 content with a fresh session header at each session start. `/dsm-wrap-up` does
 **not** touch the transcript; stale content from the previous session is harmless
 because `/dsm-go` replaces it. The user keeps the file open in VS Code across
 sessions. **Lightweight mode exception:** `/dsm-light-go` does not overwrite the
 transcript; it appends a session boundary marker, preserving the continuous
-reasoning chain across lightweight session sequences. See Lightweight Session
+work-notes chain across lightweight session sequences. See Lightweight Session
 Lifecycle below.
 
-**Permission:** Appending to `.claude/session-transcript.md` must never require
+**Permission:** Appending to `.claude/worklog.md` must never require
 user approval. This file is an agent-internal working artifact, not a deliverable.
 Configure permission settings to auto-approve writes to this path. This applies
 to all DSM projects, not just DSM Central.
@@ -140,7 +140,7 @@ to all DSM projects, not just DSM Central.
 **Per-turn flow:**
 
 1. **First tool call:** Append the user prompt summary and the plan entry to the transcript file
-2. **User reviews:** The file is open in VS Code; the user sees reasoning appear
+2. **User reviews:** The file is open in VS Code; the user sees the work notes appear
 3. **Agent acts:** Performs tool calls, edits, searches
 4. **Last tool call:** Append output summary to the transcript file
 5. **Conversation text:** Write only results, outputs, and questions to the user
@@ -153,10 +153,10 @@ tool calls or file edits.
 
 | Channel | Content |
 |---------|---------|
-| `.claude/session-transcript.md` | Reasoning, decision processes, multi-step planning (the "why") |
+| `.claude/worklog.md` | Work notes: decisions, trade-offs, multi-step planning (the "why") |
 | Conversation text | Results, summaries, questions, file descriptions (the "what") |
 
-**Format** (uses Session Transcript Delimiter Format above):
+**Format** (uses Worklog Delimiter Format above):
 
 ```
 <------------Start User / HH:MM------------>
@@ -165,7 +165,7 @@ tool calls or file edits.
 
 <------------Start Plan / HH:MM------------>
 
-[reasoning content]
+[plan / work notes]
 
 <------------Start Output / HH:MM------------>
 
@@ -199,7 +199,7 @@ Optional platform-specific fields (append when retrievable; omit entirely when n
 **When to write a plan entry:**
 - Non-trivial decisions (choosing between approaches, interpreting ambiguous input)
 - Multi-step work (explaining what will be done and why before doing it)
-- Session-start checks (showing the reasoning behind each check)
+- Session-start checks (noting what each check covers)
 - Any situation where the "why" matters as much as the "what"
 
 **When to skip the plan entry (output summary still required):**
@@ -212,11 +212,11 @@ Optional platform-specific fields (append when retrievable; omit entirely when n
 - Output summary appended AFTER completing work
 - File is ephemeral: content cleared at session end, not committed
 - Transcript is append-only; never modify or backfill past entries
-- **Append technique (mandatory):** Every append to the session transcript MUST follow this sequence: (1) read the last 3 lines of the file, (2) use the last non-empty line as the `old_string` anchor, (3) the `new_string` includes that last line PLUS the new content appended after it. **NEVER** search for earlier content to use as an insertion point. The only valid anchor is the current last line of the file. This is not a style preference; mid-file insertions cause out-of-order timestamps, confuse the user reading the transcript in real time, and have been observed in multiple sessions despite existing guidance
+- **Append technique (mandatory):** Every append to the worklog MUST follow this sequence: (1) read the last 3 lines of the file, (2) use the last non-empty line as the `old_string` anchor, (3) the `new_string` includes that last line PLUS the new content appended after it. **NEVER** search for earlier content to use as an insertion point. The only valid anchor is the current last line of the file. This is not a style preference; mid-file insertions cause out-of-order timestamps, confuse the user reading the transcript in real time, and have been observed in multiple sessions despite existing guidance
 - If a past entry was missed, note the gap in the next entry rather than editing history
 
-**Unconditional activation:** If `.claude/session-transcript.md`
-exists in the project, the Session Transcript Protocol is active. No skill
+**Unconditional activation:** If `.claude/worklog.md`
+exists in the project, the Worklog Protocol is active. No skill
 needs to activate it. The presence of the file is the activation signal.
 This rule is independent of `/dsm-go` Step 6 and does not depend on any
 session-start flow having run successfully. It is the third independent
@@ -225,18 +225,18 @@ PreToolUse shape validator. Any session that finds the file present must
 follow the protocol from the first turn, including continuation sessions
 that defer from `/dsm-light-go` to `/dsm-go` mid-flight.
 
-**Authorized exception: `/dsm-staa` (STAA exception).** The Session Transcript
+**Authorized exception: `/dsm-staa` (STAA exception).** The Worklog
 Analysis Agent (`/dsm-staa`) is the sole authorized exception to the
 unconditional activation rule above. STAA sessions intentionally do not
-write to `.claude/session-transcript.md`, for a meta-recursion reason
+write to `.claude/worklog.md`, for a meta-recursion reason
 explained in `scripts/commands/dsm-staa.md`: if STAA sessions wrote their
 own transcripts, those transcripts would become subjects of future STAA
 sessions, and STAA would analyze its own analysis indefinitely. The
-concern is about the reasoning-log file being a future subject, not about
+concern is about the work-log file being a future subject, not about
 corruption of the archived subject file STAA is currently reading,
 those are two different files (`.claude/transcripts/{timestamp}-ST.md`
-is the archived subject, `.claude/session-transcript.md` is the live
-reasoning log), and writes to the live log do not touch the archived
+is the archived subject, `.claude/worklog.md` is the live
+work log), and writes to the live log do not touch the archived
 subject. No other skill may suppress the protocol without an explicit
 amendment to this section. The `UserPromptSubmit` per-turn hook will
 still fire in STAA sessions and inject the reminder; STAA agents should
@@ -253,19 +253,19 @@ IMPORTANT block in `scripts/commands/dsm-staa.md`.
 **Anti-Patterns:**
 
 **DO NOT:**
-- Output reasoning in conversation text; the user reads reasoning in the transcript file, not the chat
-- Batch transcript entries at the end of a turn; the user cannot review reasoning after the fact
-- Skip the transcript append on turns with non-trivial reasoning
+- Put work notes in conversation text; the user reads the work notes in the transcript file, not the chat
+- Batch transcript entries at the end of a turn; the user cannot review the work notes after the fact
+- Skip the transcript append on turns with non-trivial work notes
 - Commit the transcript file; it is a session-scoped working artifact
-- Edit or rewrite past transcript entries; each entry reflects reasoning at the time it was written
+- Edit or rewrite past transcript entries; each entry reflects the work notes at the time they were written
 - Use Edit with `old_string` matching earlier content to insert entries mid-file; this causes out-of-order timestamps (observed in prior sessions). Use the mandatory append technique above
-- **Use Edit `replace_all: true` on `.claude/session-transcript.md`.** The append-anchor rule assumes a unique last-line anchor; `replace_all` duplicates the new content at every match and explodes the file (S17: 95 MB / 1.5M lines; S22: an Output block duplicated at every match). Recovery from a botched transcript Edit is a `[RETROACTIVE]` Bash-heredoc append, never a `replace_all` cleanup. The `validate-transcript-edit.sh` PreToolUse hook blocks this case (check 0/4)
-- Use reasoning delimiters in conversation text; VS Code collapses them after streaming
+- **Use Edit `replace_all: true` on `.claude/worklog.md`.** The append-anchor rule assumes a unique last-line anchor; `replace_all` duplicates the new content at every match and explodes the file (S17: 95 MB / 1.5M lines; S22: an Output block duplicated at every match). Recovery from a botched transcript Edit is a `[RETROACTIVE]` Bash-heredoc append, never a `replace_all` cleanup. The `validate-transcript-edit.sh` PreToolUse hook blocks this case (check 0/4)
+- Use transcript delimiters in conversation text; VS Code collapses them after streaming
 - **Echo a matched sensitive-data value, or a grep/scan pattern containing one, into the transcript (or `MEMORY.md` or the reasoning-lessons files) when reporting a leak-scan.** The transcript is an egress artifact; report the scan generically ("scan clean", or "N matches at lines X–Y") per the Egress Leak-Scan Generic Reporting Rule (DSM_0.2.C §5.8). Append-only means an echoed value cannot be unwritten, so the prohibition is at write time, not a later scrub
 - **Use single-quoted heredoc (`<< 'EOF'`) when appending to the transcript via Bash** if the content contains shell expansions like `$(date +%H:%M)`. Single-quoted heredocs suppress expansion and write the literal string `$(date +%H:%M)` into the transcript instead of the timestamp. Observed in S69. Correct form: capture the timestamp into a variable first and use an unquoted heredoc:
   ```bash
   NOW=$(date +%H:%M)
-  cat >> .claude/session-transcript.md << EOF
+  cat >> .claude/worklog.md << EOF
   <------------Start Plan / ${NOW}------------>
   ...
   EOF
@@ -282,52 +282,26 @@ must happen this turn), and `validate-transcript-edit.sh` (PreToolUse on Edit) e
 *shape* (anchor, append-only, delimiter) and *value* (a timestamp-drift warning). Two
 operational rules stay stated here because they are behavior, not narrative:
 
-- **Turn-boundary self-check:** every turn begins with a transcript append , pure-reasoning
+- **Turn-boundary self-check:** every turn begins with a transcript append , analysis-only
   turns (decision analysis, trade-off comparison, recommendation) explicitly included, since
-  they carry the highest-value reasoning. The only exemption is content-trivial turns
-  (one-word acknowledgments, single-fact confirmations with no new reasoning). If there is
-  new reasoning, there is a transcript append.
+  they carry the highest-value work notes. The only exemption is content-trivial turns
+  (one-word acknowledgments, single-fact confirmations with no new work notes). If there are
+  new work notes, there is a transcript append.
 - **[RETROACTIVE] recovery:** if an append was missed, append a
   `<------------Start Plan [RETROACTIVE] / HH:MM------------>` entry at the *current*
   time, state which turns were missed, and note the gap; never backdate or edit history.
 
 Module G carries the S171 origin, the check-4 warn-not-block rationale, the
-pure-reasoning-turn worked example, and the full recovery procedure.
+analysis-only-turn worked example, and the full recovery procedure.
 
-**Contemporaneous Work Log for Efficiency Analysis:**
+**Plan-block completeness:** a multi-step turn gets a multi-point plan block, not a
+one-line summary. Full rationale and examples: DSM_0.2.G (read on demand).
 
-Plan blocks are a work log, written at each decision point, not a
-post-hoc clean summary of the decision. Include alternatives that were
-weighed and set aside, points of uncertainty, checks that were repeated,
-and any change of approach. Write "considered X, set it aside because Y,
-then revised the approach after Z" instead of collapsing to "decided on Z".
-
-The motivation is auditing how work actually gets done, to find
-inefficiencies. Real work is rarely a straight line: there are loops,
-second-guessing, drift, and repeated checks along the way, and that
-texture is normally lost once a turn ends, since nothing keeps a
-durable record of it across a session. If the transcript log entry is a
-clean summary, it hides exactly the inefficiency signals the transcript
-exists to surface. Clean summaries make the work look tidier than it
-was.
-
-A useful log entry records:
-
-- What was considered and why each option was weighed
-- Where the work hesitated, repeated a check, or changed course
-- Which steps were redundant in hindsight (re-reading a file already
-  read, re-checking a fact already checked)
-- The final decision and the reason it won
-
-Completeness matters more than brevity. A log entry that is longer
-than the action it precedes is acceptable when the work warranted it; a
-log entry that compresses several rounds of back-and-forth behind a
-single confident sentence is a defect.
-
-This rule does not apply to trivial turns (single-fact answers, simple
-acknowledgments) where the "When to skip the plan entry" rule above already
-permits omission. It applies to every turn that warrants a plan
-block at all.
+**Boot-safety backstop (separate hook).** A PreToolUse hook,
+`validate-boot-safeguard-write.sh`, independent of the Worklog Protocol, blocks a known
+class of boot-unsafe content from being written into always-loaded or boot-read surfaces.
+It is a backstop for known literals, not a complete filter. Full scope, patterns, limits,
+and the override: DSM_0.2.G.
 
 ---
 
@@ -560,7 +534,7 @@ This eliminates ambiguity when tools or agents resolve references.
 Protocol-level headings SHOULD include the protocol or concept name.
 
 - Bad: `## Enforcement`
-- Good: `## Session Transcript Append-Only Enforcement`
+- Good: `## Worklog Append-Only Enforcement`
 
 ### 14.4. Format Conversion Applicability
 
@@ -586,7 +560,7 @@ budgets, file indexes, and the intro paragraph requirement, see
 ## 15. AI Collaboration Principles
 
 The interaction protocols in this document (Notebook Collaboration, App Development,
-Pre-Generation Brief, Sprint Cadence, Session Transcript) implement the principles
+Pre-Generation Brief, Sprint Cadence, Worklog) implement the principles
 defined in `DSM_6.0_AI_Collaboration_Principles_v1.0.md`. That document provides the
 foundational reasoning; this document provides the operational protocols.
 
@@ -670,7 +644,7 @@ The `@` reference imports protocols as background context, but agents may deprio
 | Notebook Collaboration Protocol | DSM 1.0 or Hybrid projects | "User copies each cell; output ONE cell at a time as a fenced code block; wait for output" |
 | App Development Protocol | DSM 4.0 projects | "One bite per stop, a bite being the smallest increment the user can verify (one testable function, test-first); concept approval happens in conversation before the write, the permission window is not the gate" |
 | Pre-Generation Brief Protocol | All projects | "Four-gate model: collaborative definition (confirm threads → dependencies → packaging) → concept (explain) → implementation (diff review) → run (when applicable); each gate = explicit stop" |
-| Session Transcript Protocol | All projects | "Append the plan entry to .claude/session-transcript.md BEFORE acting; output AFTER; conversation text = results only; use Session Transcript Delimiter Format: `<------------Start Plan / HH:MM------------>`, `<------------Start Output / HH:MM------------>`, `<------------Start User / HH:MM------------>`" |
+| Worklog Protocol | All projects | "Append the plan entry to .claude/worklog.md BEFORE acting; output AFTER; conversation text = results only; use Worklog Delimiter Format: `<------------Start Plan / HH:MM------------>`, `<------------Start Output / HH:MM------------>`, `<------------Start User / HH:MM------------>`" |
 
 **Example reinforcement in project CLAUDE.md:**
 ```markdown
@@ -681,11 +655,11 @@ The `@` reference imports protocols as background context, but agents may deprio
 ```
 
 ```markdown
-## Session Transcript Protocol (reinforces inherited protocol)
-- Append the plan entry to `.claude/session-transcript.md` BEFORE acting
+## Worklog Protocol (reinforces inherited protocol)
+- Append the plan entry to `.claude/worklog.md` BEFORE acting
 - Output summary AFTER completing work
 - Conversation text = results only
-- Use Session Transcript Delimiter Format for every block:
+- Use Worklog Delimiter Format for every block:
   <------------Start Plan / HH:MM------------>
   <------------Start Output / HH:MM------------>
   <------------Start User / HH:MM------------>
@@ -694,7 +668,7 @@ The `@` reference imports protocols as background context, but agents may deprio
   NEVER match earlier content for mid-file insertion.
 ```
 
-**WARNING:** Spoke reinforcement blocks must include the literal delimiter syntax shown in the example above. Referencing "Session Transcript Delimiter Format" by name is insufficient; agents default to markdown heading style when the syntax is absent from the local CLAUDE.md (observed in spoke project sessions).
+**WARNING:** Spoke reinforcement blocks must include the literal delimiter syntax shown in the example above. Referencing "Worklog Delimiter Format" by name is insufficient; agents default to markdown heading style when the syntax is absent from the local CLAUDE.md (observed in spoke project sessions).
 
 Without reinforcement, the agent's default behavior (batching outputs, generating multiple steps) overrides the inherited protocol.
 
@@ -1868,8 +1842,8 @@ All module files are in the same directory as this core file.
 | 3 | Session-Start Inbox Check → [Module A §19](DSM_0.2.A_Session_Lifecycle.md) |
 | 4 | Session-Start GitHub Issue Check → [Module A §20](DSM_0.2.A_Session_Lifecycle.md) |
 | 5 | Read-Only Access Within Repository |
-| 6 | Session Transcript Delimiter Format |
-| 7 | Session Transcript Protocol |
+| 6 | Worklog Delimiter Format |
+| 7 | Worklog Protocol |
 | 8 | Pre-Generation Brief Protocol → [Module F](DSM_0.2.F_Pre_Generation_Brief.md) |
 | 9 | Experiment Execution Protocol |
 | 10 | Web Research Capture Protocol |
@@ -1905,7 +1879,7 @@ All module files are in the same directory as this core file.
 | Technical Progress Reporting | Sprint boundary, engineering work to report | [A](DSM_0.2.A_Session_Lifecycle.md) |
 | Lightweight Session Lifecycle | Continuation session with known task, tight context | [A](DSM_0.2.A_Session_Lifecycle.md) |
 | Parallel Session Protocol | Concurrent isolated tasks, independent branch work | [A](DSM_0.2.A_Session_Lifecycle.md) |
-| Reasoning Lessons Protocol | Session wrap-up (extraction), session start (reading) | [A](DSM_0.2.A_Session_Lifecycle.md) |
+| Work-Lessons Protocol | Session wrap-up (capture), session start (reading) | [A](DSM_0.2.A_Session_Lifecycle.md) |
 | Continuous Learning Protocol | Session start/end, external knowledge integration | [A](DSM_0.2.A_Session_Lifecycle.md) |
 | Artifact Lifecycle Management | Transcript retirement, checkpoint supersession | [A](DSM_0.2.A_Session_Lifecycle.md) |
 | Sprint Cadence and Feedback Boundaries | Sprint planning, boundary checklists | [A](DSM_0.2.A_Session_Lifecycle.md) |

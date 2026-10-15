@@ -1,6 +1,7 @@
 # BACKLOG-002: Independent Fork-Local Backlog for TAB Forks
 
-**Status:** Implemented (fork-local); upstream contribution pending
+**Status:** Done (fork-local) — absorbed upstream (PR #125 CLOSED)
+**Central BL:** BL-581 (Independent fork-local backlog line, DSM_0.2 §21.5, v1.30.0)
 **Priority:** Medium
 **Date Created:** 2026-10-08
 **Origin:** Fork-governance gap surfaced in this session (S6) while routing a downstream spoke proposal (BL-001): a de-identified public fork has no sanctioned backlog of its own.

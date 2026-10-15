@@ -1,6 +1,6 @@
 #!/bin/bash
-# Hook: Enforce session transcript append-only rule (DSM_0.2 §7)
-# Fires on PreToolUse for Edit calls to *session-transcript.md, and (BL-552)
+# Hook: Enforce worklog append-only rule (DSM_0.2 §7)
+# Fires on PreToolUse for Edit calls to *worklog.md, and (BL-552)
 # for Bash calls that redirect into it. The two paths validate different
 # things because different things are knowable: the Edit path sees old_string
 # and new_string and checks all four rules below; the Bash path sees only a
@@ -83,9 +83,9 @@ try:
 except Exception:
     sys.exit(0)
 
-# Only commands that redirect into the session transcript are inspected.
+# Only commands that redirect into the worklog are inspected.
 # Everything else produces no output at all (the over-firing control).
-if not re.search(r">>?\s*[^\s|;&]*\.claude/session-transcript\.md", cmd):
+if not re.search(r">>?\s*[^\s|;&]*\.claude/worklog\.md", cmd):
     sys.exit(0)
 
 out = []
@@ -105,7 +105,7 @@ print("\n".join(out))
 
   if [ -n "$BASH_FINDINGS" ]; then
     cat >&2 <<WARNEOF
-WARNING: Session transcript Bash append (DSM_0.2 §7, BL-552).
+WARNING: Worklog Bash append (DSM_0.2 §7, BL-552).
 
 $BASH_FINDINGS
 
@@ -137,8 +137,8 @@ print(f'NEW_STRING={shlex.quote(ti.get(\"new_string\", \"\"))}')
 print(f'REPLACE_ALL={shlex.quote(\"true\" if ti.get(\"replace_all\", False) else \"\")}')
 ")"
 
-# Only validate session-transcript.md edits
-if [[ ! "$FILE_PATH" =~ \.claude/session-transcript\.md$ ]]; then
+# Only validate worklog.md edits
+if [[ ! "$FILE_PATH" =~ \.claude/worklog\.md$ ]]; then
   exit 0
 fi
 
@@ -155,9 +155,9 @@ fi
 # is wrong regardless of their state.
 if [[ "$REPLACE_ALL" == "true" ]]; then
   cat >&2 <<EOF
-BLOCKED: Session transcript violation — replace_all forbidden (DSM_0.2 §7, check 0/4).
+BLOCKED: Worklog violation — replace_all forbidden (DSM_0.2 §7, check 0/4).
 
-Edit with replace_all: true is never allowed on .claude/session-transcript.md.
+Edit with replace_all: true is never allowed on .claude/worklog.md.
 The append-anchor rule assumes a unique last-line anchor; replace_all duplicates
 your new content at every match and explodes the file (S17: 95 MB).
 
@@ -184,7 +184,7 @@ fi
 # --- Check 1: old_string anchored to last non-empty line ---
 if ! echo "$LAST_LINE" | grep -qF -- "$FIRST_OLD_LINE"; then
   cat >&2 <<EOF
-BLOCKED: Session transcript violation — wrong anchor (DSM_0.2 §7, check 1/4).
+BLOCKED: Worklog violation — wrong anchor (DSM_0.2 §7, check 1/4).
 
 old_string is not anchored to the last non-empty line of the file.
 
@@ -194,7 +194,7 @@ Last non-empty line:
 Your old_string started with:
   $FIRST_OLD_LINE
 
-FIX: Read the last 3 lines of .claude/session-transcript.md, use the last
+FIX: Read the last 3 lines of .claude/worklog.md, use the last
 non-empty line as old_string, and append new content after it.
 EOF
   exit 2
@@ -203,7 +203,7 @@ fi
 # --- Check 2: new_string starts with old_string (append-only) ---
 if [[ "$NEW_STRING" != "$OLD_STRING"* ]]; then
   cat >&2 <<EOF
-BLOCKED: Session transcript violation — content replaced (DSM_0.2 §7, check 2/4).
+BLOCKED: Worklog violation — content replaced (DSM_0.2 §7, check 2/4).
 
 new_string must START WITH old_string verbatim. You are replacing content
 instead of appending after it.
@@ -220,7 +220,7 @@ APPENDED="${NEW_STRING#"$OLD_STRING"}"
 # Check for <------------Start {anything}------------>
 if ! echo "$APPENDED" | grep -q '<------------Start '; then
   cat >&2 <<EOF
-BLOCKED: Session transcript violation — missing delimiter (DSM_0.2 §7, check 3/4).
+BLOCKED: Worklog violation — missing delimiter (DSM_0.2 §7, check 3/4).
 
 Every appended entry must contain a timestamped delimiter:
   <------------Start {timestamp}------------>
@@ -276,7 +276,7 @@ if [ -n "$DELIM_TS" ]; then
   # veto (DSM_0.2 §19.2's family).
   if [ "$DRIFT" -gt 5 ]; then
     cat >&2 <<WARNEOF
-WARNING: Session transcript delimiter timestamp drift (DSM_0.2 §7, check 4/4).
+WARNING: Worklog delimiter timestamp drift (DSM_0.2 §7, check 4/4).
 
   delimiter says : $DELIM_TS
   wall clock is  : $NOW_TS

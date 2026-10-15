@@ -538,17 +538,17 @@ neither marker nor checkpoint exists, the agent falls back to full `/dsm-go`.
 | Bandwidth report | Transcript boundary marker |
 | Contributor profile check | Checkpoint (minimal) |
 
-**Thinking step mandate:** Lightweight mode reduces context loading, not reasoning
-documentation. The Session Transcript Protocol (thinking-before-acting) is
+**Work-notes step mandate:** Lightweight mode reduces context loading, not work-notes
+documentation. The Worklog Protocol (plan-before-acting) is
 mandatory in lightweight mode. Both cascading failure incidents observed in spoke
 projects (redundant searches, wrong routing, secret leaks) occurred when the
-thinking step was skipped under time pressure in light or wrap-up mode. Sessions
-that maintained explicit thinking entries had the fewest errors.
+plan step was skipped under time pressure in light or wrap-up mode. Sessions
+that maintained explicit plan entries had the fewest errors.
 
 **Transcript behavior:** In lightweight mode, the transcript is not archived or
-reset. `/dsm-light-go` appends a boundary marker; reasoning accumulates across
+reset. `/dsm-light-go` appends a boundary marker; work notes accumulate across
 the lightweight chain. When a full `/dsm-go` eventually runs, it archives the
-accumulated multi-session transcript.
+accumulated multi-worklog.
 
 **Deferred items tracking:** The lightweight wrap-up checkpoint includes a
 checklist of deferred items. The next full `/dsm-go` processes them as part of
@@ -756,7 +756,7 @@ within the same main session.
 | Allowed (parallel session) | Prohibited (main session only) |
 |---------------------------|-------------------------------|
 | Read any repo file | Modify MEMORY.md |
-| Edit files in declared scope (BL type) | Modify session transcript |
+| Edit files in declared scope (BL type) | Modify worklog |
 | Write to `.claude/` (findings, notes) | Process inbox entries |
 | Commit on shared session branch (via booking) | Push feedback to DSM Central |
 | Read MEMORY.md, CLAUDE.md | Edit files outside declared scope |
@@ -778,7 +778,7 @@ operate in isolation from the main session's numbering state.
 
 | Skipped | Reason |
 |---------|--------|
-| Session transcript | Avoids concurrent writes to shared file |
+| Worklog | Avoids concurrent writes to shared file |
 | MEMORY.md writes | Main session owns memory lifecycle |
 | Inbox processing | Avoids duplicate processing |
 | Reasoning lessons | Main session handles extraction |
@@ -827,9 +827,9 @@ Reference: Lifecycle Skill Prohibition rule
 
 ## 8. Reasoning Lessons Protocol
 
-Session transcripts contain valuable reasoning traces, decision heuristics, and
-course corrections that are lost when the transcript is overwritten at the next
-session start. This protocol extracts and curates those patterns into a persistent
+Worklogs contain valuable decision heuristics, course corrections, and
+recurring work-note patterns that are lost when the transcript is overwritten at the
+next session start. This protocol captures and curates those patterns into a persistent
 file that the agent reads at session start, creating cross-session learning.
 
 **File:** `.claude/reasoning-lessons.md` (gitignored, project-local)
@@ -904,7 +904,7 @@ outputs a STAA recommendation after each auto extraction.
   4. **Consolidate:** entries expressing the same insight from different sessions
      merge into one with session cross-references (e.g., `[+S55]`)
 
-**Relationship to Session Transcript Protocol:** The transcript is the raw data
+**Relationship to Worklog Protocol:** The transcript is the raw data
 (ephemeral, overwritten each session, optionally archived to `.claude/transcripts/`).
 Reasoning lessons are the curated extract (persistent, accumulating across sessions).
 The transcript feeds the lessons; the lessons feed the agent's priming at session start.
@@ -1351,7 +1351,7 @@ when no session-specific topic is apparent.
 - **Aspiration:** Every session
 - **Minimum:** Every 3 sessions (aligned with sprint boundaries)
 - **Skip when:** Session is time-constrained, focused on mechanical work, or context
-  budget is tight. Note the skip in the session transcript ("Learning step skipped:
+  budget is tight. Note the skip in the worklog ("Learning step skipped:
   [reason]") so patterns of skipping become visible.
 
 **Relationship to Reasoning Lessons:** Reasoning Lessons extract *internal* patterns
@@ -1387,7 +1387,7 @@ the project CLAUDE.md, not here.
 
 ### 10.1. Transcript Retirement
 
-Session transcripts archive at session start (/dsm-go Step 6.5) and accumulate
+Worklogs archive at session start (/dsm-go Step 6.5) and accumulate
 in `.claude/transcripts/`. STAA analysis is the intended next step, but it is
 selective: not every transcript warrants full analysis. The auto-extraction at
 wrap-up already captures tactical reasoning lessons.
@@ -1886,7 +1886,7 @@ require acknowledgment and do not interrupt tool calls or workflow.
 ```
 
 The reminder is a single line, visually distinct but unobtrusive. It does not
-appear in the session transcript (the transcript is for reasoning, not
+appear in the worklog (the transcript is for reasoning, not
 notifications).
 
 ### 15.3. Anti-Patterns
@@ -1897,7 +1897,7 @@ notifications).
 - Reset the cumulative counter on lightweight session boundaries (only reset
   after the configured gap)
 - Treat the timer as a hard limit; the user decides when to stop
-- Add the reminder to the session transcript; it belongs in conversation text
+- Add the reminder to the worklog; it belongs in conversation text
   only
 
 ---
@@ -2594,7 +2594,7 @@ following are true:
 
 The user may override the gate by explicitly acknowledging incomplete items:
 "Defer X to next sprint" or "Accept Y as-is." The agent records the
-override in the session transcript.
+override in the worklog.
 
 ### 24.4. What Counts as Evidence
 
@@ -2888,7 +2888,7 @@ The interaction with shipped `.claude/*` content:
 1. Files tracked in the repo (hooks, templates) remain **tracked** after
    Kick-off. Git's tracking precedence means `.git/info/exclude` does not
    untrack already-tracked files; it only hides untracked ones.
-2. New files created during sessions (`session-transcript.md`,
+2. New files created during sessions (`worklog.md`,
    `session-baseline.txt`, `transcripts/*`, `last-*.txt`) are untracked and
    match the blanket rule, so they correctly stay out of git history.
 3. The shipped `.gitignore` contains line-specific rules for these same
@@ -2924,7 +2924,7 @@ Execution sequence on a fresh clone's first session:
 4. `/dsm-go` Step 1.8 invokes `/dsm-align`. `/dsm-align` runs the hub
    fast-path (because `scripts/commands/` is present, shipped via T1a).
    It populates the `<!-- BEGIN DSM_0.2 ALIGNMENT -->` section from the
-   §17.1 template, installs session-transcript hooks (Step 10b in
+   §17.1 template, installs worklog hooks (Step 10b in
    `/dsm-align`), and verifies `.gitattributes`.
 5. Session proceeds normally from Step 2 onward.
 
@@ -3046,7 +3046,7 @@ started: <ISO 8601 with TZ>
 agent: <harness identifier>
 model: <model identifier>
 branch: <git branch>
-transcript_anchor: <md5 hash of session-transcript.md after Step 6 reset>
+transcript_anchor: <md5 hash of worklog.md after Step 6 reset>
 pid: <Claude Code process PID, or "unknown" if unavailable>
 ```
 
@@ -3192,7 +3192,7 @@ limitation surfaces in practice.
 
 A wrap-up skill MAY use the lockfile's `transcript_anchor` field to verify
 no foreign appends happened during the session: recompute the md5 of
-`.claude/session-transcript.md` between the lockfile's anchor offset and
+`.claude/worklog.md` between the lockfile's anchor offset and
 EOF; if the hash diverges from a baseline computed at the lockfile write
 plus all subsequent agent appends, a concurrent session may have appended
 silently.
@@ -3207,7 +3207,7 @@ S10.L2 (2026-04-29). Two Claude Code
 conversations were running in parallel against the same project on the
 same git branch (`session-10/2026-04-23`). Neither agent detected the
 other. Discovery happened only when `git status` and the shared
-`.claude/session-transcript.md` showed entries the active agent had not
+`.claude/worklog.md` showed entries the active agent had not
 authored. One session ran `/dsm-align` v1.7.0 to v1.8.0 + drafted the
 Haystack upstream issue (T6) + closed BL-004; the parallel session ran T7
 (Phase 2 embedding-model selection) and made 3 edits to a shared sprint

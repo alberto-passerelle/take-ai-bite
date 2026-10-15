@@ -76,8 +76,14 @@ to it. Keep it current as items are submitted, absorbed, or reordered.
 - Delete a `feature/*` PR branch (local and remote) once its PR resolves — merged or
   closed-after-absorption.
 - Keep remote branches only for currently-open PRs.
-- After a fork-sync that brings an absorbed change back into the methodology, delete the held
-  `bl-NNN/*` branch whose work it carried; the fork-local `plans/` status moves to reflect it.
+- After a fork-sync that brings an absorbed change back into the methodology, reconcile each
+  fork-local BL whose reference PR is now closed and whose section is now on `main`: delete the
+  held `bl-NNN/*` branch whose work it carried, set the BL status to
+  `Done (fork-local) — absorbed as Central BL-NNN (§X, vY.Z)`, record its `**Central BL:**`
+  mapping, mark its `plans/README.md` row Done, and move the name-free body to
+  `dsm-docs/plans/done/`. Do **not** add the fork BL to `dsm-docs/plans/done/INDEX.md` — that
+  index is Central's namespace, and the absorbed change already appears there under its Central
+  number via the sync. (Normative rule: DSM_0.2 §21.5 "Done and archival".)
 
 ## 7. Pre-Submit Checklist
 

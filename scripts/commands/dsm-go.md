@@ -92,7 +92,7 @@ if [ -f "$ROOT/.claude/session.lock" ]; then
     *) if kill -0 "$LOCK_PID" 2>/dev/null && ps -p "$LOCK_PID" -o comm= 2>/dev/null | grep -q claude
        then echo "VERDICT=LIVE"; else echo "VERDICT=STALE"; fi ;;
   esac
-  echo "TRANSCRIPT_AGE_MIN=$(( ( $(date +%s) - $(stat -c %Y "$ROOT/.claude/session-transcript.md" 2>/dev/null || date +%s) ) / 60 ))"
+  echo "TRANSCRIPT_AGE_MIN=$(( ( $(date +%s) - $(stat -c %Y "$ROOT/.claude/worklog.md" 2>/dev/null || date +%s) ) / 60 ))"
 else
   echo "LOCK_ABSENT"
 fi
@@ -812,7 +812,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    is ambiguous and reproduces the GE S47 failure mode that spawned
    the sprint closure/verification protocol. The 'defer' escape hatch exists for real cases where the
    checklist was executed through other means; log deferrals in the
-   session transcript so they surface during retrospectives.
+   worklog so they surface during retrospectives.
 
    **Skip when:** First sprint in a project (no prior boundary to check),
    when no sprint identifier is found in MEMORY.md/checkpoint, or when
@@ -894,15 +894,15 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    and `-uall` does not change that. A `-z` NUL-delimited rewrite is the real
    fix for the whole family if it ever bites.
    **External Contribution note:** For External Contribution projects, session artifacts (baseline, transcript) are written to `.claude/` inside the external repo. These files are hidden from git by Claude Code's `.git/info/exclude` rule (which adds `.claude/`), not by DSM or the project's `.gitignore`. This is an acceptable trade-off: the files are invisible to `git status` and cannot leak into upstream PRs, but the safety net depends on Claude Code's infrastructure. If working with a different AI tool that does not exclude `.claude/`, these files would be visible.
-5.5. **Archive previous transcript:** If `.claude/session-transcript.md` exists and contains content beyond a blank header, archive it before overwriting. Extract the timestamp from the `**Started:**` line in the transcript header, then move the file:
+5.5. **Archive previous transcript:** If `.claude/worklog.md` exists and contains content beyond a blank header, archive it before overwriting. Extract the timestamp from the `**Started:**` line in the transcript header, then move the file:
    ```bash
    # Extract timestamp from transcript header (format: YYYY-MM-DDTHH:MM:SS+TZ)
-   STARTED=$(grep '^\*\*Started:\*\*' .claude/session-transcript.md | sed 's/\*\*Started:\*\* //' | head -1)
+   STARTED=$(grep '^\*\*Started:\*\*' .claude/worklog.md | sed 's/\*\*Started:\*\* //' | head -1)
    # Convert to filename-safe format (YYYY-MM-DDTHH:MM)
    TS=$(echo "$STARTED" | sed 's/\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}T[0-9]\{2\}:[0-9]\{2\}\).*/\1/')
    if [ -n "$TS" ] && [ "$TS" != "" ]; then
      mkdir -p .claude/transcripts
-     cp .claude/session-transcript.md ".claude/transcripts/${TS}-ST.md"
+     cp .claude/worklog.md ".claude/transcripts/${TS}-ST.md"
    fi
    ```
    If the transcript has no `**Started:**` line (corrupted or empty), skip archiving. Report the archived filename in the session report.
@@ -972,15 +972,15 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    - **If `type: quick`:** Note in the session report: "Previous session used quick wrap-up (no feedback push). Check `dsm-docs/feedback-to-dsm/` for unpushed entries."
    - **If `type: full`:** No action needed. Continue normally.
    - **If the file does not exist:** No action (step 5.8 handles incomplete wrap-up detection).
-6. **Reset session transcript:** Overwrite `.claude/session-transcript.md` with a fresh session header (the file persists across sessions; do not delete and recreate it).
+6. **Reset worklog:** Overwrite `.claude/worklog.md` with a fresh session header (the file persists across sessions; do not delete and recreate it).
 
-   **No-skip rule (§7 unconditional activation):** This step is the canonical activation point for the Session Transcript Protocol. When `/dsm-go` is entered as a deferral from `/dsm-light-go` (the user accepted the safety gate's "switch to /dsm-go?" prompt), Step 6 MUST run before any user task action. Skipping Step 6 to jump straight into the user's task is the failure mode that caused S69 to run ~6 turns with zero transcript appends. The unconditional activation rule in DSM_0.2 §7 is the third independent enforcement layer, but Step 6 is the canonical reset + activation point and the agent must execute it on every entry to `/dsm-go`, including deferral entries.
+   **No-skip rule (§7 unconditional activation):** This step is the canonical activation point for the Worklog Protocol. When `/dsm-go` is entered as a deferral from `/dsm-light-go` (the user accepted the safety gate's "switch to /dsm-go?" prompt), Step 6 MUST run before any user task action. Skipping Step 6 to jump straight into the user's task is the failure mode that caused S69 to run ~6 turns with zero transcript appends. The unconditional activation rule in DSM_0.2 §7 is the third independent enforcement layer, but Step 6 is the canonical reset + activation point and the agent must execute it on every entry to `/dsm-go`, including deferral entries.
 
    **Heredoc warning (§7 append technique):** The `cat > ... << EOF` form below uses an unquoted heredoc deliberately so `$(date -Iseconds)` expands. Do NOT change to `<< 'EOF'` (single-quoted); single-quoted heredocs suppress expansion and write the literal `$(date -Iseconds)` string into the transcript instead of the timestamp. Observed in S69.
 
    Write exactly this content, replacing N, timestamp, project name, agent, and model:
    ```bash
-   cat > .claude/session-transcript.md << EOF
+   cat > .claude/worklog.md << EOF
    # Session N Transcript
    **Started:** $(date -Iseconds)
    **Project:** [project name from MEMORY.md or directory name]
@@ -991,7 +991,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
    After the mandatory header, append optional platform-specific fields when retrievable (omit entirely when not — ritualism guard: do NOT write placeholder values like `Effort: unknown`):
    ```bash
-   cat >> .claude/session-transcript.md << EOF
+   cat >> .claude/worklog.md << EOF
    **Effort:** [low | medium | high]
    **Thinking:** [on | off]
    **Fast mode:** [on | off]
@@ -1000,7 +1000,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
    Then append the closing separator:
    ```bash
-   cat >> .claude/session-transcript.md << EOF
+   cat >> .claude/worklog.md << EOF
 
    ---
    EOF
@@ -1008,11 +1008,11 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
    **Agent/Model self-reporting:** the agent introspects its identity from the runtime environment. If retrieval is uncertain, append `(self-reported)` to the value (e.g., `**Model:** claude-opus-4-7 (self-reported)`). Do NOT fail `/dsm-go` on missing metadata.
 
-   This file is the persistent reasoning log per the Session Transcript Protocol in DSM_0.2. The user keeps it open in VS Code to monitor agent thinking in real time.
+   This file is the persistent work log per the Worklog Protocol in DSM_0.2. The user keeps it open in VS Code to follow the work in real time.
 
    **Behavioral activation (mandatory, immediate):** From this point forward,
-   follow the Session Transcript Protocol (DSM_0.2): append the plan entry to
-   `.claude/session-transcript.md` as the **first tool call** of every turn,
+   follow the Worklog Protocol (DSM_0.2): append the plan entry to
+   `.claude/worklog.md` as the **first tool call** of every turn,
    before any other tool calls or file edits. Append output summary as the
    **last tool call** after completing work. Conversation text is for results,
    summaries, and questions only, never for reasoning. This is not a checklist
@@ -1030,7 +1030,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    state. See **DSM_0.2.A §26** for the protocol. Run:
 
    ```bash
-   ANCHOR=$(md5sum .claude/session-transcript.md | awk '{print $1}')
+   ANCHOR=$(md5sum .claude/worklog.md | awk '{print $1}')
    BRANCH=$(git branch --show-current 2>/dev/null || echo "no-git")
    # Owning PID: env fast path, else the parent-chain walk used corpus-wide.
    LOCK_PID="${CLAUDE_PID}"
@@ -1093,4 +1093,4 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
 - If $ARGUMENTS is provided, skip the "What would you like to work on?" question and start working on that topic directly
 - Follow .claude/CLAUDE.md conventions for this project
-- Follow the Session Transcript Protocol from DSM_0.2 (append reasoning to .claude/session-transcript.md as the first tool call, not conversation text)
+- Follow the Worklog Protocol from DSM_0.2 (append reasoning to .claude/worklog.md as the first tool call, not conversation text)

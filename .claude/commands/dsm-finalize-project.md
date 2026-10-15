@@ -15,7 +15,7 @@ If any prerequisite fails, stop and explain what needs to be resolved first.
 
 Classify the project to determine which checklist sections are required:
 
-1. Count session transcripts in `.claude/transcripts/` (or fall back to handoffs in `dsm-docs/handoffs/`)
+1. Count worklogs in `.claude/transcripts/` (or fall back to handoffs in `dsm-docs/handoffs/`)
 2. Classify:
    - **Small (1-3 sessions):** Sections D, E, G, H, I required; B, C optional
    - **Medium (4-10 sessions):** Sections A, B, D, E, G, H, I required; C, F optional
@@ -229,7 +229,7 @@ Then:
 ## Notes
 
 - No co-author lines in commits
-- No session transcript entries (this may run outside a regular session)
+- No worklog entries (this may run outside a regular session)
 - Resolve cross-repo paths from the Ecosystem Path Registry (`.claude/dsm-ecosystem.md`)
 - If `dsm-central` path is not configured, warn and skip all inbox pushes
 - If `portfolio` path is not configured, warn and skip portfolio notification
