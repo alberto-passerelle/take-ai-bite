@@ -1015,11 +1015,11 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    `.claude/worklog.md` as the **first tool call** of every turn,
    before any other tool calls or file edits. Append output summary as the
    **last tool call** after completing work. Conversation text is for results,
-   summaries, and questions only, never for reasoning. This is not a checklist
+   summaries, and questions only, never for work notes. This is not a checklist
    item; it is a behavioral mode that remains active for the entire session.
 
    **This activation applies to /dsm-go's own remaining steps (7, 8, 9, 10).**
-   Immediately after creating the transcript header, append a thinking entry
+   Immediately after creating the transcript header, append a plan entry
    summarizing the session-start checks completed so far (steps 0-6: session
    number determined, branch verified, inbox checked, version checked, transcript
    archived, baseline saved). Then continue with step 7. This ensures the
@@ -1093,4 +1093,4 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
 - If $ARGUMENTS is provided, skip the "What would you like to work on?" question and start working on that topic directly
 - Follow .claude/CLAUDE.md conventions for this project
-- Follow the Worklog Protocol from DSM_0.2 (append reasoning to .claude/worklog.md as the first tool call, not conversation text)
+- Follow the Worklog Protocol from DSM_0.2 (append the plan entry to .claude/worklog.md as the first tool call, not in conversation text)
