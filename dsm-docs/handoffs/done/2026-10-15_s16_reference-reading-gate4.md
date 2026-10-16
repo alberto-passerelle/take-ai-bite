@@ -1,4 +1,6 @@
 # Session 16 Handoff: reference-reading research at Gate 4, then BACKLOG-011
+**Date Completed:** 2026-10-16
+**Outcome Reference:** Consumed at session 17 start
 
 **Date:** 2026-10-15
 **Branch for this work:** `bl-011/reference-reading` (rebased onto `session-16/2026-10-15`; both local only, origin not found)
