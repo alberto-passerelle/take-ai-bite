@@ -894,7 +894,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    and `-uall` does not change that. A `-z` NUL-delimited rewrite is the real
    fix for the whole family if it ever bites.
    **External Contribution note:** For External Contribution projects, session artifacts (baseline, transcript) are written to `.claude/` inside the external repo. These files are hidden from git by Claude Code's `.git/info/exclude` rule (which adds `.claude/`), not by DSM or the project's `.gitignore`. This is an acceptable trade-off: the files are invisible to `git status` and cannot leak into upstream PRs, but the safety net depends on Claude Code's infrastructure. If working with a different AI tool that does not exclude `.claude/`, these files would be visible.
-5.5. **Archive previous transcript:** If `.claude/worklog.md` exists and contains content beyond a blank header, archive it before overwriting. Extract the timestamp from the `**Started:**` line in the transcript header, then move the file:
+5.5. **Archive previous transcript:** Do not append to `.claude/worklog.md` before this step on the `/dsm-go` turn; anything appended now is archived under the previous session (DSM_0.2.G, Boot-turn ordering). If `.claude/worklog.md` exists and contains content beyond a blank header, archive it before overwriting. Extract the timestamp from the `**Started:**` line in the transcript header, then move the file:
    ```bash
    # Extract timestamp from transcript header (format: YYYY-MM-DDTHH:MM:SS+TZ)
    STARTED=$(grep '^\*\*Started:\*\*' .claude/worklog.md | sed 's/\*\*Started:\*\* //' | head -1)
@@ -976,7 +976,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
    **No-skip rule (§7 unconditional activation):** This step is the canonical activation point for the Worklog Protocol. When `/dsm-go` is entered as a deferral from `/dsm-light-go` (the user accepted the safety gate's "switch to /dsm-go?" prompt), Step 6 MUST run before any user task action. Skipping Step 6 to jump straight into the user's task is the failure mode that caused S69 to run ~6 turns with zero transcript appends. The unconditional activation rule in DSM_0.2 §7 is the third independent enforcement layer, but Step 6 is the canonical reset + activation point and the agent must execute it on every entry to `/dsm-go`, including deferral entries.
 
-   **Heredoc warning (§7 append technique):** The `cat > ... << EOF` form below uses an unquoted heredoc deliberately so `$(date -Iseconds)` expands. Do NOT change to `<< 'EOF'` (single-quoted); single-quoted heredocs suppress expansion and write the literal `$(date -Iseconds)` string into the transcript instead of the timestamp. Observed in S69.
+   **Heredoc warning (§7 append technique):** The `cat > ... << EOF` form below uses an unquoted heredoc deliberately so `$(date -Iseconds)` expands. Do NOT change to `<< 'EOF'` (single-quoted); single-quoted heredocs suppress expansion and write the literal `$(date -Iseconds)` string into the transcript instead of the timestamp. Observed in S69. The unquoted form is safe here only because this header holds no backticks; other Bash appends follow DSM_0.2.G (Appending with Bash).
 
    Write exactly this content, replacing N, timestamp, project name, agent, and model:
    ```bash
@@ -1015,15 +1015,16 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    `.claude/worklog.md` as the **first tool call** of every turn,
    before any other tool calls or file edits. Append output summary as the
    **last tool call** after completing work. Conversation text is for results,
-   summaries, and questions only, never for reasoning. This is not a checklist
+   summaries, and questions only, never for work notes. This is not a checklist
    item; it is a behavioral mode that remains active for the entire session.
 
    **This activation applies to /dsm-go's own remaining steps (7, 8, 9, 10).**
-   Immediately after creating the transcript header, append a thinking entry
+   Immediately after creating the transcript header, append a plan entry
    summarizing the session-start checks completed so far (steps 0-6: session
    number determined, branch verified, inbox checked, version checked, transcript
    archived, baseline saved). Then continue with step 7. This ensures the
-   transcript is never empty after /dsm-go completes.
+   transcript is never empty after /dsm-go completes. On the `/dsm-go` turn this
+   entry is the turn's plan entry; no earlier append is owed.
 
    **Lockfile write (BL-431):** After the transcript header is written, write
    the session lockfile so its `transcript_anchor` reflects the post-reset
@@ -1093,4 +1094,4 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
 
 - If $ARGUMENTS is provided, skip the "What would you like to work on?" question and start working on that topic directly
 - Follow .claude/CLAUDE.md conventions for this project
-- Follow the Worklog Protocol from DSM_0.2 (append reasoning to .claude/worklog.md as the first tool call, not conversation text)
+- Follow the Worklog Protocol from DSM_0.2 (append the plan entry to .claude/worklog.md as the first tool call, not in conversation text); on the `/dsm-go` turn itself the plan entry comes after Step 6 (DSM_0.2.G, Boot-turn ordering)

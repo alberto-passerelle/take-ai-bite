@@ -5,6 +5,38 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.35.0] - 2026-10-15
+
+Minor: the worklog fixes that BACKLOG-592 unblocked land in the on-demand Module G instead of §7 (BACKLOG-554, BACKLOG-500, BACKLOG-590), and two fork-facing additions to the core return: §20.9 and an extended §21.5 (BACKLOG-587, BACKLOG-588, BACKLOG-589, BACKLOG-591). The always-loaded §7 is unchanged. Acceptance: the release candidate booted clean on Opus 5.5 in 3 scripted boots (2 first-turn, 1 full) and 1 operator boot, against a known-failing control that was refused.
+
+### Fixed
+
+- **Bash worklog appends cover both heredoc failure directions (BACKLOG-554, BACKLOG-500, DSM_0.2.G "Appending with Bash").** G now names the one case that needs a Bash append (the worklog's last line also appears earlier, so Edit and the anchor rule cannot both hold). It shows that a quoted heredoc writes `$(date)` as literal text while an unquoted one runs backticks in prose as commands, with exit 0 and no visible error, and it gives a default form: `printf` the delimiter with a fresh clock read, then write the body through a single-quoted heredoc. `validate-transcript-edit.sh` accepts that form without a false warning. `/dsm-go` Step 6 and two DSM_7.0 passages are corrected; one of them stated the unquoted form as the rule. Input: take-ai-bite #141.
+  **Spoke action:** none by hand. `/dsm-go` runs `/dsm-align` on this version change, which copies the updated hook; refresh the user-level commands on each machine (`scripts/sync-commands.sh --deploy` from Central).
+- **`/dsm-go` writes its first worklog entry after the reset (BACKLOG-590, DSM_0.2.G "Boot-turn ordering").** The per-turn reminder no longer tells a `/dsm-go` turn to append before Step 5.5 archives the file, so the boot plan stops landing in the previous session's archive. `transcript-reminder.sh` prints nothing on a `/dsm-go` prompt, and `/dsm-go` Steps 5.5 and 6 point to the new G note. Verified in a full headless boot (the archive ends with the previous session's last entry) and an operator boot. Input: take-ai-bite #142.
+  **Spoke action:** covered by the same `/dsm-align` run and command refresh.
+
+### Added
+
+- **Clean staged index before a Level 3 branch (BACKLOG-587, DSM_0.2 §20.9).** Before `git checkout -b` for a `bl-*` or `sprint-*` branch, assert `git diff --cached --quiet`; commit session artifacts on the session branch first, or stop and report. This keeps the checkpoint moves `/dsm-go` stages from riding into a task branch. Input: take-ai-bite #137 and reference PR #138.
+  **Spoke action:** none (the core is imported).
+- **Fork-local backlog lifecycle (BACKLOG-588, BACKLOG-589, BACKLOG-591, DSM_0.2 §21.5).** A fork-local BL and its README row are committed to the branch every session starts from. A six-step workflow covers minting through closing. A BL is done when Central ships a change covering it, when its local work is complete, or when it is withdrawn, and its row moves to `done/fork-INDEX.md`, never to the synced `done/INDEX.md`. A fork extends Central's methodology and does not contradict it; at a fork-sync, Central's text wins. Input: take-ai-bite #139, #144 and reference PR #140.
+  **Spoke action:** none for spokes; forks read §21.5 before minting their next fork-local BL.
+
+## [1.34.0] - 2026-10-15
+
+Minor: make the Worklog Protocol readable on strict models by trimming the always-loaded §7 and removing two Module G blocks that a strict model would not read (BACKLOG-592), plus a read-only live-session check for `/dsm-staa` (BACKLOG-586).
+
+### Changed
+
+- **Worklog Protocol trimmed and Module G cleaned (BACKLOG-592, DSM_0.2 §7, DSM_0.2.G).** §7 keeps every operational rule in condensed form and shrinks from 11,489 B to 3,497 B. The header schema, the Bash append procedure, the lifecycle detail and the rationale move to DSM_0.2.G, now titled "Worklog Protocol Detail". Two G blocks that stopped a strict-model read are deleted. Three stale passages in §7 are fixed (a "cleared at session end" claim that contradicted the lifecycle, a wrong §23 citation, a "see below" that pointed to Module A), and the worklog wording in `/dsm-go`, `/dsm-light-go`, `/dsm-refresh-all` and `/dsm-refresh-memory` now matches the new §7 definition. Acceptance: 12/12 clean Opus 5.5 boots of the final state (2 scripted, 10 operator), against a known-failing control that was refused.
+  **Spoke action:** none for the core (spokes import it); refresh the user-level commands on each machine (`scripts/sync-commands.sh --deploy` from Central).
+
+### Added
+
+- **`/dsm-staa` read-only active-session check (BACKLOG-586, `/dsm-staa` Step 0, DSM_0.2.A §26.2).** The analysis agent now runs `/dsm-go` §0.7a's lock probe before anything else: a live lock gets an explicit continue/stop question, a stale or unknown lock a one-line report, no lock nothing. It never writes or removes the lock, files no backlog item, and runs no git command that changes HEAD, the index, or refs.
+  **Spoke action:** covered by the same command refresh.
+
 ## [1.33.1] - 2026-10-13
 
 Patch: a migration guide for forks of the public mirror, so a fork maintainer can complete the v1.33.0 boot-safeguard fix on their own machine (BACKLOG-585 Phase 3).

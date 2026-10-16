@@ -3,7 +3,7 @@
 **Date:** 2026-10-13
 **Status:** Active
 **Scope:** v1.33.0 / 1.33.1 adoption on this Kick-off'd public-mirror fork.
-**Related:** `dsm-docs/guides/boot-safeguard-fork-migration.md`; `dsm-docs/research/2026-10-13_strict-model-boot-refusal.md`; BACKLOG-003; `dsm-docs/handoffs/2026-10-13_s12_handoff.md`
+**Related:** `dsm-docs/guides/boot-safeguard-fork-migration.md`; `dsm-docs/research/2026-10-13_strict-model-boot-refusal.md` (deleted); BACKLOG-003; `dsm-docs/handoffs/2026-10-13_s12_handoff.md`
 
 ---
 

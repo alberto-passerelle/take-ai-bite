@@ -22,7 +22,7 @@
 #
 # Origin: BL-324 (parallel sessions contaminating main worklog).
 # BL-371: registry renamed singular→plural, detection updated for
-# multi-entry.
+# multi-entry. BL-590: silent on a /dsm-go turn (see below).
 
 set +e
 
@@ -32,6 +32,23 @@ PARALLEL_REMINDER="REMINDER (DSM_0.2 §7, parallel mode): This is a parallel ses
 
 emit_main() { echo "$MAIN_REMINDER"; exit 0; }
 emit_parallel() { echo "$PARALLEL_REMINDER"; exit 0; }
+
+# /dsm-go turn (BL-590): emit nothing. /dsm-go archives and resets the
+# worklog at Steps 5.5/6 and writes the turn's first entry after the reset,
+# so a reminder to append first would put that entry in the previous
+# session's archive (DSM_0.2.G, Boot-turn ordering). Matches the typed form
+# and the expanded command form; any parse failure falls through to the
+# normal reminder.
+PROMPT=$(python3 -c '
+import sys, json
+try:
+    print(json.load(sys.stdin).get("prompt", "") or "")
+except Exception:
+    pass
+' 2>/dev/null)
+if printf '%s\n' "$PROMPT" | grep -qE '^[[:space:]]*/dsm-go([[:space:]]|$)|<command-name>/dsm-go</command-name>'; then
+  exit 0
+fi
 
 REGISTRY=".claude/parallel-sessions.txt"
 [ -f "$REGISTRY" ] || emit_main
