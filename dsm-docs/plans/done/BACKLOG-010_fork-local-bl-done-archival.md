@@ -1,6 +1,8 @@
 # BACKLOG-010: Fork-Local BL Done-Criterion and Archival Step (§21.5)
 
-**Status:** Implemented (fork-local, S11); methodology on `bl-010/fork-local-bl-done-archival`; upstream issue #144 filed (2026-10-13); PR pending (window 3/3)
+**Status:** Done (fork-local) — absorbed upstream (issue #144 closed 2026-10-15); held fork-local branch archived as tag `archive/bl-010`
+**Central BL:** BACKLOG-591 (fork-local BL done state and `done/fork-INDEX.md`, DSM_0.2 §21.5 "Done and archive", v1.35.0)
+**Date Completed:** 2026-10-16
 **Priority:** Medium
 **Date Created:** 2026-10-13
 **Origin:** S11. Organizing `dsm-docs/plans/` surfaced that absorbed fork-local BLs (BL-001, BL-002 — upstream PRs #128/#125 closed) sat in `plans/` with stale "upstream contribution pending" status and were never archived. §21.5 defined the fork-local active line and the Central-number mapping on absorption, but never wired the archival step: no done-criterion, no archival destination, and no handling for the inherited `plans/done/INDEX.md` being Central's namespace (its `BACKLOG-001` ≠ the fork's). The generic `/dsm-backlog-done` skill assumes a single namespace and would collide fork `BACKLOG-NNN` with Central `BACKLOG-NNN`.
