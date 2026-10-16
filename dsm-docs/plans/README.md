@@ -16,4 +16,4 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 
 | BL# | Title | Priority | Status |
 |-----|-------|----------|--------|
-| BACKLOG-008 | Fork-to-Central Contribution Mechanics | Medium | Proposed |
+| BACKLOG-008 | Fork-to-Central Contribution Mechanics | Low | Proposed (narrowed in S17 to what DSM_0.2 §21.5 leaves out) |

@@ -1,13 +1,30 @@
 # BACKLOG-008: Fork-to-Central Contribution Mechanics
 
-**Status:** Proposed
-**Priority:** Medium
+**Status:** Proposed (scope narrowed in S17, 2026-10-16, after DSM_0.2 §21.5 v1.35.0)
+**Priority:** Low (was Medium; most of the original scope is now upstream)
+**Extends:** DSM_0.2 §21.5, the "Upstream contribution is optional but recommended" bullet
 **Date Created:** 2026-10-09
 **Origin:** S7. The fork has been contributing methodology upstream (PRs #125, #128; the portable-date fix #122 before them) using a consistent packaging-and-cadence process, but that process is captured nowhere in the methodology — it is tribal knowledge carried in handoffs and session memory. A gap check this session confirmed it: `§21.5` (the fork-local backlog line) does not yet exist in core methodology (it is proposed, as PR #125), and a search for any fork-to-Central contribution-routing protocol returned nothing. The existing external-contribution docs (DSM_3.0.C/D/E, DSM_0.2.D) govern contributing to *other* repos, not a DSM fork contributing methodology *back* to Central.
 **Author:** Alberto (with AI assistance)
 **Backlog line:** Fork-local independent numbering (BL-008).
 
 ---
+
+**Scope note (S17).** DSM_0.2 §21.5 (v1.35.0, Central BACKLOG-588/589/591) now covers the
+contribution route (a GitHub issue plus a cross-fork PR with the name-free BL body attached),
+the proposals-not-merges model (the contribution is input to Central's pipeline, and Central
+authors its own section or BL), and fork `main` carrying no rule that contradicts Central's.
+This BL keeps only what §21.5 leaves out, all four of which the fork guide
+`dsm-docs/guides/fork-contribution-workflow.md` already practises (§2, §4, §5, §6):
+
+1. One concern per PR, branched off `upstream/main`, carrying only methodology files and never
+   fork-local artifacts.
+2. An open-PR window with a dependency-ordering rule.
+3. One tracking issue as the index of open and queued contributions.
+4. Deleting a PR branch once its PR resolves.
+
+Sections 1-3 and 5-7 below predate the narrowing and still describe the original scope;
+section 4 is updated. Revise the Test Plan and Risks at implementation.
 
 ## 1. Problem
 
@@ -68,12 +85,14 @@ upstream via the very process it documents.
 
 ## 4. Success Criteria
 
-- A methodology subsection states the contribution shape, the proposals-not-merges model, the
-  cadence/ordering rule, the tracking-issue requirement, and the branch/fork-main hygiene.
+- A methodology rule, written as an extension of §21.5's upstream-contribution bullet, states
+  the four items in the scope note: one concern per PR off `upstream/main` with methodology
+  files only, the open-PR window and dependency ordering, the tracking issue, and PR-branch
+  deletion.
 - The rule is discoverable to any fork (not dependent on this fork's handoffs/guide).
 - The fork-local guide is named as the operational companion and stays consistent with the rule.
-- The rule names its direction explicitly (DSM fork -> Central), distinguishing it from the
-  external-contribution protocols.
+- No longer in scope (covered by §21.5 since v1.35.0): the contribution route, the
+  proposals-not-merges model, the direction (fork to Central), and fork-main non-contradiction.
 
 ## 5. Test Plan
 
