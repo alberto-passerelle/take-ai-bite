@@ -15,29 +15,30 @@ spoke's proposal: "whenever a file is used as a reference, the used passage is
 read as a small bite, the use is matched against the original wording (quote +
 location), and the human drafting alongside validates it" (hub inbox entry,
 2026-10-15, archived under `_inbox/done/`, gitignored and local only). The spoke
-also reports the failure this targets (§3.1). This note maps the principles and
+also reports the failure this targets (section 3.1). This note maps the principles and
 existing rules that bear on the proposal, tests it rather than adopting it, and
 recommends whether and where to anchor a rule.
 
 ## 2. Sources
 
 DSM references are to v1.33.1 as present in this fork on 2026-10-15, located by
-file and section.
+file and section; the cited sections are unchanged in v1.35.0 (checked 2026-10-16).
 
 **Reports**
 - Hub inbox entry, 2026-10-15, from a downstream spoke (`_inbox/done/`,
   gitignored). It summarizes a fuller observation kept in the spoke, which was
   not read; this note relies on the summary only.
 - Session 16 worklog, Output entry 11:14 (not tracked in git): the
-  self-corrected coverage claim used as the second case in §3.1.
+  self-corrected coverage claim used as the second case in section 3.1.
 
 **Principles:** DSM_6.0 §1.1, §1.3, §1.4, §1.10, §1.11, §1.14.
 
-**Rules and protocols:** DSM_0.2 §10, §10.1; DSM_0.2.A §22; DSM_0.2.B §1, §2;
-DSM_0.2.F §8.0, §8.0.1; DSM_0.2.T Code Output Standards; DSM_0.1 §8.
+**Rules and protocols:** DSM_0.2 §10, §10.1; DSM_0.2.A §1, §22; DSM_0.2.B §1,
+§2; DSM_0.2.D §9; DSM_0.2.F §8.0, §8.0.1, §8.9.2; DSM_0.2.T Code Output
+Standards; DSM_0.1 §8; DSM_1.0 §1.3.5; DSM_2.0.C §5 (Template 13).
 
 No external sources. A comparative pass against work outside DSM is deferred
-(§5).
+(section 5).
 
 ## 3. Findings
 
@@ -59,7 +60,7 @@ claim reached the human but no tracked artifact.
 a specific claim. The claim travels as the agent's interpretation, without the
 passage. The correction comes from the source side: the owner in case 1, a
 re-check of the passage in case 2. The cases differ in reach, which matters
-for where a check has to sit (§3.4).
+for where a check has to sit (section 3.4).
 
 ### 3.2 Principle analysis
 
@@ -88,7 +89,7 @@ agent's interpretation. Unless the human checked the source, any approval of
 those plans was "acquiescence to a structure the human did not co-create". For
 the request itself, DSM has the conversation §1.10 asks for: Gate 0 (DSM_0.2.F
 §8.0) confirms the "threads extracted from the user's request". For source
-documents it has narrower mechanisms (§3.3), but none found in which the human
+documents it has narrower mechanisms (section 3.3), but none found in which the human
 confirms the agent's reading against the passage before the claim is used.
 
 **§1.14 Observe Before Engaging.** §1.14 allows "read it, summarize it, extract
@@ -96,11 +97,11 @@ what it says, report it" by default and governs only the transition from
 observing external content to acting on its framing. Whether the summary is
 faithful is left open; reference reading addresses exactly that. The same
 principle is why this note tests the spoke's proposal instead of adopting it
-(§1).
+(section 1).
 
 ### 3.3 Coverage map of existing rules
 
-Rules and protocols beyond the principles in §3.2 that bear on reading or on
+Rules and protocols beyond the principles in section 3.2 that bear on reading or on
 fidelity to a source.
 
 | Rule | Location | Covers | Stops at |
@@ -119,7 +120,7 @@ fidelity to a source.
 | Gate 0 | DSM_0.2.F §8.0 | Human confirms the threads extracted from the request | Not the agent's reading of source documents |
 
 None of the rows reaches the point of use with the passage in front of the
-human (§3.4).
+human (section 3.4).
 
 ### 3.4 Ingestion read versus reference read
 
