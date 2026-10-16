@@ -15,14 +15,15 @@ spoke's proposal: "whenever a file is used as a reference, the used passage is
 read as a small bite, the use is matched against the original wording (quote +
 location), and the human drafting alongside validates it" (hub inbox entry,
 2026-10-15, archived under `_inbox/done/`, gitignored and local only). The spoke
-also reports the failure this targets (section 3.1). This note maps the principles and
-existing rules that bear on the proposal, tests it rather than adopting it, and
-recommends whether and where to anchor a rule.
+also reports the failure this targets (section 3.1). This note maps the
+principles and existing rules that bear on the proposal, tests it rather than
+adopting it, and recommends whether and where to anchor a rule.
 
 ## 2. Sources
 
 DSM references are to v1.33.1 as present in this fork on 2026-10-15, located by
-file and section; the cited sections are unchanged in v1.35.0 (checked 2026-10-16).
+file and section; the cited sections are unchanged in v1.35.0 (checked
+2026-10-16).
 
 **Reports**
 - Hub inbox entry, 2026-10-15, from a downstream spoke (`_inbox/done/`,
@@ -35,10 +36,9 @@ file and section; the cited sections are unchanged in v1.35.0 (checked 2026-10-1
 
 **Rules and protocols:** DSM_0.2 §10, §10.1; DSM_0.2.A §1, §22; DSM_0.2.B §1,
 §2; DSM_0.2.D §9; DSM_0.2.F §8.0, §8.0.1, §8.9.2; DSM_0.2.T Code Output
-Standards; DSM_0.1 §8; DSM_1.0 §1.3.5; DSM_2.0.C §5 (Template 13).
+Standards; DSM_1.0 §1.3.5; DSM_2.0.C §5 (Template 13).
 
-No external sources. A comparative pass against work outside DSM is deferred
-(section 5).
+No external sources.
 
 ## 3. Findings
 
@@ -81,7 +81,7 @@ wording before passing it on. Before approving, §1.4.2 has the human ask "what
 would need to be different for you to reject this". Shown only a paraphrase,
 they cannot answer: any mismatch lies between the claim and a passage they
 never see. Review then yields what §1.4 warns of, oversight "in form but not in
-substance", even when the reviewer is diligent.
+substance".
 
 **§1.10 We Need to Talk.** §1.10 applies at "every entry point where work is
 defined", and plans are one. In case 1 the claims entered the plans as the
@@ -94,14 +94,12 @@ documents it has narrower mechanisms (section 3.3).
 **§1.14 Observe Before Engaging.** §1.14 allows "read it, summarize it, extract
 what it says, report it" by default and governs only the transition from
 observing external content to acting on its framing. Whether the summary is
-faithful is left open; reference reading addresses exactly that. The same
-principle is why this note tests the spoke's proposal instead of adopting it
-(section 1).
+faithful is left open; reference reading addresses exactly that.
 
 ### 3.3 Coverage map of existing rules
 
-Rules and protocols beyond the principles in section 3.2 that bear on reading or on
-fidelity to a source.
+Rules and protocols beyond the principles in section 3.2 that bear on reading or
+on fidelity to a source.
 
 | Rule | Location | Covers | Stops at |
 |------|----------|--------|----------|
@@ -114,8 +112,6 @@ fidelity to a source.
 | Reference, do not copy | DSM_2.0.C §5, Template 13 | Plans point at an external specification "by section" instead of restating it; reconciliation log | Pre-decomposed projects only; reconciliation is periodic, not at each use |
 | Feedback roles | DSM_0.2.A §1 | Inbox entry is a notification; the feedback file holds the evidence and "verbatim quotes" | Governs where evidence is placed, not whether a reader consults it |
 | Read the relevant source | DSM_0.2.T, Code Output Standards | "Read the relevant source (file, definition, documentation) before answering questions about it" | An earlier broad read can count as having read it |
-| Citation Standards | DSM_0.1 §8 | Citation format and placement | Not required in checkpoints, handoffs and decisions |
-| Composition Challenge, Edit Explanation Stop | DSM_0.2.B §1–2 | §1.4.2 applied to collections and edits the agent produces | Not the agent's readings of sources |
 | Gate 0 | DSM_0.2.F §8.0 | Request threads (section 3.2) | Not the agent's reading of source documents |
 
 None of the rows reaches the point of use with the passage in front of the
@@ -126,8 +122,7 @@ human (section 3.4).
 An *ingestion read* is a broad read for orientation and supports no specific
 claim. A *reference read* starts when a claim drawn from a file is about to be
 used in a plan, a decision, a brief or a message. The trigger is the use, not
-the earlier read; the report's own sequence is ingestion first, reference
-later. The exchange has four parts:
+the earlier read. The exchange has four parts:
 
 1. **Passage:** the wording the claim rests on, quoted as a small bite (§1.1).
 2. **Location:** file and section.
@@ -154,9 +149,12 @@ work depends on is load-bearing and triggers the exchange.
 | Protocol | **C.** Reference-read protocol in DSM_0.2.B, beside Composition Challenge and Edit Explanation Stop | Those two apply §1.4.2 to what the agent produces; a third would apply it to what the agent reads, with room for trigger, exchange, exemptions and anti-patterns | One more protocol to maintain and follow; over-firing risk (section 4) |
 | Protocol | **D.** Source step in Gate 0 (DSM_0.2.F §8.0) | Gate 0 already confirms the agent's reading of the request; Read-Before-Draft already fires there | Gate 0 runs at work definition; claims used later escape it |
 | Rule | **E.** Clarify §10 and §10.1 (DSM_0.2) | Removes the ambiguity found in section 3.3; small edit | Reaches deliverable-critical claims only; internal notes and backlog context keep the single-pass exemption |
-| Rule | **F.** Narrow the §22 exemption (DSM_0.2.A) | Targets the sequence of case 1: read earlier, used later | §22 is a reading strategy for long files, not a rule about claims |
-| Rule | **G.** Amend "Read the relevant source" in the alignment template (DSM_0.2.T) | Reaches every aligned project's CLAUDE.md | Adds always-loaded context; a single line has no room for trigger and exemptions |
-| Rule | **H.** Extend Decision References beyond decisions (DSM_1.0 §1.3.5) | Closest existing wording: "Never paraphrase from memory" | Lives in the data-science methodology; asks for a citation, not a check against the wording |
+
+Three rule-level edits were set aside: F, narrowing the DSM_0.2.A §22 exemption,
+a reading strategy rather than a rule about claims; G, amending "Read the
+relevant source" in DSM_0.2.T, always-loaded and too short for a trigger; H,
+extending DSM_1.0 §1.3.5 Decision References, which asks for a citation, not a
+check against the wording.
 
 The candidates combine, for example a principle bullet with a protocol that
 carries it; section 5 recommends one combination.
@@ -169,8 +167,8 @@ carries it; section 5 recommends one combination.
   (DSM_0.2.F §8.0.1).
 - **Thin evidence.** DSM_0.2.A §1 treats an inbox entry as a notification that
   points to the full record, so case 1's only evidence (section 2) is a summary
-  by DSM's own definition. Case 2 is self-reported.
-  Two cases show no recurrence; §8.0.1 rested on six.
+  by DSM's own definition. Case 2 is self-reported. Two cases show no
+  recurrence; §8.0.1 rested on six.
 - **Over-firing.** If most claims in a plan count as load-bearing, the exchange
   fires on ordinary work. The over-firing guard of DSM_0.2.F §8.9.2, written for
   another gate, states the risk: such a gate "trains the user to accept
