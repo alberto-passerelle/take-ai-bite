@@ -1,9 +1,132 @@
-# DSM_0.2 Worklog Enforcement Detail
+# DSM_0.2 Worklog Protocol Detail
 
-The enforcement mechanism, turn-boundary self-check, and retroactive-recovery
-detail for the Worklog Protocol (DSM_0.2 §7), extracted from §7.
-Read on demand; NOT part of the `@` import chain. §7 keeps the operational rules
-always-loaded and points here for the origins, rationale, and worked examples.
+Detail for the Worklog Protocol (DSM_0.2 §7): file, header and lifecycle; append
+rules and the Bash append procedure; activation; the enforcement mechanism; the
+turn-boundary self-check; retroactive recovery. Read on demand; NOT part of the `@`
+import chain. §7 keeps the operational rules always loaded and points here for
+schema, procedures, rationale and worked examples.
+
+---
+
+**Worklog File, Header and Lifecycle Detail:**
+
+**Relationship to DSM_7.0 §2.1:** §7 defines the protocol shape (append-only,
+first-tool-call plan entry, last-tool-call output, delimiter format). DSM_7.0
+§2.1.5 describes the Claude-specific mechanism: the `UserPromptSubmit` hook that
+injects the per-turn reminder and the `PreToolUse` validator that enforces anchor
+shape on Edit tool calls. The protocol stays in §7; the Claude execution layer
+lives in DSM_7.0 §2.1.
+
+**Lifecycle detail:** the file lives permanently in `.claude/`. `/dsm-wrap-up` does
+not touch it; stale content from the previous session is harmless because
+`/dsm-go` replaces it at the next session start. The user keeps the file open in
+VS Code across sessions. `/dsm-light-go` does not overwrite it: it appends a
+session-boundary marker, which keeps the work-notes chain continuous across
+lightweight session sequences.
+
+**Permission detail:** the worklog is an agent-internal working artifact, not a
+deliverable, so auto-approval of writes to it applies in every DSM project, not
+only DSM Central.
+
+**Header** (written by `/dsm-go` Step 6):
+
+```
+# Session N Transcript
+**Started:** YYYY-MM-DDTHH:MM+TZ
+**Project:** [project name]
+**Agent:** [harness identifier, e.g., "Claude Code"]
+**Model:** [model identifier, e.g., "claude-opus-4-7"]
+```
+
+Optional platform-specific fields (append when retrievable; omit entirely when
+not; never write placeholder values like `Effort: unknown`):
+
+```
+**Effort:** [low | medium | high]
+**Thinking:** [on | off]
+**Fast mode:** [on | off]
+```
+
+```
+---
+```
+
+`Agent` and `Model` are mandatory. If introspection is uncertain, append
+`(self-reported)` to the value (e.g., `**Model:** claude-opus-4-7 (self-reported)`).
+The schema is agent-agnostic; only the values differ across harnesses.
+
+---
+
+**Worklog Append Rules Detail:**
+
+**Why append-only:** each entry records the work notes as they stood when written.
+
+**Why the last-line anchor:** mid-file insertions cause out-of-order timestamps and
+confuse the user reading the log live; they recurred in several sessions despite
+earlier guidance.
+
+**Why never `replace_all`:** the anchor rule assumes a unique last-line anchor;
+`replace_all` duplicates the new content at every match and explodes the file (S17:
+95 MB / 1.5M lines; S22: an Output block duplicated at every match). Recovery from a
+botched Edit is a `[RETROACTIVE]` Bash append, never a `replace_all` cleanup.
+`validate-transcript-edit.sh` blocks this case (check 0/4).
+
+**Why no batching:** the user follows the log live and cannot review work notes after
+the fact.
+
+**Appending with Bash (when the Edit path is unavailable):** the Edit path (read the
+last 3 lines, anchor on the last non-empty line) is preferred and needs no shell
+quoting. It is unavailable in one known case: when the last non-empty line also
+occurs earlier in the file, the anchor rule and Edit's own uniqueness rule cannot
+both be met. The validator rejects any longer anchor, and Edit rejects the short one
+as ambiguous. That case calls for a Bash append (BACKLOG-500).
+
+The two heredoc forms fail in opposite directions:
+
+| Body contains | Unquoted `<< EOF` | Single-quoted `<< 'EOF'` |
+|---|---|---|
+| `$(date +%H:%M)` meant to expand | Expands (correct) | Written as literal text (S69) |
+| Backticks or `$` in prose, such as a code span | Runs the backticked text as a command and writes its output in place of the span | Kept as written (correct) |
+
+Bash substitutes both `$(...)` and backticks, so a code span in ordinary prose is the
+usual way to meet the second row. That failure exits 0 and the surrounding prose
+still reads normally with the span missing, which is why it recurred unnoticed (S145
+in a spoke, S249 and S258 at Central, take-ai-bite #141).
+
+Default form: write the delimiter with a fresh clock read, then the body through a
+single-quoted heredoc, in the same Bash call:
+
+```bash
+printf '\n<------------Start Plan / %s------------>\n\n' "$(date +%H:%M)" >> .claude/worklog.md
+cat >> .claude/worklog.md << 'EOF'
+Body text; `code spans` and $VARS stay as written.
+EOF
+```
+
+The timestamp comes from a clock read made as the line is written, not from a value
+typed into the body, so it is a reading rather than an estimate.
+`validate-transcript-edit.sh` check 4/4 detects a drifted timestamp (BACKLOG-517);
+this form prevents one (BACKLOG-554). Use an unquoted heredoc only when the body holds
+no backticks and no other `$`, as in the fixed header `/dsm-go` Step 6 writes.
+
+**Leak-scan rationale:** the worklog is an egress artifact and append-only, so an
+echoed value cannot be unwritten; the prohibition applies at write time, not as a
+later scrub.
+
+**Activation rationale:** the presence of `.claude/worklog.md` is the activation
+signal, independent of `/dsm-go` Step 6 and of any session-start flow having run.
+It is the third enforcement layer, alongside the per-turn hook (occurrence) and the
+PreToolUse shape validator, and it covers continuation sessions that defer from
+`/dsm-light-go` to `/dsm-go` mid-flight. The one authorized exception is `/dsm-staa`
+(see §7).
+
+**Boot-turn ordering:** on a `/dsm-go` turn, the turn's first entry is written after
+Step 6 resets the file, not before Step 5.5 archives it. Anything appended earlier is
+copied into the previous session's archive and later attributed to the wrong session
+(BACKLOG-590, take-ai-bite #142). Step 6 already writes that entry, so the session-start
+checks run first and nothing is owed before them. `transcript-reminder.sh` prints no
+reminder on a `/dsm-go` prompt for the same reason. `/dsm-light-go` appends a boundary
+marker instead of archiving, so the ordinary order applies there.
 
 ---
 
@@ -87,72 +210,3 @@ missed an earlier append, it must:
 
 Retroactive entries are evidence the protocol failed and recovered, not a
 workaround that makes the failure invisible.
-
-**Plan-Block Completeness and the Contemporaneous Work Log:**
-
-Plan blocks are a running log of the work as it proceeds, not a tidy
-summary written once the outcome is known. Record the steps taken, the
-options tried and dropped, the checks run, and any change of direction,
-so the log reflects the actual path of the work rather than a cleaned-up
-version of it. Write "did X, dropped it after Y, switched to Z" instead
-of collapsing to "did Z".
-
-The purpose is to make inefficiencies visible for later review. Work
-rarely runs in a straight line: steps get repeated, approaches get
-replaced, and the path doubles back, and that path is normally lost once
-a turn ends, since nothing keeps a durable record of it across a session.
-A log entry that reads as a clean summary hides exactly the inefficiency
-signals the log exists to surface.
-
-A useful log entry records:
-
-- Which steps were taken and which options were tried and dropped
-- Where the work doubled back, repeated a step, or changed direction
-- Which steps were redundant in hindsight (re-reading a file already
-  read, re-checking a fact already checked)
-- The decision reached and the reason for it
-
-Completeness matters more than brevity. A log entry that is longer than
-the action it precedes is acceptable when the work warranted it; a log
-entry that compresses several rounds of back-and-forth behind a single
-confident sentence is a defect.
-
-This rule does not apply to trivial turns (single-fact answers, simple
-acknowledgments) where §7's "When to skip the plan entry" rule already
-permits omission. It applies to every turn that warrants a plan block at all.
-
----
-
-**Boot-Safeguard Reintroduction Guard:**
-
-`validate-boot-safeguard-write.sh` (PreToolUse on Write/Edit/Bash) is the structural
-prevention from BL-584 Phase 2 against re-arming the BL-543-class model-side safety
-refusal. The refusal re-arms when its own description is written back into the files the
-next boot reads; the terminology sweep and the euphemism discipline remove the source, and
-this hook stops it re-entering.
-
-**What it guards.** Boot-loaded / boot-read surfaces only: `.claude/CLAUDE.md`, the
-`@`-imported core, `~/.claude/projects/<slug>/memory/MEMORY*.md`,
-`.claude/reasoning-lessons.md` and `-compact.md`, and active `dsm-docs/handoffs/*.md` and
-`dsm-docs/checkpoints/*.md`. It never fires in the allowed-verbatim zones
-(`dsm-docs/decisions/`, `dsm-docs/research/`, any `done/`).
-
-**What it matches.** Known literals only: the verbatim classifier token (stored
-base64-encoded and decoded at runtime, so the hook file is not itself a carrier) and the
-retired `session-transcript` path token. It deliberately does NOT match the noisy marker
-phrases; they are too false-positive-prone to auto-block (§8.9.2).
-
-**Behavior.** Write/Edit into a guarded surface with a match blocks the call (exit 2). A
-Bash write warns only (exit 1; shell is not statically analysable). A genuinely required
-write is confirmed per-target in `.claude/boot-safeguard-overrides-session.txt`
-(session-scoped, gitignored).
-
-**Scope limit (no over-claim, per §19.1).** A backstop for known literals, not a semantic
-filter; it cannot catch novel framing in different words. The verbatim form lives only in
-the quarantine research logs.
-
-**Propagation.** Installs via `/dsm-align` Step 10b (the hook is copied from Central's
-`.claude/hooks/` and wired from `settings-hooks.json`), reaching every spoke on re-align
-(BL-585 Phase 1).
-
-**Origin:** BL-584 Phase 2. Model: `validate-cross-repo-write.sh` (BL-391).

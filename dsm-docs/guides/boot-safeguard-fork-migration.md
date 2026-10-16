@@ -42,7 +42,7 @@ git merge upstream/main
 The merge is an ordinary three-way merge. Your fork-local backlog items, checkpoints and other additions
 are kept (DSM_0.2 §21.5). If a methodology file conflicts (`DSM_*.md`, `scripts/commands/*.md`,
 `.claude/hooks/*.sh`, `.claude/*.template`, `scripts/templates/settings-hooks.json`), take upstream's
-version unless you changed that file on purpose; an old version brings the problem back.
+version unless you changed that file on purpose; an old version brings the problem back. A deliberate fork change re-applies on top of upstream rather than replacing it (the extend-not-contradict rule, DSM_0.2 §21.5).
 
 ## D. Step 2: Refresh the User-Level Commands
 

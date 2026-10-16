@@ -418,6 +418,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-493 | /dsm-go Step 5.8's incomplete-wrap-up detection fires on every fresh session | v1.21.0 | 2026-08-05 | /dsm-go Step 5.8 |
 | BACKLOG-495 | Reasoning-lessons intake outpaces pruning, so no size target holds without a rate control | v1.26.5 | 2026-10-01 | DSM_0.2.A §8 Maintenance (per-entry size ceiling) + §8.2 (R2 ecosystem-split retention) |
 | BACKLOG-498 | The done/INDEX.md currency audit is Central-only but lives inside a skill Central almost never runs | — | 2026-09-12 | /dsm-align Step 11b both-tree audit + BL-547 reachability |
+| BACKLOG-500 | §7's sanctioned transcript-append paths are under-specified: anchor collision and heredoc quoting | v1.35.0 | 2026-10-15 | DSM_0.2.G Appending with Bash (anchor-collision precondition) |
 | BACKLOG-501 | Research-file status labels may not exceed their verification pass | v1.21.0 | 2026-08-12 | DSM_0.2 §10.1 |
 | BACKLOG-502 | The roadmap covers 26% of the backlog it claims to map, and work selection is routed through it | v1.21.0 | 2026-08-12 | plan/roadmap.md curation criterion |
 | BACKLOG-503 | /dsm-align hook merge keys idempotency on command alone, so multi-matcher hooks never reach spokes | v1.21.0 | 2026-08-12 | /dsm-align sub-step 10e |
@@ -457,6 +458,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-517 | Transcript delimiter timestamps are never checked against the wall clock | — | 2026-08-21 | validate-transcript-edit.sh check 4/4, DSM_0.2 §7 |
 | BACKLOG-536 | `/dsm-wrap-up` Step 6a's per-session feedback scan is suffix-specific, so topically-named feedback is never pushed | v1.26.2 | 2026-08-31 | /dsm-wrap-up Step 6a, /dsm-align Step 6a (scope widened in-flight), DSM_0.2.A §4 |
 | BACKLOG-537 | Central's six leftover project-level command copies are inert residue the deploy warning flags every run | v1.26.2 | 2026-08-31 | scripts/sync-commands.sh (delete + Central-only --check guard) |
+| BACKLOG-554 | The transcript heredoc rule names one command-substitution syntax out of two, and one of the two defects its own remedy fixes | v1.35.0 | 2026-10-15 | DSM_0.2.G Appending with Bash (two-direction table, clock-read default form) |
 | BACKLOG-557 | The active backlog index has no currency audit, so a filed item can sit open and invisible indefinitely | v1.27.2 | 2026-10-08 | /dsm-align Step 11d (active-index currency audit, both directions; absorbs BL-498 active-README dead-link criterion) |
 | BACKLOG-558 | Design an envelope/payload split so redistributed lessons and feedback never carry client identity by default | — | 2026-09-24 | 2026-09-24 envelope/payload operational design (B-mirror boundary; Q1–Q5 resolved, no methodology edit / no impl BL needed; enforcement = BL-560/561); closed S274 |
 | BACKLOG-559 | Retroactively reword redistributed reasoning-lesson and feedback entries to remove project/client identity, count-preserving | — | 2026-09-24 | superseded: moot under the B-mirror boundary (2026-09-24 envelope/payload operational design) |
@@ -481,6 +483,13 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-581 | Sanctioned independent fork-local backlog line for public-mirror forks | v1.30.0 | 2026-10-09 | DSM_0.2 §21.5 (fork-local backlog line) + DSM_7.0 §2.1 cross-ref |
 | BACKLOG-582 | By-design data-protection / compliance briefing for projects handling personal data | v1.31.0 | 2026-10-10 | DSM_0.2.C §5.9 (DP/compliance briefing by design); take-ai-bite #127/#128 |
 | BACKLOG-583 | Wire the §5.9 DP/compliance briefing surfacing check into session-start | v1.32.0 | 2026-10-11 | /dsm-go Step 2g (DP/compliance surfacing) + DSM_0.2.C §5.9 reconcile + DSM_0.2.A §23 cross-ref |
+| BACKLOG-586 | Give /dsm-staa a read-only concurrent-session check on entry | v1.34.0 | 2026-10-14 | /dsm-staa Step 0 (read-only lock check) + Notes write scope + DSM_0.2.A §26.2 row; take-ai-bite #135/#136 |
+| BACKLOG-587 | Require a clean staged index before creating a Level 3 task branch | v1.35.0 | 2026-10-15 | DSM_0.2 §20.9 (clean staged index before a Level 3 branch); take-ai-bite #137/#138 |
+| BACKLOG-588 | Keep fork-local backlog on main and document the fork BL workflow | v1.35.0 | 2026-10-15 | DSM_0.2 §21.5 (visible-from-every-session rule + fork-local BL workflow); take-ai-bite #139/#140 |
+| BACKLOG-589 | Add a fork non-contradiction and free-contribution principle | v1.35.0 | 2026-10-15 | DSM_0.2 §21.5 (extend-not-contradict rule) + fork migration guide pointer; take-ai-bite #139/#140 |
+| BACKLOG-590 | Stop the /dsm-go boot-turn plan from landing in the previous session's archive | v1.35.0 | 2026-10-15 | DSM_0.2.G Boot-turn ordering + transcript-reminder.sh silent on /dsm-go |
+| BACKLOG-591 | Define when a fork-local BL is done and where it is archived | v1.35.0 | 2026-10-15 | DSM_0.2 §21.5 (done-and-archive rule, done/fork-INDEX.md); take-ai-bite #144 |
+| BACKLOG-592 | Make the Worklog Protocol readable on strict models (trim §7 by priority; remove Module G's two flagged blocks) | v1.34.0 | 2026-10-15 | DSM_0.2 §7 (trimmed) + DSM_0.2.G (Worklog Protocol Detail) |
 
 ---
 
