@@ -89,8 +89,7 @@ agent's interpretation. Unless the human checked the source, any approval of
 those plans was "acquiescence to a structure the human did not co-create". For
 the request itself, DSM has the conversation §1.10 asks for: Gate 0 (DSM_0.2.F
 §8.0) confirms the "threads extracted from the user's request". For source
-documents it has narrower mechanisms (section 3.3), but none found in which the human
-confirms the agent's reading against the passage before the claim is used.
+documents it has narrower mechanisms (section 3.3).
 
 **§1.14 Observe Before Engaging.** §1.14 allows "read it, summarize it, extract
 what it says, report it" by default and governs only the transition from
@@ -117,7 +116,7 @@ fidelity to a source.
 | Read the relevant source | DSM_0.2.T, Code Output Standards | "Read the relevant source (file, definition, documentation) before answering questions about it" | An earlier broad read can count as having read it |
 | Citation Standards | DSM_0.1 §8 | Citation format and placement | Not required in checkpoints, handoffs and decisions |
 | Composition Challenge, Edit Explanation Stop | DSM_0.2.B §1–2 | §1.4.2 applied to collections and edits the agent produces | Not the agent's readings of sources |
-| Gate 0 | DSM_0.2.F §8.0 | Human confirms the threads extracted from the request | Not the agent's reading of source documents |
+| Gate 0 | DSM_0.2.F §8.0 | Request threads (section 3.2) | Not the agent's reading of source documents |
 
 None of the rows reaches the point of use with the passage in front of the
 human (section 3.4).
@@ -150,8 +149,8 @@ work depends on is load-bearing and triggers the exchange.
 
 | Level | Candidate | For | Against |
 |-------|-----------|-----|---------|
-| Principle | **A.** Reading row in the §1.1 table (DSM_6.0) | Matches the report's frame; one row; keeps the bite vocabulary | §1.1 governs size; it gives the check its unit, not its timing or the human's confirmation (section 3.2) |
-| Principle | **B.** Bullet in §1.3 (DSM_6.0) | Closes the gap that a broad read can pass for "something it checked" | Principle text only; no trigger, no exchange |
+| Principle | **A.** Reading row in the §1.1 table (DSM_6.0) | Matches the report's frame; one row; keeps the bite vocabulary | A size rule only (section 3.2) |
+| Principle | **B.** Bullet in §1.3 (DSM_6.0) | Closes the §1.3 gap (section 3.2) | Principle text only; no trigger, no exchange |
 | Protocol | **C.** Reference-read protocol in DSM_0.2.B, beside Composition Challenge and Edit Explanation Stop | Those two apply §1.4.2 to what the agent produces; a third would apply it to what the agent reads, with room for trigger, exchange, exemptions and anti-patterns | One more protocol to maintain and follow; over-firing risk (section 4) |
 | Protocol | **D.** Source step in Gate 0 (DSM_0.2.F §8.0) | Gate 0 already confirms the agent's reading of the request; Read-Before-Draft already fires there | Gate 0 runs at work definition; claims used later escape it |
 | Rule | **E.** Clarify §10 and §10.1 (DSM_0.2) | Removes the ambiguity found in section 3.3; small edit | Reaches deliverable-critical claims only; internal notes and backlog context keep the single-pass exemption |
@@ -168,8 +167,9 @@ carries it; section 5 recommends one combination.
   gap. Against this, DSM records that a principle alone did not stop a
   recurring failure: §8.0 "does not by itself prevent the failure mode"
   (DSM_0.2.F §8.0.1).
-- **Thin evidence.** Case 1 rests on a notification, which DSM_0.2.A §1 defines
-  as a summary pointing to the full record (section 2). Case 2 is self-reported.
+- **Thin evidence.** DSM_0.2.A §1 treats an inbox entry as a notification that
+  points to the full record, so case 1's only evidence (section 2) is a summary
+  by DSM's own definition. Case 2 is self-reported.
   Two cases show no recurrence; §8.0.1 rested on six.
 - **Over-firing.** If most claims in a plan count as load-bearing, the exchange
   fires on ordinary work. The over-firing guard of DSM_0.2.F §8.9.2, written for
@@ -180,8 +180,8 @@ carries it; section 5 recommends one combination.
 
 **Why C + B + E still stands.** Only C has room for the trigger and exemptions
 that answer over-firing; B and E add no procedure of their own. The thin
-evidence argues for a fork-local trial that counts exchanges and corrections
-before any upstream proposal (section 5), not for dropping the rule.
+evidence argues for a trial before any upstream proposal (section 5), not for
+dropping the rule.
 
 ## 5. Conclusion
 
