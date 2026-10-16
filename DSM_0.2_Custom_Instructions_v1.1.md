@@ -109,199 +109,67 @@ implicitly closes the previous block. No explicit end delimiter is needed.
 
 ## 7. Worklog Protocol
 
-**Relationship to DSM_7.0 §2.1:** §7 defines the transcript protocol
-shape (append-only, first-tool-call plan entry, last-tool-call output,
-delimiter format). DSM_7.0 §2.1.5 describes the Claude-specific
-mechanism: the `UserPromptSubmit` hook that injects the per-turn
-reminder and the `PreToolUse` validator that enforces anchor shape on
-Edit tool calls. The protocol stays here; the Claude execution layer
-lives in DSM_7.0 §2.1.
+The worklog, `.claude/worklog.md`, is the agent's channel for work notes: plans,
+decisions and trade-offs (the "why"). Conversation text carries results, summaries
+and questions (the "what"), never work notes. The user follows the worklog live in
+VS Code.
 
-The worklog is the **primary and only** channel for the agent's
-working notes. The user keeps `.claude/worklog.md` open in VS Code
-and follows the work there in real time. Conversation text is for results,
-summaries, and questions only, never for working notes.
+**Lifecycle:** the file stays in `.claude/` across sessions and is never committed.
+`/dsm-go` resets it with a fresh header at session start; `/dsm-light-go` appends a
+session-boundary marker instead (DSM_0.2.A §6, Lightweight Session Lifecycle). Header
+schema, lifecycle detail and the relationship to DSM_7.0 §2.1: DSM_0.2.G.
 
-**File:** `.claude/worklog.md`
-**Lifecycle:** The file lives permanently in `.claude/`. `/dsm-go` overwrites its
-content with a fresh session header at each session start. `/dsm-wrap-up` does
-**not** touch the transcript; stale content from the previous session is harmless
-because `/dsm-go` replaces it. The user keeps the file open in VS Code across
-sessions. **Lightweight mode exception:** `/dsm-light-go` does not overwrite the
-transcript; it appends a session boundary marker, preserving the continuous
-work-notes chain across lightweight session sequences. See Lightweight Session
-Lifecycle below.
-
-**Permission:** Appending to `.claude/worklog.md` must never require
-user approval. This file is an agent-internal working artifact, not a deliverable.
-Configure permission settings to auto-approve writes to this path. This applies
-to all DSM projects, not just DSM Central.
+**Permission:** appends never require user approval; configure every DSM project to
+auto-approve writes to this path.
 
 **Per-turn flow:**
 
-1. **First tool call:** Append the user prompt summary and the plan entry to the transcript file
-2. **User reviews:** The file is open in VS Code; the user sees the work notes appear
-3. **Agent acts:** Performs tool calls, edits, searches
-4. **Last tool call:** Append output summary to the transcript file
-5. **Conversation text:** Write only results, outputs, and questions to the user
+1. **First tool call:** append the user-prompt summary and the plan entry.
+2. **Work:** tool calls, edits, searches.
+3. **Last tool call:** append the output summary.
+4. **Conversation text:** results, outputs and questions only.
 
-Two appends per turn: the plan before work, the output after work. The plan
-append must be the agent's **first tool call** in the turn, before any other
-tool calls or file edits.
+Each turn appends User, Plan and Output blocks in that order, using the §6 delimiters.
 
-**What goes where:**
-
-| Channel | Content |
-|---------|---------|
-| `.claude/worklog.md` | Work notes: decisions, trade-offs, multi-step planning (the "why") |
-| Conversation text | Results, summaries, questions, file descriptions (the "what") |
-
-**Format** (uses Worklog Delimiter Format above):
-
-```
-<------------Start User / HH:MM------------>
-
-[prompt summary]
-
-<------------Start Plan / HH:MM------------>
-
-[plan / work notes]
-
-<------------Start Output / HH:MM------------>
-
-[summary of what was done]
-```
-
-**Header** (created by `/dsm-go`):
-
-```
-# Session N Transcript
-**Started:** YYYY-MM-DDTHH:MM+TZ
-**Project:** [project name]
-**Agent:** [harness identifier, e.g., "Claude Code"]
-**Model:** [model identifier, e.g., "claude-opus-4-7"]
-```
-
-Optional platform-specific fields (append when retrievable; omit entirely when not — do NOT write placeholder values like `Effort: unknown`):
-
-```
-**Effort:** [low | medium | high]
-**Thinking:** [on | off]
-**Fast mode:** [on | off]
-```
-
-```
----
-```
-
-`Agent` and `Model` are mandatory. If introspection is uncertain, append `(self-reported)` to the value (e.g., `**Model:** claude-opus-4-7 (self-reported)`). The schema is agent-agnostic; only the values differ across harnesses.
-
-**When to write a plan entry:**
-- Non-trivial decisions (choosing between approaches, interpreting ambiguous input)
-- Multi-step work (explaining what will be done and why before doing it)
-- Session-start checks (noting what each check covers)
-- Any situation where the "why" matters as much as the "what"
-
-**When to skip the plan entry (output summary still required):**
-- Simple acknowledgments ("Understood", "Done")
-- Single-fact answers with no decision process
-- Tool calls where the action is self-explanatory
+**When to write a plan entry:** every turn that has new work notes, including
+analysis and recommendation turns that touch no files. Skip it only for
+content-trivial turns: acknowledgments, single-fact answers, self-explanatory tool
+calls; the output summary is still required. A multi-step turn gets a multi-point
+plan, not a one-line summary (plan-block completeness).
 
 **Rules:**
-- The plan entry must be the **first tool call** of the turn, before any other tool calls or file edits
-- Output summary appended AFTER completing work
-- File is ephemeral: content cleared at session end, not committed
-- Transcript is append-only; never modify or backfill past entries
-- **Append technique (mandatory):** Every append to the worklog MUST follow this sequence: (1) read the last 3 lines of the file, (2) use the last non-empty line as the `old_string` anchor, (3) the `new_string` includes that last line PLUS the new content appended after it. **NEVER** search for earlier content to use as an insertion point. The only valid anchor is the current last line of the file. This is not a style preference; mid-file insertions cause out-of-order timestamps, confuse the user reading the transcript in real time, and have been observed in multiple sessions despite existing guidance
-- If a past entry was missed, note the gap in the next entry rather than editing history
+- Append-only: never edit, rewrite or backfill past entries, and never commit the file.
+- **Append technique (mandatory):** (1) read the file's last 3 lines; (2) use the last
+  non-empty line alone as the Edit `old_string` anchor; (3) `new_string` is that line
+  plus the new content. Never anchor on earlier content, and never use
+  `replace_all: true` on this file (the shape validator blocks it). If the Edit path is
+  unavailable, append with Bash as described in DSM_0.2.G.
+- Do not batch entries at the end of a turn, and do not put delimiters in
+  conversation text (VS Code collapses them after streaming).
+- When reporting a leak-scan, never echo a matched sensitive value, or a pattern
+  containing one, into the worklog, `MEMORY.md` or the reasoning-lessons files; report
+  the scan generically (DSM_0.2.C §5.8).
 
-**Unconditional activation:** If `.claude/worklog.md`
-exists in the project, the Worklog Protocol is active. No skill
-needs to activate it. The presence of the file is the activation signal.
-This rule is independent of `/dsm-go` Step 6 and does not depend on any
-session-start flow having run successfully. It is the third independent
-enforcement layer alongside the per-turn hook (occurrence) and the
-PreToolUse shape validator. Any session that finds the file present must
-follow the protocol from the first turn, including continuation sessions
-that defer from `/dsm-light-go` to `/dsm-go` mid-flight.
+**Unconditional activation:** if `.claude/worklog.md` exists, the protocol is active
+from the first turn, whether or not a session-start skill ran (rationale: DSM_0.2.G).
 
-**Authorized exception: `/dsm-staa` (STAA exception).** The Worklog
-Analysis Agent (`/dsm-staa`) is the sole authorized exception to the
-unconditional activation rule above. STAA sessions intentionally do not
-write to `.claude/worklog.md`, for a meta-recursion reason
-explained in `scripts/commands/dsm-staa.md`: if STAA sessions wrote their
-own transcripts, those transcripts would become subjects of future STAA
-sessions, and STAA would analyze its own analysis indefinitely. The
-concern is about the work-log file being a future subject, not about
-corruption of the archived subject file STAA is currently reading,
-those are two different files (`.claude/transcripts/{timestamp}-ST.md`
-is the archived subject, `.claude/worklog.md` is the live
-work log), and writes to the live log do not touch the archived
-subject. No other skill may suppress the protocol without an explicit
-amendment to this section. The `UserPromptSubmit` per-turn hook will
-still fire in STAA sessions and inject the reminder; STAA agents should
-read this paragraph first, then proceed without appending to the live
-transcript. Systematic resolution of the hook/skill collision is tracked
-under §23 (Skill/Hook Collaboration Protocol).
+**Authorized exception: `/dsm-staa` (STAA exception).** `/dsm-staa` is the sole
+authorized exception to unconditional activation: STAA sessions do not append to the
+worklog, and they ignore the per-turn reminder, which still fires there. The reason,
+the two files involved and STAA's PII safeguard are in `scripts/commands/dsm-staa.md`.
+No other skill may suppress the protocol without an explicit amendment to this section.
 
-STAA also carries a **PII/egress safeguard** in its command file: because it reads a
-possibly PII-bearing subject transcript and appends to the egress-zone reasoning-lessons
-files, every presented excerpt and every appended lesson must be name-free (role, not
-name), per the Egress Leak-Scan Generic Reporting Rule (DSM_0.2.C §5.8). See the
-IMPORTANT block in `scripts/commands/dsm-staa.md`.
+**Enforcement and recovery** (mechanism, origins and worked examples: DSM_0.2.G):
+a `UserPromptSubmit` hook injects a per-turn reminder that an append is due, and
+`validate-transcript-edit.sh` checks each Edit's anchor, append-only shape,
+delimiter and timestamp.
 
-**Anti-Patterns:**
-
-**DO NOT:**
-- Put work notes in conversation text; the user reads the work notes in the transcript file, not the chat
-- Batch transcript entries at the end of a turn; the user cannot review the work notes after the fact
-- Skip the transcript append on turns with non-trivial work notes
-- Commit the transcript file; it is a session-scoped working artifact
-- Edit or rewrite past transcript entries; each entry reflects the work notes at the time they were written
-- Use Edit with `old_string` matching earlier content to insert entries mid-file; this causes out-of-order timestamps (observed in prior sessions). Use the mandatory append technique above
-- **Use Edit `replace_all: true` on `.claude/worklog.md`.** The append-anchor rule assumes a unique last-line anchor; `replace_all` duplicates the new content at every match and explodes the file (S17: 95 MB / 1.5M lines; S22: an Output block duplicated at every match). Recovery from a botched transcript Edit is a `[RETROACTIVE]` Bash-heredoc append, never a `replace_all` cleanup. The `validate-transcript-edit.sh` PreToolUse hook blocks this case (check 0/4)
-- Use transcript delimiters in conversation text; VS Code collapses them after streaming
-- **Echo a matched sensitive-data value, or a grep/scan pattern containing one, into the transcript (or `MEMORY.md` or the reasoning-lessons files) when reporting a leak-scan.** The transcript is an egress artifact; report the scan generically ("scan clean", or "N matches at lines X–Y") per the Egress Leak-Scan Generic Reporting Rule (DSM_0.2.C §5.8). Append-only means an echoed value cannot be unwritten, so the prohibition is at write time, not a later scrub
-- **Use single-quoted heredoc (`<< 'EOF'`) when appending to the transcript via Bash** if the content contains shell expansions like `$(date +%H:%M)`. Single-quoted heredocs suppress expansion and write the literal string `$(date +%H:%M)` into the transcript instead of the timestamp. Observed in S69. Correct form: capture the timestamp into a variable first and use an unquoted heredoc:
-  ```bash
-  NOW=$(date +%H:%M)
-  cat >> .claude/worklog.md << EOF
-  <------------Start Plan / ${NOW}------------>
-  ...
-  EOF
-  ```
-  The Edit-tool append path (read last 3 lines, anchor on last non-empty line) is preferred and avoids heredoc quoting entirely. Use heredoc only when the Edit path is unavailable.
-
-**Enforcement, self-check, and retroactive recovery** (origins, rationale, and worked
-examples in [DSM_0.2.G_Transcript_Enforcement.md](DSM_0.2.G_Transcript_Enforcement.md),
-read on demand):
-
-Two hooks keep this protocol active so it does not depend on operator discipline: the
-`UserPromptSubmit` hook injects a per-turn reminder and enforces *occurrence* (an append
-must happen this turn), and `validate-transcript-edit.sh` (PreToolUse on Edit) enforces
-*shape* (anchor, append-only, delimiter) and *value* (a timestamp-drift warning). Two
-operational rules stay stated here because they are behavior, not narrative:
-
-- **Turn-boundary self-check:** every turn begins with a transcript append , analysis-only
-  turns (decision analysis, trade-off comparison, recommendation) explicitly included, since
-  they carry the highest-value work notes. The only exemption is content-trivial turns
-  (one-word acknowledgments, single-fact confirmations with no new work notes). If there are
-  new work notes, there is a transcript append.
+- **Turn-boundary self-check:** if the turn has new work notes, its first tool call
+  is a worklog append.
 - **[RETROACTIVE] recovery:** if an append was missed, append a
-  `<------------Start Plan [RETROACTIVE] / HH:MM------------>` entry at the *current*
-  time, state which turns were missed, and note the gap; never backdate or edit history.
-
-Module G carries the S171 origin, the check-4 warn-not-block rationale, the
-analysis-only-turn worked example, and the full recovery procedure.
-
-**Plan-block completeness:** a multi-step turn gets a multi-point plan block, not a
-one-line summary. Full rationale and examples: DSM_0.2.G (read on demand).
-
-**Boot-safety backstop (separate hook).** A PreToolUse hook,
-`validate-boot-safeguard-write.sh`, independent of the Worklog Protocol, blocks a known
-class of boot-unsafe content from being written into always-loaded or boot-read surfaces.
-It is a backstop for known literals, not a complete filter. Full scope, patterns, limits,
-and the override: DSM_0.2.G.
+  `<------------Start Plan [RETROACTIVE] / HH:MM------------>` entry at the
+  *current* time, state which turns were missed, and note the gap; never backdate or
+  edit history.
 
 ---
 
@@ -1210,6 +1078,8 @@ merge to the session branch, not directly to main.
 (BL moved to done/), trivial fixes (typos, dates), session artifacts (handoffs,
 checkpoints, feedback), parallel session commits (via commit booking).
 
+**Before creating one:** assert a clean staged index (§20.9).
+
 ### 20.4. Branch Push Policy
 
 **Default: local only.** Branches are not pushed to GitHub unless needed.
@@ -1329,6 +1199,33 @@ git checkout session-{N}/{YYYY-MM-DD}-recovery
 Then push the recovery branch and open a follow-up PR. The work is
 preserved on the recovery branch; main is rewound to its remote state
 without touching the working tree.
+
+**Origin:** see [DSM_0.2.E_Provenance.md](DSM_0.2.E_Provenance.md).
+
+### 20.9. Clean Staged Index Before a Level 3 Branch
+
+`git checkout -b` carries the index with it. Anything already staged on the
+session branch is committed by the first commit on the new Level 3 branch, so a
+task branch, and any PR built from it, can carry unrelated changes while every
+command exits 0. The ordinary source is `/dsm-go` itself: Steps 3 and 3.5 stage
+the consumed handoff and checkpoint moves with `git mv`.
+
+**Rule:** before creating a Level 3 branch (`bl-*` or `sprint-*`), assert the
+index is clean, reading the status directly rather than through a pipe (§19.2):
+
+```bash
+git diff --cached --quiet
+echo "staged-clean=$?"   # 0 = clean, 1 = something is staged
+```
+
+- `0`: create the branch.
+- `1`: list what is staged (`git diff --cached --name-status`). If it belongs on
+  the session branch (the §20.3 exceptions: session artifacts, status updates),
+  commit it there first. Otherwise stop and report it to the user. Never unstage
+  or stash it silently to make the check pass.
+
+Only the index is in scope. Unstaged and untracked changes follow the working
+tree to the new branch but are committed only when explicitly added.
 
 **Origin:** see [DSM_0.2.E_Provenance.md](DSM_0.2.E_Provenance.md).
 
@@ -1647,6 +1544,18 @@ this line.
   or decisions. On upstream absorption Central assigns the canonical number and
   the fork-local BL records the mapping (a `**Central BL:**` field, added when
   known) so provenance survives the renumber.
+- **Extend, do not contradict.** A fork may add methodology or narrow it for its
+  own use, but its main branch does not carry a rule that contradicts Central's.
+  Where a fork needs different behaviour, it proposes the change upstream (the
+  contribution route below) rather than diverging silently; if the two conflict
+  at a fork-sync, Central's text wins and the fork re-applies its change on top.
+  This limits contradiction, not contribution: forks stay free to develop and
+  contribute.
+- **Visible from every session.** A fork-local BL file and its row in the
+  fork's `dsm-docs/plans/README.md` are committed at creation to the branch
+  every session starts from (`main` by default), never only to a task branch. A
+  session on another branch (STAA, a parallel session) cannot see a BL that
+  lives only on a task branch, and may then guess a Central number.
 - **Name-free, always.** A public fork's `dsm-docs/plans/` ships publicly, so
   every fork-local BL body MUST be name-free: no client, mandate, or person
   names, no confidential content (the public-mirror egress discipline of
@@ -1665,13 +1574,35 @@ this line.
   attached for Central's backlog pipeline — so a change that helps every fork
   reaches Central. A fork MAY keep a BL purely local; the recommendation is a
   nudge, not a gate.
+- **Done and archive.** A fork-local BL is done when Central ships a change
+  covering it (record `**Central BL:** BACKLOG-NNN` and the version), when it is
+  kept local and its local work is complete, or when it is withdrawn. On done,
+  set the Status, move the body to `dsm-docs/plans/done/`, and move its row from
+  the README to `dsm-docs/plans/done/fork-INDEX.md`. Never add it to the
+  inherited `dsm-docs/plans/done/INDEX.md`: Central's mirror sync overwrites that
+  file with Central's numbering, while the sync never writes the plans README
+  (inherited once, as an empty table) or `fork-INDEX.md`, so a fork-sync leaves
+  them untouched.
+
+**Fork-local BL workflow (any session type):**
+
+1. Read the fork's `dsm-docs/plans/README.md` on the branch every session
+   starts from; the next number is the highest fork-local `BACKLOG-###` there
+   or in `done/fork-INDEX.md`, plus one.
+2. Write a name-free body with Risks (§21.2), a Test Plan, and one line naming
+   the upstream section it extends (the extend-not-contradict rule above).
+3. Add the README row and commit both to the starting branch.
+4. Implement on a `bl-NNN/*` branch from a clean index (§20.9) and merge back.
+5. Optionally offer it upstream (the contribution route above).
+6. Close it per the done-and-archive rule above.
 
 **Agent behavior:** on a fork (a Kick-off'd clone, or any non-Central repo
 maintaining its own `dsm-docs/plans/`), when the user formalizes a proposal,
 mint it in the fork-local line from `BACKLOG-001` rather than guessing a Central
 number, keep the body name-free, index it in the fork's
-`dsm-docs/plans/README.md`, and when the work is complete offer the upstream
-contribution per the routing above. This is INPUT to Central's planning pipeline,
+`dsm-docs/plans/README.md` on the starting branch, follow the workflow above,
+and when the work is complete offer the upstream contribution per the routing
+above. This is INPUT to Central's planning pipeline,
 not a bypass of it: Central still authors its own section or BL when it absorbs
 the change (the issue/PR is INPUT, per Actionable Work Items).
 
