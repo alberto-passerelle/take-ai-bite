@@ -1,6 +1,8 @@
 # Session 17 Handoff: file BACKLOG-011, then the upstream feedback set
 
 **Date:** 2026-10-16
+**Date Completed:** 2026-10-19
+**Outcome Reference:** Consumed at session 18 start
 **Branches:** `bl-011/reference-reading` (open, research signed off) and `session-17/2026-10-16`
 (open, pushed). Both are on the fork `alberto-passerelle/take-ai-bite`.
 **Read first:** the S17 checkpoint, then `dsm-docs/research/2026-10-15_reference-reading.md`
