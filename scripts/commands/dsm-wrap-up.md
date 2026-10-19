@@ -285,38 +285,107 @@ At the start, run `git rev-parse --is-inside-work-tree 2>/dev/null`. Cache the r
 
    Then `git commit` and `git push` in sequence. If no session changes exist, skip the commit.
    After committing, delete `.claude/session-baseline.txt` (consumed).
-9.4. **Fully-pushed assertion before any PR is created or merged (per BL-516; rule and rationale in DSM_0.2 §20.4, not restated here):**
+9.4. **Resolve the git host, then assert the branch is fully pushed (per BL-600 and BL-516; rules in DSM_0.2.A §27 and DSM_0.2 §20.4, not restated here):**
+
+   Resolve the host first. Steps 9.5 and 10 use `GIT_HOST`, `GH_REPO` and `ORIGIN_URL`
+   (DSM_0.2.A §27.1 is authoritative if this copy diverges):
+
+   ```bash
+   ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+   ORIGIN_URL=$(git remote get-url origin 2>/dev/null)
+   ORIGIN_HOST=$(printf '%s' "$ORIGIN_URL" | sed -E 's#^[a-z+]+://##; s#^[^@/]*@##; s#[:/].*##')
+   ORIGIN_REPO=$(printf '%s' "$ORIGIN_URL" | sed -E 's#\.git$##; s#^[a-z+]+://[^/]+/##; s#^[^@/]*@[^:/]+:##')
+   GH_REPO="$ORIGIN_HOST/$ORIGIN_REPO"
+   GIT_HOST=$(sed -nE 's/^\*\*Git host:\*\*[[:space:]]*(github|gitlab|other|none)([^a-z].*)?$/\1/p' "$ROOT/.claude/CLAUDE.md" 2>/dev/null | head -1)
+   if [ -z "$GIT_HOST" ]; then
+     if [ -z "$ORIGIN_URL" ]; then GIT_HOST=none
+     elif [ -n "$ORIGIN_HOST" ] && gh repo view "$GH_REPO" --json name >/dev/null 2>&1; then GIT_HOST=github
+     elif [ -n "$ORIGIN_HOST" ] && glab repo view "$ORIGIN_URL" >/dev/null 2>&1; then GIT_HOST=gitlab
+     else GIT_HOST=other; fi
+   fi
+   echo "GIT_HOST=$GIT_HOST GH_REPO=$GH_REPO"
+   ```
+
+   Then, when Step 10 will open a pull or merge request (`GIT_HOST` is `github` or
+   `gitlab`):
 
    ```bash
    git fetch -q origin
    UNPUSHED=$(git rev-list @{u}..HEAD --count)
    ```
 
-   `UNPUSHED` must be `0` before Step 10 opens or merges a PR. If it is not, **halt**
+   `UNPUSHED` must be `0` before Step 10 opens or merges a request. If it is not, **halt**
    and report the count with `git log @{u}..HEAD --oneline`; do not push silently to
    clear it, because an unpushed commit at this point usually means the branch is not
    in the state the session believes. Read the count from the assignment, never from a
-   pipeline's exit status (§19.2).
+   pipeline's exit status (§19.2). The request's head is checked against local `HEAD`
+   by the merge itself (`--match-head-commit` on GitHub, `--sha` on GitLab, Step 10).
 
-   When a PR already exists, also assert its head matches local `HEAD`:
-   `gh pr view "$PR" --json headRefOid --jq .headRefOid` equals `git rev-parse HEAD`.
+   **Skip the assertion silently if:** `GIT_AVAILABLE` is false, `GIT_HOST` is `other` or
+   `none` (the local merge merges the local branch itself), or no upstream is configured
+   (`@{u}` fails , set one or push with `-u` first).
 
-   **Skip silently if:** `GIT_AVAILABLE` is false, no upstream is configured (`@{u}`
-   fails , set one or push with `-u` first), or Step 10 will not open a PR.
-
-9.5. **Open-PR CI status check (per BL-441):** After the session push (Step 9) and BEFORE the merge-to-main (Step 10), if the session pushed commits to a branch with an open PR, verify CI is not silently red. If `GIT_AVAILABLE` is true AND `origin` points at GitHub AND `gh` is installed:
+9.5. **Open-PR CI status check (per BL-441):** After the session push (Step 9) and BEFORE the merge-to-main (Step 10), if the session pushed commits to a branch with an open PR, verify CI is not silently red. If `GIT_HOST` is `github` (Step 9.4); `--repo` is required, because in a GitHub fork `gh`'s default repository is the upstream one:
    ```bash
-   PR_NUMBER=$(gh pr list --head "$(git branch --show-current)" --json number --jq '.[0].number' 2>/dev/null)
-   [ -n "$PR_NUMBER" ] && gh pr checks "$PR_NUMBER" 2>/dev/null
+   PR_NUMBER=$(gh pr list --repo "${GH_REPO:?run the §27 host snippet first}" --head "$(git branch --show-current)" --json number --jq '.[0].number' 2>/dev/null)
+   [ -n "$PR_NUMBER" ] && gh pr checks "$PR_NUMBER" --repo "${GH_REPO:?run the §27 host snippet first}" 2>/dev/null
    ```
-   If any check has `conclusion=failure`, **warn in conversation text** (not just the persistent report): "Wrap-up note: PR #{N} has K failing CI check(s): [names]. The session is ending with red CI on the working branch's PR." This is a **warn, not a block** , the user's redirect window between the warning and the actual session end is the enforcement mechanism; the wrap-up proceeds. **Anti-pattern guard:** a session must not end with the working branch's PR in a red CI state without the user being explicitly informed; the warning is the discharge of that obligation. **Skip silently if:** no `gh`, no GitHub remote, no open PR for the branch, or no commits pushed this session. `pending` checks are silent; only `conclusion=failure` warns. One `gh` call per wrap-up (rate-limit guard). Origin: S14 ("wrap-up is too late to verify because this skill is running to finalize the session; we should have caught failed checks before ending the session"). Placed before Step 10 so red CI surfaces before the merge-to-main publication.
-10. **Merge session branch to main via PR:** If the current branch is a session branch (not main/master), merge it to main using a pull request. This is required because branch protection prevents direct pushes to main.
-   a. Ensure the session branch is pushed: `git push -u origin {session-branch}` (may already be pushed from step 8)
-   b. Create PR: `gh pr create --title "Session N: [brief summary]" --body "Session wrap-up merge." --base main --head {session-branch}`
-   c. Merge PR: `gh pr merge --merge --delete-branch`
-   d. Update local: `git checkout main && git pull`
-   e. If `gh` is not available or the PR fails, warn: "Branch protection is active. Cannot merge to main without a PR. The session branch `{session-branch}` has been pushed to remote. Merge manually via GitHub." and stop.
-   f. If already on main (no session branch), skip this step.
+   If any check has `conclusion=failure`, **warn in conversation text** (not just the persistent report): "Wrap-up note: PR #{N} has K failing CI check(s): [names]. The session is ending with red CI on the working branch's PR." This is a **warn, not a block** , the user's redirect window between the warning and the actual session end is the enforcement mechanism; the wrap-up proceeds. **Anti-pattern guard:** a session must not end with the working branch's PR in a red CI state without the user being explicitly informed; the warning is the discharge of that obligation. **Skip silently if:** `GIT_HOST` is not `github` (GitLab is deferred to BACKLOG-602), no open PR for the branch, or no commits pushed this session. `pending` checks are silent; only `conclusion=failure` warns. One `gh` call per wrap-up (rate-limit guard). Origin: S14 ("wrap-up is too late to verify because this skill is running to finalize the session; we should have caught failed checks before ending the session"). Placed before Step 10 so red CI surfaces before the merge-to-main publication.
+10. **Merge session branch to main, by git host (DSM_0.2.A §27.2):** If already on main (no session branch), skip this step. Otherwise merge the session branch by the path for `GIT_HOST` (Step 9.4). Report each outcome line exactly as printed: every line comes from its own command's exit status (DSM_0.2 §19.2), and a `STOP:` line ends this step with the branches left as the line describes. Never force-push. Shell variables do not survive between Bash calls (DSM_0.2.A §27.1): begin each block's call with the Step 9.4 resolution snippet and `B="{session-branch}"`.
+   a. **Push the session branch** (every host except `none`; it may already be pushed from Step 9):
+      ```bash
+      B="{session-branch}"
+      if [ "$GIT_HOST" != none ]; then
+        if git push -q -u origin "$B"; then echo "PUSHED: $B"
+        else echo "STOP: push of $B to origin failed (exit $?); nothing was merged and $B exists only on this machine"; fi
+      fi
+      ```
+   b. **`github`: pull request on the project's own repository.** `--repo` is required (a fork's `gh` default is the upstream repository); `--match-head-commit` merges only what is on this machine. On `MERGED`, continue with (e).
+      ```bash
+      if PR_URL=$(gh pr create --repo "${GH_REPO:?run the §27 host snippet first}" --base main --head "$B" --title "Session N: [brief summary]" --body "Session wrap-up merge."); then
+        if gh pr merge "$PR_URL" --merge --delete-branch --match-head-commit "$(git rev-parse HEAD)"; then echo "MERGED: $PR_URL"
+        else echo "STOP: $PR_URL was created but not merged (exit $?); merge it on GitHub"; fi
+      else echo "STOP: no pull request could be created on $GH_REPO (exit $?); $B is pushed; open and merge a pull request on GitHub"; fi
+      ```
+   c. **`gitlab`: merge request through `glab`.** `--auto-merge=false` merges now (by default `glab` waits for a running pipeline); `--sha` merges only what is on this machine. On `MERGED`, continue with (e). On `FALLBACK`, run (d). Once the merge request exists, never run (d) for the same branch (one merge route per branch).
+      ```bash
+      if glab mr create -R "${ORIGIN_URL:?run the §27 host snippet first}" --source-branch "$B" --target-branch main --title "Session N: [brief summary]" --description "Session wrap-up merge." --yes; then
+        if glab mr merge "$B" -R "${ORIGIN_URL:?run the §27 host snippet first}" --auto-merge=false --remove-source-branch --sha "$(git rev-parse HEAD)" --yes; then echo "MERGED: merge request for $B"
+        else echo "STOP: the merge request for $B was created but not merged (exit $?); merge it on GitLab"; fi
+      else echo "FALLBACK: glab could not create a merge request (exit $?); using the local merge"; fi
+      ```
+   d. **`other`, `none`, or the GitLab fallback: local merge.** Pushes `main` unless `GIT_HOST` is `none`. If the host rejects the push (a protected branch), local `main` is put back where it was and the session branch stays pushed; the user merges it through the host's web interface. This push is the same publication as a pull-request merge to `main` (DSM_0.2.C §2), authorized by the user invoking `/dsm-wrap-up`.
+      ```bash
+      OUT=""
+      git checkout -q main || OUT="STOP: could not switch to main; nothing was merged"
+      if [ -z "$OUT" ] && [ "$GIT_HOST" != none ]; then
+        git fetch -q origin main && git merge -q --ff-only origin/main \
+          || OUT="STOP: local main does not fast-forward to origin/main; nothing was merged"
+      fi
+      PRE=$(git rev-parse HEAD)
+      if [ -z "$OUT" ]; then
+        git merge -q --no-ff -m "Merge $B (session wrap-up)" "$B" \
+          || { git merge --abort 2>/dev/null; OUT="STOP: merging $B into main failed (conflict); main is unchanged"; }
+      fi
+      if [ -z "$OUT" ] && [ "$GIT_HOST" != none ]; then
+        if git push -q origin main; then
+          git push -q origin --delete "$B" 2>/dev/null
+          OUT="MERGED: $B into main and pushed main to origin"
+        else
+          git checkout -q "$B" && git update-ref refs/heads/main "$PRE"
+          OUT="STOP: origin rejected the push of main; local main is back at $(git rev-parse --short "$PRE") and $B stays pushed. Merge $B through your host's web interface. Do not force-push."
+        fi
+      elif [ -z "$OUT" ]; then
+        OUT="MERGED: $B into main (local only, no remote)"
+      fi
+      case "$OUT" in MERGED*) git branch -q -d "$B" ;; *) git checkout -q "$B" 2>/dev/null ;; esac
+      echo "$OUT"
+      ```
+   e. **Update local after a pull or merge request** (the local merge in (d) already leaves you on the updated `main`):
+      ```bash
+      git checkout -q main && git pull -q --ff-only && echo "LOCAL MAIN: $(git log --oneline -1)"
+      git branch -q -d "$B" 2>/dev/null
+      ```
 11. **Mirror sync PR safety net:** Check the Ecosystem Path Registry for entries with `mirror: true`. For each mirror repo, check for open PRs created by mirror sync:
 
    a. **List open sync PRs. `--head` is an EXACT branch match, never a prefix (BL-535).**
@@ -340,7 +409,7 @@ At the start, run `git rev-parse --is-inside-work-tree 2>/dev/null`. Cache the r
       exclusion list is the mechanism that produced BL-535, and it fails the moment someone
       forgets an entry. A mirror may legitimately hold long-lived retained sync PRs; take-ai-bite
       holds `#92` and `#93` deliberately, and a working filter matches them on its first run.
-   c. For each PR that passes (b): attempt `gh pr merge {number} --merge --delete-branch`.
+   c. For each PR that passes (b): attempt `gh pr merge {number} --repo {mirror-repo} --merge --delete-branch`. The `--repo` is required: run from Central, an unqualified `gh pr merge {number}` would act on Central's own pull request with that number (found by the BL-600 sweep).
    d. If merge succeeds: report "Merged mirror sync PR #{number} on {repo}".
    e. If merge fails or `gh` unavailable: warn "Open mirror sync PR on {repo}: #{number} ({title}). Merge manually."
    f. **Report the three outcomes distinguishably**, so inertness can never again read as an

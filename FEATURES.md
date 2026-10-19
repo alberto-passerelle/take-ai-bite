@@ -6,12 +6,14 @@ Methodology (DSM), the human-AI collaboration framework behind
 feature is numbered for easy reference (F-000 is the first, newest entries
 appear at the top).
 
-**Current count:** 199 features.
+**Current count:** 201 features.
 
 ---
 
 ## October 2026
 
+- **F-200 (2026-10-19) Session wrap-up merges on any git host and never reaches the upstream repository from a fork (BACKLOG-600, DSM_0.2.A §27)** — The end-of-session merge now works on GitHub (pull request), GitLab (merge request), any other host (local merge, then push) and with no remote, and a failed push is reported as failed. Every GitHub call names the project's own repository, so in a fork neither the wrap-up pull request nor the session-start checks can land on the project it was forked from.
+- **F-199 (2026-10-19) A getting-started guide that starts from your own fork (BACKLOG-599, `GETTING_STARTED.md`)** — A newcomer, or the AI assistant helping them, follows one path with a check at every step: install and set up git, fork and clone take-ai-bite, run the first session and the first wrap-up on the fork. It covers GitLab and other hosts, one fork per team member, a download-only quick try with its limits, how to bring later updates into the fork, and where an AI assistant sends project content.
 - **F-198 (2026-10-15) Forks get a full lifecycle for their own backlog items (BACKLOG-588, BACKLOG-589, BACKLOG-591, DSM_0.2 §21.5)** — A fork's own backlog items are now visible from every session, follow a short workflow from creation to close, and are archived in a file the upstream sync never overwrites. A fork can add to the methodology but does not contradict it: when the two disagree at a sync, the upstream text wins and the fork's change is re-applied on top.
 - **F-197 (2026-10-15) Task branches start without someone else's staged changes (BACKLOG-587, DSM_0.2 §20.9)** — Before a backlog or sprint branch is created, the agent checks that nothing is already staged. Files that session start moved stay on the session branch instead of riding silently into the task branch and its pull request.
 - **F-196 (2026-10-15) Session start no longer files its first note in the previous session's log (BACKLOG-590)** — On a `/dsm-go` turn, the first work-log entry is now written into the fresh log after it is reset. Before this, it went into the old log just before that log was archived, so it was credited to the wrong session.

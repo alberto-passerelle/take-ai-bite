@@ -41,6 +41,8 @@ protocol listed in the dispatch table is needed.
 23. [CLAUDE.md Section Completeness Gate for New Projects](#23-claudemd-section-completeness-gate-for-new-projects)
 24. [Sprint Plan Cross-Reference Before Completion](#24-sprint-plan-cross-reference-before-completion)
 25. [Cloned-Mirror Kick-off Protocol](#25-cloned-mirror-kick-off-protocol)
+26. [Concurrent-Session Detection Protocol](#26-concurrent-session-detection-protocol)
+27. [Git Host Resolution Rule](#27-git-host-resolution-rule)
 
 ---
 
@@ -2282,13 +2284,17 @@ DSM_3 Section 6.4.
 
 > **Core reference:** DSM_0.2 §4. Moved here from core to reduce always-loaded context.
 
-At session start, run three checks to surface unprocessed GitHub issues. If `gh`
-is not available, skip all checks silently.
+At session start, run three checks to surface unprocessed GitHub issues. Run them
+only when §27 resolves `GIT_HOST=github`, and always against the project's own
+repository (`--repo "$GH_REPO"`, from the §27 snippet): in a GitHub fork, an
+unqualified `gh issue list` lists the upstream repository's issues as if they were
+the fork's. Skip all checks silently for any other `GIT_HOST`, and on any `gh` error
+(a fork with issues turned off returns one).
 
 ### 20.1. External Issues (Priority Path)
 
 ```
-gh issue list --label external --state open
+gh issue list --repo "${GH_REPO:?run the §27 host snippet first}" --label external --state open
 ```
 
 External-labeled issues come from outside contributors and take priority.
@@ -2296,7 +2302,7 @@ External-labeled issues come from outside contributors and take priority.
 ### 20.2. New Issues Since Last Session
 
 ```
-gh issue list --state open --search "created:>={YYYY-MM-DD}"
+gh issue list --repo "${GH_REPO:?run the §27 host snippet first}" --state open --search "created:>={YYYY-MM-DD}"
 ```
 
 Replace `{YYYY-MM-DD}` with the date from MEMORY.md's "Latest Session" entry.
@@ -2306,7 +2312,7 @@ the `external` label.
 ### 20.3. Untriaged Open Issues (Classified)
 
 ```
-gh issue list --state open
+gh issue list --repo "${GH_REPO:?run the §27 host snippet first}" --state open
 ```
 
 Classify the results into two groups, excluding issues already surfaced by 20.1/20.2:
@@ -2813,11 +2819,14 @@ a previous partial Kick-off should be skipped without error.
     on, each with its present/absent status, derived from the gates that
     consume them (report-only, never a hard gate):
     - `git` — required; present (Kick-off ran).
-    - `gh` — recommended; enables `/dsm-go` gates 2a.6 (default-branch
-      verification) and 2a.7 (open-PR CI). If absent, those gates skip with a
-      one-line note; install `gh` to enable them.
-    Extend the list only with tools a boot gate actually consumes, so the
-    checklist cannot drift from the gates; for general toolchain setup, point
+    - `gh` — recommended on GitHub; enables `/dsm-go` gates 2a.6 (default-branch
+      verification) and 2a.7 (open-PR CI) and the pull-request merge in
+      `/dsm-wrap-up`. If absent, those gates skip with a one-line note and the
+      wrap-up merges locally and pushes `main` (§27).
+    - `glab` — optional on GitLab; enables the merge-request merge in
+      `/dsm-wrap-up` (§27). If absent, the wrap-up merges locally and pushes `main`.
+    Extend the list only with tools a boot gate or the wrap-up merge actually
+    consumes, so the checklist cannot drift from them; for general toolchain setup, point
     to the Environment Preflight Protocol (Module D) rather than duplicating it.
     Then tell the user:
     "Cloned-Mirror Kick-off complete. This clone is now self-registered as
@@ -3216,3 +3225,102 @@ plan. Both sessions on the same branch, modifying the same working tree,
 appending to the same transcript, with no awareness of each other.
 
 Filed as BL-431 in DSM Central S207 (2026-05-05).
+
+---
+
+## 27. Git Host Resolution Rule
+
+Skills that talk to a git host (the `/dsm-wrap-up` merge and its checks, the `/dsm-go` checks, the §20
+issue check) resolve the host once per run from the `origin` remote and name the repository on every
+host-CLI call. Two facts make this necessary:
+
+- A DSM project can live on GitHub, on GitLab, on any other git server, or on no server at all. A merge
+  that only works through GitHub's `gh` leaves every other project unmerged.
+- A GitHub fork made with `gh repo fork --clone` sets the `upstream` remote as `gh`'s default repository
+  (`gh repo fork --help`). An unqualified `gh pr …` or `gh issue …` call in a fork therefore reads and
+  writes the upstream repository, not the user's fork.
+
+### 27.1. Git Host Resolution Snippet
+
+Canonical form; the skills carry copies, and this section is authoritative if they diverge.
+
+```bash
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+ORIGIN_URL=$(git remote get-url origin 2>/dev/null)
+ORIGIN_HOST=$(printf '%s' "$ORIGIN_URL" | sed -E 's#^[a-z+]+://##; s#^[^@/]*@##; s#[:/].*##')
+ORIGIN_REPO=$(printf '%s' "$ORIGIN_URL" | sed -E 's#\.git$##; s#^[a-z+]+://[^/]+/##; s#^[^@/]*@[^:/]+:##')
+GH_REPO="$ORIGIN_HOST/$ORIGIN_REPO"
+GIT_HOST=$(sed -nE 's/^\*\*Git host:\*\*[[:space:]]*(github|gitlab|other|none)([^a-z].*)?$/\1/p' "$ROOT/.claude/CLAUDE.md" 2>/dev/null | head -1)
+if [ -z "$GIT_HOST" ]; then
+  if [ -z "$ORIGIN_URL" ]; then GIT_HOST=none
+  elif [ -n "$ORIGIN_HOST" ] && gh repo view "$GH_REPO" --json name >/dev/null 2>&1; then GIT_HOST=github
+  elif [ -n "$ORIGIN_HOST" ] && glab repo view "$ORIGIN_URL" >/dev/null 2>&1; then GIT_HOST=gitlab
+  else GIT_HOST=other; fi
+fi
+echo "GIT_HOST=$GIT_HOST GH_REPO=$GH_REPO"
+```
+
+| `GIT_HOST` | Meaning |
+|---|---|
+| `github` | `gh` is installed, authenticated, and can see the `origin` repository on its host |
+| `gitlab` | `glab` is installed, authenticated, and can see the `origin` repository |
+| `other` | A remote exists but neither CLI can reach it (another host, a local path, or a missing or unauthenticated CLI) |
+| `none` | No `origin` remote (a local-only project) |
+
+Classification is by CLI success against `origin`, not by URL text, so a self-hosted or enterprise host
+is classified correctly when its CLI is set up. `GH_REPO` is `HOST/OWNER/REPO`, the form `gh --repo`
+accepts; `glab -R` takes `ORIGIN_URL` as it is, nested groups included. Never print `ORIGIN_URL` in a
+report: an HTTPS remote can carry a credential.
+
+**Shell variables do not survive between an agent's tool calls.** A later call that uses these values
+either re-runs this snippet first, or starts by setting `GIT_HOST=…` and `GH_REPO=…` to the resolved
+values (neither holds a credential: the parsing drops any `user:token@` part). `ORIGIN_URL` is never
+written out; a call that needs it re-runs the snippet. **An empty value brings the fork hazard back,
+silently:** `gh` treats `--repo ""` as no value and falls back to its default repository, which in a fork
+is the upstream one (measured S287: exit 0, upstream's pull requests listed). So the skills write the value
+as `"${GH_REPO:?run the §27 host snippet first}"` (likewise `ORIGIN_URL`), which stops the command with
+that message when the variable is unset instead of running it against the wrong repository.
+
+### 27.2. Wrap-Up Merge Path by Host
+
+| `GIT_HOST` | `/dsm-wrap-up` Step 10 merge |
+|---|---|
+| `github` | Pull request on `$GH_REPO`, merged with `--match-head-commit` set to local `HEAD` |
+| `gitlab` | Merge request through `glab -R "$ORIGIN_URL"`, merged with `--auto-merge=false` and `--sha` set to local `HEAD`. If `glab` cannot create the merge request, use the local merge |
+| `other` | Local merge, then push `main` |
+| `none` | Local merge, no push |
+
+Rules every path follows:
+
+- **Each outcome line comes from its own command's exit status** (DSM_0.2 §19.2). A push that failed is
+  reported as failed.
+- **Never force.** A rejected push of `main` (a protected branch) stops the merge, puts local `main` back
+  where it was, and tells the user to merge the session branch through the host's web interface.
+- **One merge route per branch.** Once a pull or merge request exists, a failure to merge it stops the
+  wrap-up; it does not fall back to a local merge of the same branch.
+- The local merge's push to `main` is the same publication as a pull-request merge to `main`
+  (DSM_0.2.C §2) and is authorized the same way, by the user invoking `/dsm-wrap-up`.
+
+### 27.3. Repository Checks by Git Host
+
+The read-only checks (`/dsm-wrap-up` 9.5, `/dsm-go` 2a.6 and 2a.7, the §20 issue check) run only when
+`GIT_HOST` is `github`, and always with `--repo "$GH_REPO"`. They skip silently for `other` and `none`.
+For `gitlab` they also skip for now: the JSON fields they would read are not documented for `glab`
+(BACKLOG-602).
+
+### 27.4. Declaring the Git Host Override
+
+A project may add one line to the project-specific part of `.claude/CLAUDE.md`:
+
+```markdown
+**Git host:** github | gitlab | other | none
+```
+
+The declaration replaces detection. Use it when detection is wrong (an SSH host alias, for example) or to
+choose the local merge on purpose (`other`). A value outside the four is ignored.
+
+### 27.5. Git Host Resolution Origin
+
+BACKLOG-600 (S287, 2026-10-19), found while checking take-ai-bite's fork-first onboarding (BACKLOG-599):
+the wrap-up could only merge through GitHub, and in a fork its pull request would have been opened on the
+upstream repository.

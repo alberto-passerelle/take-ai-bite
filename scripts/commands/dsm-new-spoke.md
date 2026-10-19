@@ -28,7 +28,7 @@ The spoke-vs-mirror choice is a **user intent, not a directory property** (an un
    - If `.claude/dsm-ecosystem.md` already exists with a `dsm-central` row whose path (after `~` expansion and trailing-slash strip) differs from the repo root → this is already a spoke. **HALT:** "Already a spoke of {that hub}. Run /dsm-go to start a session." (idempotent; no clobber)
 
 3. **Ensure git is initialized (DSM requires a local git repository).**
-   - Run `git rev-parse --is-inside-work-tree 2>/dev/null`. If NOT a repo: `git init`, `git branch -m main`, then ask "Remote repository? (GitHub URL or 'none' for local-only)" and `git remote add origin {url}` if a URL is given. The initial commit is deferred to step 9 (after scaffolding) so it captures the scaffold.
+   - Run `git rev-parse --is-inside-work-tree 2>/dev/null`. If NOT a repo: `git init`, `git branch -m main`, then ask "Remote repository URL (GitHub, GitLab or any other git host), or 'none' for local-only?" and `git remote add origin {url}` if a URL is given. The initial commit is deferred to step 9 (after scaffolding) so it captures the scaffold.
 
 4. **Derive runtime values (no prompt):** `{REPO_ROOT}` from `git rev-parse --show-toplevel` (or `pwd`), `{project_name}` from `basename {REPO_ROOT}`, `{ISO_DATE}` from `date -I`.
 

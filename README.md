@@ -63,6 +63,15 @@ The framework operates at three levels:
 
 For the full chapter, see [`DSM_6.1_Systems_Prompt_Engineering_v1.0.md`](DSM_6.1_Systems_Prompt_Engineering_v1.0.md).
 
+## Getting Started
+
+1. Fork this repository and clone your fork.
+2. Open the folder in VS Code with the Claude Code extension and type `/dsm-go`.
+3. Follow [`GETTING_STARTED.md`](GETTING_STARTED.md): prerequisites, every step with a check, how to
+   keep your fork up to date, and instructions for an AI assistant helping you.
+
+TAB is for individual use: each person works in their own fork.
+
 ## Start Here
 
 Read [`TAKE_AI_BITE.md`](TAKE_AI_BITE.md) for the short version of the founding principle. It takes two minutes and captures the core idea: someone offers you a bite of a cookie, you take a bite the size you will enjoy; too small and you won't taste the cookie, too much and it will cause a lot of issues.
@@ -109,13 +118,12 @@ They are not theoretical; they emerged from daily practice with AI agents across
 
 </details>
 
-See the full timeline of 199 features → [FEATURES.md](FEATURES.md)
+See the full timeline of 201 features → [FEATURES.md](FEATURES.md)
 
 ## What's Coming
 
 - **Structural compliance retrofit** — Applying document structure standards (TOC, intro paragraphs, line budgets) across all methodology files
 - **A queryable knowledge graph** that compiles human-authored methodology into a navigable, interconnected structure, making the ecosystem's accumulated knowledge searchable across projects and sessions
-- **Onboarding guide** — A newcomer-friendly path into the framework for practitioners encountering DSM for the first time
 
 ## Links
 
