@@ -74,6 +74,6 @@ is in the preserved session transcript. Reasoning lessons extracted (6, S7), MEM
 - STAA recommended: **yes** (complex multi-option packaging + two §22 course corrections)
 
 **Still carried forward (next session):**
-- Inbox: `_inbox/AISA-work.md` pending; two untracked `_inbox/done/*` archives (2026-10-01, 2026-10-06) — not this session's processing, left for an inbox pass
+- Inbox: a downstream spoke's inbox file pending; two untracked `_inbox/done/*` archives (2026-10-01, 2026-10-06) — not this session's processing, left for an inbox pass
 - `/dsm-align` not run (fork at 1.28.0 via sync; align optional)
 - Contributor profile not updated (skipped)

@@ -1,6 +1,7 @@
 # BACKLOG-012: Remove the Reporting Spoke's Name From the Public Fork
 
-**Status:** Proposed
+**Status:** Implemented
+**Date Implemented:** 2026-10-19
 **Priority:** High
 **Extends:** DSM_0.2 §21.5, the "Name-free, always" bullet (applied to session artifacts and configuration already on the public fork)
 **Date Created:** 2026-10-19
@@ -36,7 +37,8 @@ artifact; the sweep found seven plus `.gitignore`.
    neutral comment in `.gitignore` points there.
 3. **Tags:** delete the five affected `archive/bl-*` tags from the fork; keep them locally as the
    archive.
-4. **PR #11:** retitle it to say "a downstream spoke's archives".
+4. **PR #11:** retitle it to say "a downstream spoke's archives". Its description also named the
+   spoke (found by T-6, see the log); the same phrase was replaced there.
 5. **History of `main`:** not rewritten; recorded under Risks as an accepted risk.
 
 The name is never written into this BL, a command line or the worklog. Sweeps decode it at run
@@ -46,10 +48,10 @@ does not print the pattern. The user maintains the deny-list.
 ## Success Criteria
 
 - [ ] A sweep of the fork's `main` tree returns 0 files once the session PR merges.
-- [ ] The spoke's inbox files stay ignored, inside and outside `_inbox/`.
-- [ ] No branch or tag on the fork contains the name.
-- [ ] A search of the fork's issues and PRs returns 0.
-- [ ] The history decision is recorded with what it leaves in place.
+- [x] The spoke's inbox files stay ignored, inside and outside `_inbox/`.
+- [ ] No branch or tag on the fork contains the name (tags done; `main` waits for the session PR).
+- [x] A search of the fork's issues and PRs returns 0.
+- [x] The history decision is recorded with what it leaves in place.
 
 ## Test Plan
 
@@ -78,6 +80,15 @@ does not print the pattern. The user maintains the deny-list.
   PR refs, which a push cannot change. GitHub's documentation on removing sensitive data routes
   full removal through GitHub Support (to verify before relying on it). Revisit if the spoke's
   owner asks for removal.
+- **PR #11 keeps the old wording on its page.** The retitle added a public "renamed" event whose
+  old-title field still names the spoke, and the description edit left the old text in the
+  description's edit history. *Accepted* for the event (user decision, S18): no way for users to
+  remove it is known; GitHub Support is the route if removal is ever requested. The edit
+  history is open: GitHub states that "Comment authors and anyone with write access to a
+  repository can delete sensitive information from a comment's edit history"
+  (docs.github.com, "Tracking changes in a comment", read 2026-10-19), but does not say whether
+  this covers a PR description. Not attempted; it is a further change on GitHub that needs the
+  user's approval.
 - **Weaker ignore protection in other clones.** A fresh clone of the fork lacks the local exclude.
   *Mitigation:* `_inbox/*` and `_inbox/done/*` still ignore the inbox in every clone; only files
   outside `_inbox/` depend on the local exclude.
@@ -91,8 +102,35 @@ does not print the pattern. The user maintains the deny-list.
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented._
+Executed in S18 (2026-10-19) on `bl-012/remove-spoke-name` (fix commit `9ba66a1`). The name was
+decoded at run time; all printed output was redacted.
+
+- T-1: pass. The sweep finds the name once in `.git/info/exclude` (line 16) after the move, and
+  three times in `.gitignore` on `HEAD` before it.
+- T-2: pass for `bl-012`: tracked working tree 0 files, file names 0, committed tree at `9ba66a1`
+  0 files. The `origin/main` half is pending (below).
+- T-3: pass. `git check-ignore -v` matched the spoke's inbox file through `.gitignore:131`
+  (`_inbox/*`) and a test path outside `_inbox/` through `.git/info/exclude:16`. Evidence is the
+  printed match lines; that command's exit code came from a pipe and is not used.
+- T-4: pass. The fix commit changes exactly `.gitignore` and the 7 checkpoints; closing adds this
+  file's move and the two index files.
+- T-5: pass. After deleting the five tags (`git push origin --delete`, exit 0), `git ls-remote`
+  lists only `archive/bl-005-006`, which has 0 hits. The six local `archive/bl-*` tags match the
+  record taken before deletion (`diff` exit 0).
+- T-6: first run FAILED, then pass. After the retitle the fork search still returned PR #11: its
+  description named the spoke once (comments, reviews, review comments and branch name: 0). After
+  the description edit, `gh pr view` shows 0 hits in title and body, and the search returns 0
+  (self-test on "downstream": 1). The timeline "renamed" event is not covered by the search and is
+  recorded under Risks.
+- T-7: deferred; `.claude/name-denylist.txt` does not exist yet.
+- T-8: T-2 is the Resolver sweep. Prose checks: the one path this BL cites
+  (`dsm-docs/handoffs/done/2026-10-19_s17_staa-bl-candidates.md`) exists; the counts in the
+  Problem Statement are the sweep's output; mirror/deploy coverage does not apply (fork-local
+  files, no mirror).
 
 ### Pending verification
 
-- [ ] All Test Plan items (deferred: Proposed, not implemented)
+- [ ] T-2 on `origin/main`: once the S18 session PR (#16) merges at wrap-up, `git grep -l -i`
+      over `origin/main` returns 0 files, with the T-1 self-test.
+- [ ] T-7: once the user creates `.claude/name-denylist.txt`, run `git grep -i -f` with it over the
+      tree and the T-1 self-test with it.
