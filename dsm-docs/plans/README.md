@@ -18,3 +18,4 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 |-----|-------|----------|--------|
 | BACKLOG-008 | Fork-to-Central Contribution Mechanics | Low | Proposed (narrowed in S17 to what DSM_0.2 §21.5 leaves out) |
 | BACKLOG-011 | Reference-Read Protocol: Check Claims Against Their Source Passage Before Use | Medium | Proposed (5 open questions before implementation) |
+| BACKLOG-012 | Remove the Reporting Spoke's Name From the Public Fork | High | Proposed |
