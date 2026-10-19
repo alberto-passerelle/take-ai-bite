@@ -8,7 +8,7 @@ Before starting alignment, check if git is initialized:
 2. If **not** a git repo:
    a. Run: `git init`
    b. Run: `git branch -m main`
-   c. Ask: "Remote repository? (GitHub URL or 'none' for local-only)"
+   c. Ask: "Remote repository URL (GitHub, GitLab or any other git host), or 'none' for local-only?"
    d. If URL provided: `git remote add origin {url}`
    e. Create initial commit: `git add .` then `git commit -m "Initialize DSM project"`
    f. Report: "Git initialized. All DSM projects require a local git repository."

@@ -8,7 +8,7 @@ Before caching GIT_AVAILABLE, check if git is initialized:
 2. If **not** a git repo:
    a. Run: `git init`
    b. Run: `git branch -m main`
-   c. Ask: "Remote repository? (GitHub URL or 'none' for local-only)"
+   c. Ask: "Remote repository URL (GitHub, GitLab or any other git host), or 'none' for local-only?"
    d. If URL provided: `git remote add origin {url}`
    e. Create initial commit: `git add .` then `git commit -m "Initialize DSM project"`
    f. Report: "Git initialized. All DSM projects require a local git repository."
@@ -335,8 +335,8 @@ the invocation point, not the specification. Key steps summarized:
 ### 0.8d. On Kick-off completion
 
 First emit the fork-init readiness checklist (the environment tools the boot
-gates depend on — `git`, `gh` — each with present/absent status) per §25.2
-step 15. Then report to the user:
+gates and the wrap-up merge depend on — `git`, `gh`, `glab` — each with
+present/absent status) per §25.2 step 15. Then report to the user:
 
 > "Cloned-Mirror Kick-off complete. This clone is now self-registered as
 > `dsm-central` in `.claude/dsm-ecosystem.md`. `/dsm-align` (Step 1.8) will
@@ -627,13 +627,29 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
    - **2a.5. Ecosystem Path Registry:** Read `.claude/dsm-ecosystem.md` (created by `/dsm-align` in Step 1.8). Parse the Paths table and cache each Name -> Path mapping for the session. For each entry, verify the path exists on the filesystem:
      - If the path exists: note as validated
      - If the path does not exist: warn "Ecosystem path '{name}' points to '{path}' which does not exist. Cross-repo operations using this path will be skipped."
-   - **2a.6. Default-branch verification:** **Non-suppressible (per DSM_0.2 §8.9.1):** the halt-with-critical-warning prompt below MUST display and MUST receive an explicit user response (fix the configuration, or type `defer`). Auto mode does NOT bypass this prompt regardless of explicit suspension. If `GIT_AVAILABLE` is true AND `git remote get-url origin` returns a URL containing `github.com`, resolve the configured remote default branch with `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`. Compare against the local main line: read the project-specific section of `.claude/CLAUDE.md` for an optional `**Main branch:**` declaration; default to `main` if absent. If the remote default differs from the local main line, **halt with a critical warning** that names both values and the fix command (`gh repo edit --default-branch {local}`). This is a hard gate: no session work proceeds until the user fixes the configuration OR types `defer` to bypass for this session only. Cache the resolved value for the session (one `gh` call per session). **Skip silently if:** remote `origin` does not point at GitHub (no `github.com` substring), OR `gh` CLI is not installed (warn once: "install gh to enable default-branch verification" and continue). Origin: Default-branch verification protocol. Failure mode this catches: a spoke project (S4) lost ~45 minutes to an HTTP 404 cascade because the repo's default branch was a stale session branch, not `main`.
-   - **2a.7. Open-PR CI status check (per BL-441):** If `GIT_AVAILABLE` is true AND the `origin` remote points at GitHub AND `gh` is installed (reuse the determination cached in 2a.6), check whether the current branch has an open PR and surface its CI status in the boot report so a session never resumes on top of silently-failing CI. Run:
+   - **2a.6. Default-branch verification:** **Non-suppressible (per DSM_0.2 §8.9.1):** the halt-with-critical-warning prompt below MUST display and MUST receive an explicit user response (fix the configuration, or type `defer`). Auto mode does NOT bypass this prompt regardless of explicit suspension. If `GIT_AVAILABLE` is true, first resolve the git host with the DSM_0.2.A §27 snippet and cache `GIT_HOST`, `GH_REPO` and `ORIGIN_HOST` for the session (2a.7 and the session-start issue check, DSM_0.2.A §20, reuse them; §27.1 is authoritative if this copy diverges):
      ```bash
-     PR_NUMBER=$(gh pr list --head "$(git branch --show-current)" --json number --jq '.[0].number' 2>/dev/null)
-     [ -n "$PR_NUMBER" ] && gh pr checks "$PR_NUMBER" 2>/dev/null
+     ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+     ORIGIN_URL=$(git remote get-url origin 2>/dev/null)
+     ORIGIN_HOST=$(printf '%s' "$ORIGIN_URL" | sed -E 's#^[a-z+]+://##; s#^[^@/]*@##; s#[:/].*##')
+     ORIGIN_REPO=$(printf '%s' "$ORIGIN_URL" | sed -E 's#\.git$##; s#^[a-z+]+://[^/]+/##; s#^[^@/]*@[^:/]+:##')
+     GH_REPO="$ORIGIN_HOST/$ORIGIN_REPO"
+     GIT_HOST=$(sed -nE 's/^\*\*Git host:\*\*[[:space:]]*(github|gitlab|other|none)([^a-z].*)?$/\1/p' "$ROOT/.claude/CLAUDE.md" 2>/dev/null | head -1)
+     if [ -z "$GIT_HOST" ]; then
+       if [ -z "$ORIGIN_URL" ]; then GIT_HOST=none
+       elif [ -n "$ORIGIN_HOST" ] && gh repo view "$GH_REPO" --json name >/dev/null 2>&1; then GIT_HOST=github
+       elif [ -n "$ORIGIN_HOST" ] && glab repo view "$ORIGIN_URL" >/dev/null 2>&1; then GIT_HOST=gitlab
+       else GIT_HOST=other; fi
+     fi
+     echo "GIT_HOST=$GIT_HOST GH_REPO=$GH_REPO"
      ```
-     Behavior: if any check has `conclusion=failure`, surface in the boot report: "PR #{N} has K failing CI check(s): [names]." If all checks pass, include "PR #{N} CI: green". Only FAILED checks are enumerated; `pending` checks are silent (a mid-workflow resume is not a failure); green checks collapse into the summary line. One `gh` call at boot (rate-limit guard). **Skip silently if:** no `gh`, no GitHub remote, or no open PR for the current branch (the common case). On any `gh` error (auth, rate limit, network), skip silently; never block the boot. Origin: S14, where PR #865's `lint-all` was red for 20 days (a `cargo fmt --check` failure) while `/dsm-go` reported "awaiting re-review" from MEMORY; the user had to ask "check PR #865" to surface it.
+     Every `gh` call in this step and in 2a.7 names `--repo "$GH_REPO"` (or passes it as the repository argument): in a GitHub fork, `gh`'s default repository is the upstream one, so an unqualified call would check the upstream repository instead of this project's. If `GIT_HOST` is `github`, resolve the configured remote default branch with `gh repo view "${GH_REPO:?run the §27 host snippet first}" --json defaultBranchRef --jq .defaultBranchRef.name`. Compare against the local main line: read the project-specific section of `.claude/CLAUDE.md` for an optional `**Main branch:**` declaration; default to `main` if absent. If the remote default differs from the local main line, **halt with a critical warning** that names both values and the fix command (`gh repo edit "$GH_REPO" --default-branch {local}`). This is a hard gate: no session work proceeds until the user fixes the configuration OR types `defer` to bypass for this session only. Cache the resolved value for the session (two `gh` calls per session: the host resolution and this one). **Skip silently if:** `GIT_HOST` is not `github` (DSM_0.2.A §27.3; GitLab projects are deferred to BACKLOG-602). Exception: when `GIT_HOST` is `other` but `ORIGIN_HOST` is `github.com` (the `gh` CLI is missing or not authenticated), warn once: "install and authenticate gh to enable default-branch verification" and continue. Origin: Default-branch verification protocol. Failure mode this catches: a spoke project (S4) lost ~45 minutes to an HTTP 404 cascade because the repo's default branch was a stale session branch, not `main`.
+   - **2a.7. Open-PR CI status check (per BL-441):** If `GIT_HOST` is `github` (cached in 2a.6; in a new Bash call, set `GH_REPO` to the cached value first, per DSM_0.2.A §27.1), check whether the current branch has an open PR and surface its CI status in the boot report so a session never resumes on top of silently-failing CI. Run:
+     ```bash
+     PR_NUMBER=$(gh pr list --repo "${GH_REPO:?run the §27 host snippet first}" --head "$(git branch --show-current)" --json number --jq '.[0].number' 2>/dev/null)
+     [ -n "$PR_NUMBER" ] && gh pr checks "$PR_NUMBER" --repo "${GH_REPO:?run the §27 host snippet first}" 2>/dev/null
+     ```
+     Behavior: if any check has `conclusion=failure`, surface in the boot report: "PR #{N} has K failing CI check(s): [names]." If all checks pass, include "PR #{N} CI: green". Only FAILED checks are enumerated; `pending` checks are silent (a mid-workflow resume is not a failure); green checks collapse into the summary line. One `gh` call at boot (rate-limit guard). **Skip silently if:** `GIT_HOST` is not `github`, or no open PR for the current branch (the common case). On any `gh` error (auth, rate limit, network), skip silently; never block the boot. Origin: S14, where PR #865's `lint-all` was red for 20 days (a `cargo fmt --check` failure) while `/dsm-go` reported "awaiting re-review" from MEMORY; the user had to ask "check PR #865" to surface it.
    - **2a.8. CLAUDE.md section completeness (Module A §23):** Check whether CLAUDE.md contains all 4 required sections (DSM_0.2 Alignment, participation pattern, project type, project specific). If all present, pass silently. If sections are missing, report which ones and suggest completing them before implementation. This is a hard gate: no implementation work until all 4 sections exist. Existing complete projects pass silently.
    - **2b. Inbox check (behavior depends on project type from 2a):** If this is an External Contribution, do NOT create `_inbox/` in the external repo (see DSM_0.2 External Contribution exception). **Inbox location and resolution by project type:**
 

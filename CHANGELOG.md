@@ -5,6 +5,48 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.0] - 2026-10-19
+
+Minor: take-ai-bite can be recommended to a newcomer as it is. A new `GETTING_STARTED.md` makes "fork, then clone" the documented start (BACKLOG-599), and the session wrap-up now merges on any git host and stays on the user's own fork (BACKLOG-600). The two ship together because the guide describes the new wrap-up. Acceptance: two first-turn `/dsm-go` boots of the release candidate on Opus 5.5 started normally (no refusal). The merge paths were tested against stand-in repositories and stand-in CLIs, and the fork case against a fake fork. A tester's run on a real fork, and on GitLab, follows the release.
+
+### Added
+
+- **Getting-started guide (BACKLOG-599, `GETTING_STARTED.md`).** One path from nothing to a first finished session on the reader's own fork, with a check the reader or their AI assistant can run at every step. It covers:
+  - prerequisites: installing git and setting its identity, a git host account, `gh`, bash, VS Code and Claude Code, and the plan the AI assistant needs;
+  - a provider-neutral note on where project content is sent, with recommended privacy settings;
+  - forking and cloning, GitLab and other hosts, and one fork per team member;
+  - a download-only quick try, with its limits (no updates, no route back to take-ai-bite);
+  - how to bring take-ai-bite's later updates into a fork;
+  - a block of instructions written for an AI assistant helping with setup.
+
+  The README gains a short Getting Started block. START_HERE §5 becomes an overview that links to the guide, and §2 and §6 no longer say that updates reach other people's copies automatically. TAKE_AI_BITE.md typos are fixed.
+  **Spoke action:** none.
+  **Fork action:** read "Getting Updates and Sending Feedback" in `GETTING_STARTED.md`. After merging an update, redeploy the commands (`scripts/sync-commands.sh --deploy`), because user-level copies override the repository's own.
+- **Git host resolution rule (BACKLOG-600, DSM_0.2.A §27).** Skills that talk to a git host work out from `origin` whether it is `github`, `gitlab`, `other` or `none`, using the CLI that can actually reach the repository rather than the URL text. Every host-CLI call then names the repository. A project can override the detection with a `**Git host:**` line in its CLAUDE.md.
+  **Spoke action:** none required. Optionally declare `**Git host:**` if detection is wrong for the project.
+
+### Changed
+
+- **`/dsm-wrap-up` merges by host (BACKLOG-600, Steps 9.4 and 10).**
+  - **GitHub:** a pull request on the project's own repository, merged only if its head matches local `HEAD` (`--match-head-commit`).
+  - **GitLab:** a merge request through `glab`, merged at once (`--auto-merge=false`, `--sha`). If `glab` cannot create the request, the wrap-up falls back to the local merge.
+  - **Any other host:** a local merge, then a push of `main`.
+  - **No remote:** a local merge.
+
+  Each outcome line comes from its own command's exit status, so a failed push is reported as failed (the old message said the branch "has been pushed" either way). A rejected push of `main` puts local `main` back and never forces.
+  **Spoke action:** refresh the user-level commands on each machine (`scripts/sync-commands.sh --deploy` from Central).
+- **Checks never read the upstream repository from a fork (BACKLOG-600).** `/dsm-go` 2a.6 (default branch), `/dsm-go` 2a.7 and `/dsm-wrap-up` 9.5 (failing CI) and the DSM_0.2.A §20 issue check name the repository explicitly. They run only on GitHub; GitLab follows in BACKLOG-602. `gh repo fork --clone` makes the upstream repository `gh`'s default, and `gh` treats an empty `--repo` as no value, so each call stops if the value is missing instead of reading upstream. The "Remote repository?" prompts in `/dsm-go`, `/dsm-align` and `/dsm-new-spoke` now cover any host, and the Kick-off readiness list includes `glab`.
+  **Spoke action:** covered by the same command refresh.
+
+### Fixed
+
+- **Mirror-sync safety net merged by number without naming the mirror (BACKLOG-600, `/dsm-wrap-up` Step 11c).** Run from Central, `gh pr merge {number}` would have acted on Central's own pull request with that number. It now names `--repo {mirror-repo}`.
+
+### Spawned
+
+- **BACKLOG-601** (Medium): optional privacy-leaning default in take-ai-bite (non-essential traffic off, with a notice and an update reminder).
+- **BACKLOG-602** (Low): run the repository checks on GitLab projects too.
+
 ## [1.35.0] - 2026-10-15
 
 Minor: the worklog fixes that BACKLOG-592 unblocked land in the on-demand Module G instead of §7 (BACKLOG-554, BACKLOG-500, BACKLOG-590), and two fork-facing additions to the core return: §20.9 and an extended §21.5 (BACKLOG-587, BACKLOG-588, BACKLOG-589, BACKLOG-591). The always-loaded §7 is unchanged. Acceptance: the release candidate booted clean on Opus 5.5 in 3 scripted boots (2 first-turn, 1 full) and 1 operator boot, against a known-failing control that was refused.
