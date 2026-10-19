@@ -11,7 +11,7 @@
 Implemented BL-003 (direction B boot-plan guard) and BL-010 (fork-local BL done-criterion +
 archival, §21.5) on held branches; organized `plans/` by archiving the two absorbed fork BLs
 (001/002) to `done/` and defining when a fork BL is "done" (upstream-absorbed). Flipped
-`redhat.telemetry.enabled`→false; notified AISA-work's air-gapped inbox. Recon found the user
+`redhat.telemetry.enabled`→false; notified a downstream spoke's air-gapped inbox. Recon found the user
 had filed the three drafted issues (#141/#142/#144); updated BL records to reference them.
 
 ## Pending next session

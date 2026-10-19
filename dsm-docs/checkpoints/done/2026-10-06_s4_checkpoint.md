@@ -7,7 +7,7 @@
 
 ## Work completed this session
 
-Processed the inbox (2 entries archived); confirmed the AISA-work spoke is live
+Processed the inbox (2 entries archived); confirmed a downstream spoke is live
 and independent. Added a `SessionStart` upstream-version-drift hook. Synced this
 mirror 1.26.4 → 1.26.8 by fork-merging the de-identified upstream and landing it
 on main via PR #4. Caught and fixed a §22 co-author-trailer violation and

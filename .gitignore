@@ -133,6 +133,5 @@ _inbox/*
 !_inbox/done/
 _inbox/done/*
 !_inbox/done/Hello-world.md
-# Belt-and-suspenders: never stage an AISA inbox file even outside _inbox/ (matches
-# the date-prefixed 2026-10-06_AISA-work.md, not just a bare AISA-work.md).
-*AISA-work.md
+# Belt-and-suspenders for a downstream spoke's inbox files outside _inbox/: the name
+# pattern lives in .git/info/exclude (local, untracked), so this tracked file stays name-free.

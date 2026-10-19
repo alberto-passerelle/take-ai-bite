@@ -23,7 +23,7 @@
 1. **Watch the three open PRs (#136, #138, #140) — this is the gating constraint for all queued work.** The open-PR window is at 3/3 (cadence ceiling), so no further upstream PR may be submitted until one resolves. On each resolution: delete the paired `feature/*` AND the backing held `bl-*` (local+remote) and move the #130 row to Absorbed — the guide §6 ties branch cleanup to PR resolution, and leaving them keeps the window artificially full; the absorbed change itself returns at the next fork-sync, so the held branch is then redundant.
 2. **When the window frees, submit BL-009 first, then BL-003/BL-008.** BL-009 is implemented and tested on `bl-009` (already pushed), so it is submission-ready: cut a `feature/*` off `upstream/main`, open issue + PR + comment, and ADD it to #130 (it is not listed there yet). BL-003 and BL-008 follow because they are still Proposed and must be implemented first; the order is forced by readiness, not preference.
 3. **Security config → full fork-workflow if Central does not absorb the manually-posted issue.** The issue informs upstream; if it is picked up, fork-sync brings it back. If not, escalate to the standard path (fork-local BL-010 + a template `feature/*` PR) when the PR window allows. Minor machine follow-ups: `redhat.telemetry.enabled` is still `true` in VS Code (optional flip); the new env var takes effect at the next Claude Code launch.
-4. **Inbox `_inbox/AISA-work.md`** — pending since 2026-10-08, still unprocessed; read on request (not blocking).
+4. **Inbox: a downstream spoke's file** — pending since 2026-10-08, still unprocessed; read on request (not blocking).
 
 ## Open branches
 
