@@ -33,6 +33,7 @@ informs an active BL but is not its primary deliverable.
 | 2026-04-21 | [Claude usage metrics API](2026-04-21_claude-usage-metrics-api.md) | BL-412 | Open |
 | 2026-04-24 | [Böckeler "Harness Engineering" vs TAB/DSM](2026-04-24_boeckeler-harness-engineering-vs-tab-dsm.md) | BL-423 | Feeds Thread 1 of BL-423 |
 | 2026-02-27 | [Literate CQRS Knowledge Architecture (folder, 6 files)](Literate-CQRS-Knowledge/) | Literate-CQRS-knowledge-architecture-plan.md | Active research stream |
+| 2026-10-15 | [Reference reading: checking claims against their source passage](2026-10-15_reference-reading.md) | BACKLOG-011 (fork-local) | Active; signed off S17, BL Proposed |
 
 ### Informs an active BL but is not its primary deliverable
 
@@ -49,7 +50,6 @@ informs an active BL but is not its primary deliverable.
 | 2026-04-14 | [LinkedIn post: JetBrains MCP refactoring vs Claude Code](2026-04-14_linkedin-post-jetbrains-mcp-refactoring.md) | File BL "AST-based refactoring tool integration evaluation" or move to done | Promoted from QA, no follow-up |
 | 2026-04-19 | [Deep memory retrieval feasibility](2026-04-19_deep-memory-retrieval-feasibility.md) | File BL on memory retrieval design | Self-marked "ready for promotion" |
 | 2026-04-19 | [Humanizer vs Wikipedia "Signs of AI writing"](2026-04-19_humanizer-vs-wikipedia-signs-of-ai-writing.md) | File BL "Humanizer alignment with Wikipedia AI-writing signs" | Self-marked "input for BL" |
-| 2026-10-15 | [Reference reading: checking claims against their source passage](2026-10-15_reference-reading.md) | File BL "Reference reading" (planned fork-local BACKLOG-011) or move to done | New finding |
 
 ### Tool / methodology assessments awaiting decision
 

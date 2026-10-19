@@ -1,7 +1,7 @@
 # Reference reading: checking claims against their source passage
 
 **Date:** 2026-10-15
-**Linked BL:** (none, candidate for promotion; planned as fork-local BACKLOG-011)
+**Linked BL:** BACKLOG-011 (fork-local, filed 2026-10-19)
 **Author:** Alberto
 **Status:** Active
 **Validation depth:** Single-pass internal
