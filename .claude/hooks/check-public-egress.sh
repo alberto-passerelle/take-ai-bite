@@ -51,9 +51,11 @@ load_patterns() {
     grep -v '^[[:space:]]*#' "$LIST" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | grep -v '^$' > "$PATTERNS"
   fi
   if [ ! -s "$PATTERNS" ]; then
+    HINT=""
+    [ "$MODE" = "--pre-push" ] && HINT="
+  Deliberate bypass: git push --no-verify (only on the user's explicit request)."
     block "Refused: the name list .claude/name-denylist.txt is missing or empty, so nothing can be checked.
-  Create it (one name per line, gitignored) and retry.
-  Deliberate bypass for a push: git push --no-verify (only on the user's explicit request)."
+  Create it (one name per line, gitignored) and retry.$HINT"
   fi
 }
 
