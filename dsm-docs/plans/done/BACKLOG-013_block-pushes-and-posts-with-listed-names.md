@@ -1,6 +1,7 @@
 # BACKLOG-013: Block Pushes and GitHub Posts That Contain Listed Names
 
-**Status:** Proposed
+**Status:** Implemented
+**Date Implemented:** 2026-10-19
 **Priority:** Medium
 **Extends:** DSM_0.2.C §5.7 (the prevention half, for a fork whose `main` is the public surface and has no mirror-sync gate); DSM_0.2.C §5.8 (the check reports generically); DSM_0.2 §21.5 ("Name-free, always")
 **Date Created:** 2026-10-19
@@ -48,15 +49,15 @@ places:
 
 ## Success Criteria
 
-- [ ] A push whose commits carry a listed name in an added line, a file name, a commit message or
+- [x] A push whose commits carry a listed name in an added line, a file name, a commit message or
       a tag message is refused, with a message that names no listed value.
-- [ ] A `gh` command that would post a listed name in its arguments or body file is blocked before
+- [x] A `gh` command that would post a listed name in its arguments or body file is blocked before
       it runs.
-- [ ] Clean pushes and clean `gh` commands pass; `gh` commands that send nothing (view, list,
+- [x] Clean pushes and clean `gh` commands pass; `gh` commands that send nothing (view, list,
       checks, GET `api`) are not checked.
-- [ ] With the list missing or empty, pushes and posting `gh` commands are refused with a message
+- [x] With the list missing or empty, pushes and posting `gh` commands are refused with a message
       that says how to fix it.
-- [ ] A listed word inside a longer word does not match.
+- [x] A listed word inside a longer word does not match.
 
 ## Test Plan
 
@@ -99,6 +100,9 @@ local bare remote. No GitHub call, no real name.
 - **Wiring is local.** `.git/hooks/pre-push` and `.claude/settings.json` are untracked, so a fresh
   clone runs without the check. *Mitigation:* the checker's header documents both install steps;
   `/dsm-align` keeps user-added hooks in `settings.json` (it never removes non-template entries).
+- **A body file written in the same command is blocked.** The hook runs before the command, so a
+  file the command itself creates does not exist yet and counts as unreadable. *Accepted:* write
+  the body file in one call and send it in the next.
 - **Platform.** Tested only on macOS (bash 3.2, BSD grep). The grep flags used (`-i -w -F -f`)
   exist in GNU grep, which is untested here. *Accepted:* this hub is the only clone.
 
@@ -110,8 +114,38 @@ prevention gate, with this checker as one example; and a feedback issue that the
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented._
+Executed in S18 (2026-10-19) on `bl-013/egress-name-check`: checker `deadf76`, message fix
+`aa59b8e`. T-2 to T-11 ran from `/tmp/s18-egress-scripts/run-tests.sh` against a scratch repo with
+a local bare remote and a made-up test word; final run after `aa59b8e`.
+
+- T-1: pass. `bash -n` exit 0; file mode `100755` in git.
+- T-2: pass. Push with no list: exit 1, "name list ... missing or empty".
+- T-3, T-4, T-5: pass. Each refused (exit 1); the report names the right place for each: "1 in
+  added lines", "1 in the message", "1 in file names".
+- T-6: pass. Word added in one commit and removed in the next, one push: refused on the adding
+  commit.
+- T-7: pass. Annotated tag: refused, "1 line(s) in the tag message".
+- T-8: pass. Clean commit pushed, exit 0. The hook also runs on `git push --dry-run` (refused with
+  a hit), which T-12 relies on.
+- T-9: pass, all 12 cases as specified: posting `gh` blocked with exit 2 on a title, a body file, a
+  heredoc body, `api -f`, `api -F field=@file`, an unreadable body file, and a missing list;
+  `gh pr view`, `gh pr list` with the list missing, a GET `gh api`, a non-`gh` command and a clean
+  body pass with exit 0.
+- T-10: pass. 52 lines of hook output, 0 contain the test word.
+- T-11: pass. The word inside a longer word passes, both on push and in a `gh` title.
+- T-12: pass, in this repo after installation. With the list missing: `git push --dry-run` of
+  `bl-013` refused (exit 1); a `gh api -X GET ... -f per_page=1` call blocked by the PreToolUse hook
+  in the running session, so no restart was needed. With the list in place: the same dry-run push
+  passes (exit 0) and the same `gh api` call runs (exit 0).
+- T-13: the tracked change adds one file (the checker) and removes or renames no string, so the
+  §21.4 sweep is empty. Cross-references resolve: the STAA handoff path exists; DSM_0.2.C §5.7 and
+  §5.8 exist at the cited headings.
+
+The first scratch run was invalid: its own T-5 step (`git add .`) tracked the checker and the next
+`git reset --hard` deleted it, so later cases failed with exit 127. A missing checker still
+refused the push. The script was fixed and the suite rerun; the results above are from the reruns.
 
 ### Pending verification
 
-- [ ] All Test Plan items (deferred: Proposed, not implemented)
+- None. The first real push through the hook is the S18 merge of this branch into `session-17` and
+  its push; its result is recorded in the S18 worklog.

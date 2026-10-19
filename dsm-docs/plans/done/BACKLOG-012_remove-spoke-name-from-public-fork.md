@@ -132,5 +132,6 @@ decoded at run time; all printed output was redacted.
 
 - [ ] T-2 on `origin/main`: once the S18 session PR (#16) merges at wrap-up, `git grep -l -i`
       over `origin/main` returns 0 files, with the T-1 self-test.
-- [ ] T-7: once the user creates `.claude/name-denylist.txt`, run `git grep -i -f` with it over the
-      tree and the T-1 self-test with it.
+- [x] T-7: done in S18 after the list was created (one entry): `git grep -l -i -w -F` with the
+      list over `HEAD` and over `origin/session-17` returns 0 files; the self-test with the same
+      list matches 1 line in `.git/info/exclude`.
