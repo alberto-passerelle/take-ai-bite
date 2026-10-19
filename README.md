@@ -96,6 +96,8 @@ They are not theoretical; they emerged from daily practice with AI agents across
 <details>
 <summary>Latest additions to the framework (click to expand)</summary>
 
+- **Getting started from your own fork** — A step-by-step guide, with a check at every step, takes a newcomer or the AI assistant helping them from installing git to a first finished session on their own fork of Take AI Bite
+- **Wrap-up on any git host** — The end-of-session merge works on GitHub, GitLab, any other host or with no remote, reports a failed push as failed, and in a fork never reaches the project it was forked from
 - **New-spoke bootstrap command** — A fresh directory becomes a spoke of an existing hub with one command, instead of misusing the cloned-mirror setup that would wrongly register it as its own hub
 - **Punctuation rule retired** — A standing instruction enforced on every pass is replaced by a skill run on demand against a finished document
 - **The before-acting log entry is called a plan** — Renamed from "thinking" across the instruction file, the per-turn reminder and every project config; old logs keep working and both names validate
