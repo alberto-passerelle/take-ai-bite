@@ -103,6 +103,11 @@ local bare remote. No GitHub call, no real name.
 - **A body file written in the same command is blocked.** The hook runs before the command, so a
   file the command itself creates does not exist yet and counts as unreadable. *Accepted:* write
   the body file in one call and send it in the next.
+- **Commands that only mention a posting `gh` call are checked too.** The tool-use check reads the
+  whole command text, so a command that quotes such a call (test data, an `echo`) is treated as
+  posting. With the list in place it passes unless a listed name or an unreadable file token
+  appears. *Known limitation (S18, after closing):* telling a real call from a quoted one needs a
+  shell parser, which is a different size of change.
 - **Platform.** Tested only on macOS (bash 3.2, BSD grep). The grep flags used (`-i -w -F -f`)
   exist in GNU grep, which is untested here. *Accepted:* this hub is the only clone.
 
@@ -144,6 +149,20 @@ a local bare remote and a made-up test word; final run after `aa59b8e`.
 The first scratch run was invalid: its own T-5 step (`git add .`) tracked the checker and the next
 `git reset --hard` deleted it, so later cases failed with exit 127. A missing checker still
 refused the push. The script was fixed and the suite rerun; the results above are from the reruns.
+
+**Found after closing (S18).** The first real `gh pr edit` through the hook was blocked as
+"body file 1 ... cannot be read". The file existed; the command had `; echo ...` glued to the path,
+and the token pattern stops only at whitespace, so the hook looked for a file named with a
+trailing `;`. It failed toward blocking: nothing was let through. Fixed in `f32abff` (shell
+operators `;`, `&`, `|`, `)` are stripped from the end of a file token before it is read), with
+four cases added to the suite:
+
+- T-9m (word in a body file, `;` attached): before the fix blocked as unreadable, after the fix
+  blocked as a hit ("Hits: body file 1").
+- T-9n (clean body file, `;` attached): exit 2 before the fix, exit 0 after.
+- T-9o (`&&` after the path) and T-9p (`|` after the path): exit 0 before and after.
+- Full suite after the fix: all 26 rows as specified; 55 lines of hook output, 0 contain the test
+  word.
 
 ### Pending verification
 

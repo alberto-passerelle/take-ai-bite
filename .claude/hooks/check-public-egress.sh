@@ -134,7 +134,8 @@ if [ "$n" -gt 0 ]; then TOTAL=$((TOTAL + n)); DETAIL="$DETAIL command text: $n l
 i=0
 for tok in $(printf '%s\n' "$CMD" | grep -oE '(--body-file|-F|--input)[[:space:]=]+[^[:space:]]+' \
              | sed -E 's/^(--body-file|-F|--input)[[:space:]=]+//'); do
-  tok=$(printf '%s' "$tok" | sed -e "s/^[\"']//" -e "s/[\"']\$//")
+  # Drop shell operators glued to the path (`--body-file x.md;`), then surrounding quotes.
+  tok=$(printf '%s' "$tok" | sed -e 's/[;&|)]*$//' -e "s/^[\"']//" -e "s/[\"']\$//")
   case "$tok" in
     *=@*) path="${tok#*=@}" ;;
     *=*)  continue ;;            # a literal field value, already in the command text
