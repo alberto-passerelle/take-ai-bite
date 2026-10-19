@@ -78,12 +78,14 @@ to it. Keep it current as items are submitted, absorbed, or reordered.
 - Keep remote branches only for currently-open PRs.
 - After a fork-sync that brings an absorbed change back into the methodology, reconcile each
   fork-local BL whose reference PR is now closed and whose section is now on `main`: delete the
-  held `bl-NNN/*` branch whose work it carried, set the BL status to
+  held `bl-NNN/*` branch whose work it carried (tag its head `archive/bl-NNN` first when no PR
+  ref preserves those commits), set the BL status to
   `Done (fork-local) — absorbed as Central BL-NNN (§X, vY.Z)`, record its `**Central BL:**`
-  mapping, mark its `plans/README.md` row Done, and move the name-free body to
-  `dsm-docs/plans/done/`. Do **not** add the fork BL to `dsm-docs/plans/done/INDEX.md` — that
-  index is Central's namespace, and the absorbed change already appears there under its Central
-  number via the sync. (Normative rule: DSM_0.2 §21.5 "Done and archival".)
+  mapping, move its row from `plans/README.md` to `dsm-docs/plans/done/fork-INDEX.md`, and move
+  the name-free body to `dsm-docs/plans/done/`. Do **not** add the fork BL to
+  `dsm-docs/plans/done/INDEX.md` — that index is Central's namespace, and the absorbed change
+  already appears there under its Central number via the sync. (Normative rule: DSM_0.2 §21.5
+  "Done and archive".)
 
 ## 7. Pre-Submit Checklist
 

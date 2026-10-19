@@ -11,7 +11,7 @@
 - **Upstream fork-sync 1.28.0 → 1.31.0** (merge `98ab954`, clean/additive, 14 files): v1.29.0 `/dsm-new-spoke` (BL-578); v1.30.0 §21.5 fork-local backlog (fork's ref PR #125, now canonical); v1.31.0 §5.9 DP/compliance briefing (fork's ref PR #128, now canonical). Upstream absorbed both fork contributions. Safety sequence verified pre-merge (de-identification, `git merge-tree` clean, `_inbox` guard blob survives). Commands redeployed; `last-align` marker → 1.31.0.
 - **Full branch cleanup:** deleted 4 merged session branches (local; remotes auto-deleted on PR merge → pruned) + force-deleted 5 redundant (`feature/fork-local-backlog`, `feature/dp-compliance-briefing`, `bl-001`, `bl-002`, `bl-580`). Kept held contribution branches `bl-004`, `bl-005-006`, `bl-007`.
 - **§22 caught at final-state check:** a pattern-scoped `git branch -r --list` recorded `feature/*` as "no remote"; fixed, lesson recorded (use unscoped enumeration for cleanup).
-- **S8 lifecycle-bypass reconciled:** "Session 8" (PR #11, `_inbox`/AISA gitignore hardening) ran outside `/dsm-go`+`/dsm-wrap-up`; its stale markers/MEMORY (stuck at 7) were reconciled here.
+- **S8 lifecycle-bypass reconciled:** "Session 8" (PR #11, `_inbox` gitignore hardening) ran outside `/dsm-go`+`/dsm-wrap-up`; its stale markers/MEMORY (stuck at 7) were reconciled here.
 
 ## Pending next session
 
@@ -19,7 +19,7 @@
 2. **Upstream PR batch per tracking issue #130**, now that §21.5/§5.9 have landed. `bl-004` (§26 active-session detection) and `bl-007` (§20.9 clean-index) are independent of item 1 and can be contributed first; `bl-005-006` (§21.6) waits on the item-1 rebase. Order forced by the dependency, not preference.
 3. **Fork-local BL-003 / BL-008 / BL-009** (Proposed): boot-plan displacement, fork→Central contribution mechanics, unquoted-heredoc backtick hazard. Independent, no blocker; pick up when methodology-contribution bandwidth exists.
 4. **BL-001 v1b session-start wiring** (deferred since S6): the §5.9 briefing's session-start surfacing. Upstream's own CHANGELOG names this surfacing as a deferred follow-up too, so the fork and Central agree it is unfinished — worth coordinating rather than duplicating.
-5. **Inbox: `_inbox/AISA-work.md`** pending since 2026-10-08. Not blocking; a read-on-request inbox pass.
+5. **Inbox: a downstream spoke's file** pending since 2026-10-08. Not blocking; a read-on-request inbox pass.
 
 ## Open branches
 

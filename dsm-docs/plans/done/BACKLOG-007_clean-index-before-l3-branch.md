@@ -1,6 +1,8 @@
 # BACKLOG-007: Clean Index Before Creating a Level 3 Task Branch
 
-**Status:** Implemented (fork-local, S7); methodology on `bl-007/clean-index-before-l3-branch` (commit `8167a0b`); upstream PR #138 (S10, open)
+**Status:** Done (fork-local) — absorbed upstream (PR #138 closed unmerged 2026-10-15); held fork-local branch archived as tag `archive/bl-007`
+**Central BL:** BACKLOG-587 (clean staged index before a Level 3 branch, DSM_0.2 §20.9, v1.35.0)
+**Date Completed:** 2026-10-16
 **Priority:** Medium
 **Date Created:** 2026-10-09
 **Origin:** S7 §22 incident (2026-10-09). The `/dsm-go` boot (Steps 3/3.5) staged the consumed handoff + checkpoint moves on the session branch. A BL implementation then created a Level 3 `bl-004` branch off that session branch **while the index still held those staged moves**, and the first `git commit` on the task branch — which commits the whole index, not only freshly `git add`ed paths — absorbed the two unrelated session-artifact renames into the methodology commit. The methodology branch (destined for an upstream PR) was polluted with session artifacts, and the session branch lost the consumption.

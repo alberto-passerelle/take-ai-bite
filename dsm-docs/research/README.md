@@ -33,6 +33,7 @@ informs an active BL but is not its primary deliverable.
 | 2026-04-21 | [Claude usage metrics API](2026-04-21_claude-usage-metrics-api.md) | BL-412 | Open |
 | 2026-04-24 | [Böckeler "Harness Engineering" vs TAB/DSM](2026-04-24_boeckeler-harness-engineering-vs-tab-dsm.md) | BL-423 | Feeds Thread 1 of BL-423 |
 | 2026-02-27 | [Literate CQRS Knowledge Architecture (folder, 6 files)](Literate-CQRS-Knowledge/) | Literate-CQRS-knowledge-architecture-plan.md | Active research stream |
+| 2026-10-15 | [Reference reading: checking claims against their source passage](2026-10-15_reference-reading.md) | BACKLOG-011 (fork-local) | Active; signed off S17, BL Proposed |
 
 ### Informs an active BL but is not its primary deliverable
 

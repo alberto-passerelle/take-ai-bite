@@ -53,7 +53,7 @@ issue **#130**; the full reasoning is in the preserved session transcript.
 6. At a **full** wrap-up: merge `session-7` to main, update #130, reconcile MEMORY.
 
 **Deferred to next full session:**
-- [ ] Inbox check (note: `AISA-work.md` pending in `_inbox/`)
+- [ ] Inbox check (note: a downstream spoke's inbox file pending in `_inbox/`)
 - [ ] Version check / `/dsm-align`
 - [ ] Reasoning lessons extraction
 - [ ] Feedback push

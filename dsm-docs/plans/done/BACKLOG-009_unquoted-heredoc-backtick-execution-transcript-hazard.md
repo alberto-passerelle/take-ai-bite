@@ -1,6 +1,8 @@
 # BACKLOG-009: Unquoted-Heredoc Backtick/Command-Substitution Hazard in Transcript Appends
 
-**Status:** Implemented (fork-local, S10); methodology on `bl-009/unquoted-heredoc-execution-hazard` (commit `965e4fa`); upstream issue #141 filed (2026-10-13); PR pending (window 3/3)
+**Status:** Done (fork-local) — absorbed upstream (issue #141 closed 2026-10-15); held fork-local branch archived as tag `archive/bl-009`
+**Central BL:** BACKLOG-554 + BACKLOG-500 (Bash worklog appends cover both heredoc failure directions, DSM_0.2.G "Appending with Bash", v1.35.0)
+**Date Completed:** 2026-10-16
 **Priority:** Medium
 **Date Created:** 2026-10-09
 **Origin:** S7 §22 incident (2026-10-09). A work-log Output block was appended with an unquoted heredoc (`cat >> ... << EOF`). The block's prose contained a backtick-quoted example command, and an unquoted heredoc performs command substitution on backtick (and `$(...)`) spans in its body — so the shell executed the example, creating a stray branch and writing empty where the command text should have been. Every command exited 0; the corruption surfaced only because the branch-switch message printed.

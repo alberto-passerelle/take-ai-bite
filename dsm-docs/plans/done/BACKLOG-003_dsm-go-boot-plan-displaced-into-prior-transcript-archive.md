@@ -1,6 +1,8 @@
 # BACKLOG-003: /dsm-go boot plan displaced into prior session's transcript archive
 
-**Status:** Implemented (fork-local, S11); methodology on `bl-003/boot-plan-transcript-displacement`; upstream issue #142 filed (2026-10-13); PR pending (window 3/3)
+**Status:** Done (fork-local) — absorbed upstream (issue #142 closed 2026-10-15); held fork-local branch archived as tag `archive/bl-003`
+**Central BL:** BACKLOG-590 (/dsm-go writes its first worklog entry after the reset, DSM_0.2.G "Boot-turn ordering", v1.35.0)
+**Date Completed:** 2026-10-16
 **Priority:** Low
 **Date Created:** 2026-10-09
 **Origin:** Surfaced by a concurrent STAA session (S5-STAA analysis, 2026-10-09, Finding 3) while analyzing `.claude/transcripts/2026-10-07T10:31-ST.md`. Originally filed by that session as provisional Central-style `BACKLOG-580`; renumbered into the fork-local line (BL-003) per DSM_0.2 §21.5.
