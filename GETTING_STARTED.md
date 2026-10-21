@@ -109,7 +109,10 @@ the commands in a terminal (on Windows: Git Bash or WSL).
    was done, commits it, pushes the session to your fork and merges it into your fork's `main`.
    Check: `gh pr list --repo YOUR-USERNAME/take-ai-bite --state merged` shows the session, and nothing
    new appears on the original TAB repository. Then open your project folder in VS Code and type
-   `/dsm-go`. From now on you work inside your project, and you end each session with `/dsm-wrap-up`.
+   `/dsm-go`. The first `/dsm-go` in a new project asks you to approve three short sections of its
+   instructions file (its role, its type and what it is about). The agent drafts them from your plan,
+   and no code is written until they exist; type `defer` to put this off for one session. From now on
+   you work inside your project, and you end each session with `/dsm-wrap-up`.
 
 **GitLab and other hosts.** A GitHub fork stays on GitHub, so on another service you make the copy by
 importing it. On GitLab: **Create new** (+) → **New project/repository** → **Import project** →

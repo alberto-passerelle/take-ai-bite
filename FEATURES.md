@@ -6,12 +6,14 @@ Methodology (DSM), the human-AI collaboration framework behind
 feature is numbered for easy reference (F-000 is the first, newest entries
 appear at the top).
 
-**Current count:** 201 features.
+**Current count:** 203 features.
 
 ---
 
 ## October 2026
 
+- **F-202 (2026-10-21) Lessons reach the hub only after a person approves them, and a hub's lesson files never become public (BACKLOG-606, DSM_0.2.A §8.3)** — Wrap-up keeps reasoning lessons in the project. `/dsm-staa` shows each shareable lesson with a privacy scan and sends only what you approve, and take-ai-bite's `.gitignore` keeps a hub's lesson files out of a public fork.
+- **F-201 (2026-10-21) The CLAUDE.md section check prints one line and holds back only new projects (BACKLOG-608, DSM_0.2.A §23)** — Every session start reports in one line whether the project's instructions file has its four sections. Only a project that has never wrapped up is held back until they exist, and `defer` lets it continue for one session.
 - **F-200 (2026-10-19) Session wrap-up merges on any git host and never reaches the upstream repository from a fork (BACKLOG-600, DSM_0.2.A §27)** — The end-of-session merge now works on GitHub (pull request), GitLab (merge request), any other host (local merge, then push) and with no remote, and a failed push is reported as failed. Every GitHub call names the project's own repository, so in a fork neither the wrap-up pull request nor the session-start checks can land on the project it was forked from.
 - **F-199 (2026-10-19) A getting-started guide that starts from your own fork (BACKLOG-599, `GETTING_STARTED.md`)** — A newcomer, or the AI assistant helping them, follows one path with a check at every step: install and set up git, fork and clone take-ai-bite, run the first session and the first wrap-up on the fork. It covers GitLab and other hosts, one fork per team member, a download-only quick try with its limits, how to bring later updates into the fork, and where an AI assistant sends project content.
 - **F-198 (2026-10-15) Forks get a full lifecycle for their own backlog items (BACKLOG-588, BACKLOG-589, BACKLOG-591, DSM_0.2 §21.5)** — A fork's own backlog items are now visible from every session, follow a short workflow from creation to close, and are archived in a file the upstream sync never overwrites. A fork can add to the methodology but does not contradict it: when the two disagree at a sync, the upstream text wins and the fork's change is re-applied on top.

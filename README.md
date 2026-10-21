@@ -96,6 +96,8 @@ They are not theoretical; they emerged from daily practice with AI agents across
 <details>
 <summary>Latest additions to the framework (click to expand)</summary>
 
+- **Lessons shared only after review** — Wrap-up keeps reasoning lessons in the project; they reach the hub only through a review step that shows each lesson with a privacy scan, and a hub's lesson files stay out of public forks
+- **One-line instructions-file check** — Session start reports in one line whether the project's instructions file has its four sections, and holds back only a project that has never wrapped up
 - **Getting started from your own fork** — A step-by-step guide, with a check at every step, takes a newcomer or the AI assistant helping them from installing git to a first finished session on their own fork of Take AI Bite
 - **Wrap-up on any git host** — The end-of-session merge works on GitHub, GitLab, any other host or with no remote, reports a failed push as failed, and in a fork never reaches the project it was forked from
 - **New-spoke bootstrap command** — A fresh directory becomes a spoke of an existing hub with one command, instead of misusing the cloned-mirror setup that would wrongly register it as its own hub
@@ -120,7 +122,7 @@ They are not theoretical; they emerged from daily practice with AI agents across
 
 </details>
 
-See the full timeline of 201 features → [FEATURES.md](FEATURES.md)
+See the full timeline of 203 features → [FEATURES.md](FEATURES.md)
 
 ## What's Coming
 

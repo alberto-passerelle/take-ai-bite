@@ -1176,21 +1176,20 @@ propagates beyond the originating project.
 |-------|---------|----------------|
 | `ecosystem` | Applies to any DSM project | Redistributed to all spokes via DSM Central |
 | `pattern` | Applies to projects with same participation pattern or type | Redistributed selectively |
-| `project` | Specific to this project's domain | Stays local; reported for pattern detection |
+| `project` | Specific to this project's domain | Stays local; never sent to the hub |
 
 **Entry format with scope:** `- [{tag}] S{N} [{scope}]: {lesson text}`
 
 Example: `- [auto] S12 [ecosystem]: When placing DSM infrastructure, confirm project root before creating files.`
 
 **Management rules:**
-- Only `ecosystem` and `pattern` scope lessons get redistributed
-- `project` scope lessons are reported in the push notification but not
-  redistributed to other spokes
-- A `project` lesson recurring independently in 3+ spokes escalates to
-  `ecosystem` scope
+- Only `ecosystem` and `pattern` lessons are offered by the STAA share step
+  (§8.3) and get redistributed
+- `project` lessons stay in the originating project; no skill sends them to
+  the hub
 - Deduplication: if a lesson already exists in DSM Central's aggregation file
-  or in a DSM_0.2 protocol, acknowledge in the push notification but do not
-  re-add
+  or in a DSM_0.2 protocol, the hub acknowledges it when processing the
+  notification but does not re-add it
 - **Local-file retention at DSM Central (BACKLOG-495 flow control):** at DSM
   Central, an `ecosystem`-scope lesson extracted by `/dsm-wrap-up` Step 0 is written
   to the aggregation file `dsm-docs/reasoning-lessons-ecosystem.md` and withheld from
@@ -1212,16 +1211,32 @@ Example: `- [auto] S12 [ecosystem]: When placing DSM infrastructure, confirm pro
 
 ### 8.3. Cross-Project Propagation
 
-Reasoning lessons generated in spoke projects must propagate to DSM Central.
-Without propagation, valuable patterns stay siloed in individual projects.
+Reasoning lessons reach DSM Central only through a reviewed share step in
+`/dsm-staa`. No skill sends a lesson to another project on its own: a lesson
+crosses the project boundary only after the user has read its text and approved
+it in the same session (BACKLOG-606).
 
-**Mandatory push rule:** At session wrap-up, after extracting reasoning lessons,
-the agent checks whether any new lessons were added during this session. If new
-lessons exist, push a notification to DSM Central's inbox listing the new
-entries with their scope classification.
+**Reviewed sharing rule:** wrap-up extracts and classifies lessons into the
+local `.claude/reasoning-lessons.md` and sends nothing. The `/dsm-staa` share
+step is the only path to the hub:
 
-**Push mechanism:** Uses the Session-End Inbox Push protocol. The notification
-goes to `{dsm-central-path}/_inbox/{this-project-name}.md`.
+- **Candidates:** `ecosystem` and `pattern` lessons not yet decided, per the
+  local record `.claude/lessons-shared.txt` (one line per decided lesson:
+  decision, date, a hash of the lesson line; no lesson text). `project`
+  lessons are never offered. At a hub, only `[STAA]` lessons are offered,
+  because wrap-up already adds the `[auto]` ones.
+- **Review:** each candidate is shown in full with its scope, its destination
+  and the scan result, reported generically (DSM_0.2.C §5.8). The user
+  approves, edits, drops or skips each one; a bare "all" is not accepted.
+  Dropped lessons are recorded so they are not offered again; skipped ones are
+  offered at the next run.
+- **Send:** only approved or edited text is written. At a spoke, one
+  notification to `{dsm-central-path}/_inbox/{this-project-name}.md` in the
+  format below; at a hub, an append to the aggregation file with attribution.
+  Dropping everything writes nothing.
+- **Cross-repo confirmation:** the step adds the target to
+  `.claude/cross-repo-writes-session.txt` only after approval, writes, then
+  removes the line it added (DSM_0.2.C §2).
 
 **Inbox entry format:**
 
@@ -1231,8 +1246,9 @@ goes to `{dsm-central-path}/_inbox/{this-project-name}.md`.
 **Type:** Notification
 **Priority:** Medium
 **Source:** {project name}
+**Reviewed:** approved in /dsm-staa (Session N); {A} approved, {E} edited, {D} dropped
 
-New reasoning lessons added via {[auto]/[STAA]} (Session N):
+Lessons shared via the reviewed STAA share step:
 
 | # | Category | Scope | Lesson |
 |---|----------|-------|--------|
@@ -1241,31 +1257,43 @@ New reasoning lessons added via {[auto]/[STAA]} (Session N):
 Source file: {project}/.claude/reasoning-lessons.md
 ```
 
+**Lesson files are never public.** A hub's lesson files (the aggregation file,
+`_inbox/`, the local lessons files and the compact mirror) never enter a public
+repository. DSM Central is private, and its mirror manifest publishes none of
+them. Every other hub, including a fork of the public mirror, keeps them in
+`.gitignore`. Before writing the aggregation file or a lesson notification at
+such a hub, the writing skill runs `git check-ignore -q` on the target; if the
+target is not ignored, it stops and names the `.gitignore` line to add instead
+of writing.
+
 **Central aggregation file:** `dsm-docs/reasoning-lessons-ecosystem.md` collects
-`ecosystem` and `pattern` scope lessons from all spokes, with attribution to
-the originating project and session. The agent processes incoming lesson
-notifications during DSM Central session-start inbox processing: ecosystem
-lessons are added to the aggregation file; pattern lessons are added with a
-scope note; project lessons are acknowledged but not added.
+the `ecosystem` and `pattern` lessons shared through the STAA step, plus the
+hub's own, with attribution to the originating project and session.
 
 **Wrap-up variants:**
-- `/dsm-wrap-up`: extract + classify + push (full cycle)
-- `/dsm-quick-wrap-up`: extract + classify, defer push (no cross-repo writes)
-- `/dsm-light-wrap-up`: defer everything (extraction, classification, push)
+- `/dsm-wrap-up`: extract + classify, local only; at a hub it also adds
+  `[auto]` `ecosystem`/`pattern` lessons to the aggregation file
+- `/dsm-quick-wrap-up`: extract + classify, local only
+- `/dsm-light-wrap-up`: defers extraction and classification
+- `/dsm-staa`: the reviewed share step, the only path to the hub
 
 **DSM Central sessions:** When processing a lesson notification in the inbox,
 the agent:
-1. Reads the notification and checks each lesson against the aggregation file
-   for duplicates
-2. Adds non-duplicate `ecosystem` and `pattern` lessons to
-   `dsm-docs/reasoning-lessons-ecosystem.md` with attribution
-3. Moves the inbox entry to `_inbox/done/`
+1. Checks for the `**Reviewed:**` line. A notification without it came from a
+   spoke still running an older wrap-up: ask the user before adding any of its
+   lessons
+2. Checks each lesson against the aggregation file for duplicates
+3. Adds non-duplicate `ecosystem` and `pattern` lessons to
+   `dsm-docs/reasoning-lessons-ecosystem.md` with attribution (pattern lessons
+   with a scope note)
+4. Moves the inbox entry to `_inbox/done/`
 
 **Aggregation file review-cost bound and prune (BACKLOG-567).** The aggregation file
 `dsm-docs/reasoning-lessons-ecosystem.md` is **not** boot-read (it is not read at
 `/dsm-go` Step 1.5, which reads only the local compact mirror) and is **not** in the
-public mirror manifest (`scripts/take-ai-bite-sync.txt`), so it carries neither a
-boot-priming token cost nor a confidentiality surface. Its governing cost is a full-file
+public mirror manifest (`scripts/take-ai-bite-sync.txt`), so it carries no
+boot-priming token cost and, at Central, no confidentiality surface; at any other hub
+the "Lesson files are never public" rule above keeps it out of git. Its governing cost is a full-file
 **review** read (inbox processing, redistribution, escalation review), so its bound is a
 review-cost bound, derived differently from §8.1's boot-priming byte bound. Do not
 transplant §8.1's 61,440 B number, which is sized to a cost this file does not incur.
@@ -2458,9 +2486,11 @@ or files the agent has already read in the current session.
 > **Origin:** Ensures every project CLAUDE.md is complete before
 > implementation begins.
 
-Every project CLAUDE.md must contain four sections before implementation work
-starts. This is a hard gate: the agent does not proceed to implementation
-until all sections are present and approved.
+Every project CLAUDE.md must contain four sections. For a project with no
+session history yet (§23.2), this is a hard gate: the agent does not proceed to
+implementation until all sections are present and approved. A project that
+already has session history is not blocked; a missing section is reported in
+one line at session start (§23.3).
 
 ### 23.1. Required CLAUDE.md Sections
 
@@ -2475,18 +2505,25 @@ Sections 2-4 each require explicit user approval before being written.
 
 ### 23.2. Completeness Check Behavior
 
-**At `/dsm-go` (step 2a.8):** After content validation (step 2a.7), check
-whether all 4 sections are present in CLAUDE.md.
+**At `/dsm-go` (Step 2a.8):** a snippet checks the four numbered headings and
+prints one line at every session start. The snippet in `/dsm-go` is
+authoritative; this section describes it (BL-608).
 
-- **All 4 present:** Pass silently. No action needed.
-- **Section 1 missing:** This indicates `/dsm-align` was not run. Suggest
-  running it before continuing.
-- **Sections 2-4 missing (new or incomplete project):** Report which sections
-  are missing and suggest completing them: "CLAUDE.md is missing sections:
-  [list]. Complete these before starting implementation. Next: [suggest next
-  section to add based on project state]."
+- **All 4 present:** `OK`. No action needed.
+- **Section 1 missing:** `/dsm-align` has not run. The line says so; run it
+  before continuing.
+- **Sections 2-4 missing, project with session history:** `REPORT`. The line
+  lists the missing sections and never blocks; offer the §23.4 workflow.
+- **Sections 2-4 missing, project with no session history:** `BLOCK`. The
+  hard gate of §23.3 applies until the sections exist or the user types
+  `defer` for the session.
 
-**Detection heuristic:** The agent checks for numbered section headings in
+**Session history** is any of: `.claude/last-wrap-up.txt`, a checkpoint under
+`dsm-docs/checkpoints/` (including `done/`), or an archived worklog under
+`.claude/transcripts/`. The marker alone is not enough: it is gitignored, so a
+clone of an established project has the tracked checkpoints but not the marker.
+
+**Detection:** The snippet checks for numbered section headings in
 CLAUDE.md. Each section must use an explicit `## N.` heading:
 
 - Section 1: `## 1. DSM_0.2 Alignment` (inside alignment delimiters, managed by `/dsm-align`)
@@ -2503,16 +2540,19 @@ readable for both agents and humans.
 ### 23.3. Hard Gate Enforcement
 
 The completeness gate is enforced at the boundary between setup and
-implementation. The agent must not begin implementation work (writing code,
-creating deliverables, running experiments) while sections are missing.
+implementation, for a project with no session history (§23.2). The agent must
+not begin implementation work (as defined below) in such a project while
+sections are missing, unless the user types `defer` for the session. The
+`/dsm-go` line for this case is `BLOCK`, and it is non-suppressible (DSM_0.2
+§8.9.1).
 
 **What counts as implementation:** Creating code files, writing notebooks,
 building application features, running experiments. Research, planning, and
 CLAUDE.md completion are not implementation.
 
-**Existing projects:** Projects with a complete CLAUDE.md (all 4 sections
-present) pass the gate silently at every session start. The gate only
-activates when sections are missing.
+**Existing projects:** A project with session history is never blocked by this
+gate. A complete CLAUDE.md prints `OK` at every session start; missing sections
+print a `REPORT` line, and the agent offers the §23.4 workflow.
 
 **Empty projects or new folders:** Only accept `/dsm-go` as the first command.
 Running other DSM commands on an unscaffolded project could interfere with

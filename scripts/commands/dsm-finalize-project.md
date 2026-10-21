@@ -66,8 +66,7 @@ Then:
 
 2. **Reasoning lesson routing:** Read `.claude/reasoning-lessons.md` and classify each entry:
    - **Project-specific** (`project` scope): Leave in place or move to archive
-   - **DSM-methodology-relevant** (`ecosystem`/`pattern` scope): Push to DSM Central's inbox as a structured feedback entry, referencing the spoke's reasoning-lessons file as source
-   Format the inbox entry per DSM_0.2 Module A (Reasoning Lessons Protocol).
+   - **DSM-methodology-relevant** (`ecosystem`/`pattern` scope): send nothing from here (BACKLOG-606). Run `/dsm-staa` Step 8b's candidate snippet and report "Lessons not yet shared: N. Share them with `/dsm-staa` in a separate conversation; it reviews each lesson before anything reaches the hub."
 
 3. **Final feedback push:** Scan `dsm-docs/feedback-to-dsm/` for any files NOT in `done/`. For each unpushed file, push to DSM Central's inbox and move the source to `done/`. This catches anything the session-end pushes missed.
 
