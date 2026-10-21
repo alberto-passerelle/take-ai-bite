@@ -650,7 +650,44 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
      [ -n "$PR_NUMBER" ] && gh pr checks "$PR_NUMBER" --repo "${GH_REPO:?run the §27 host snippet first}" 2>/dev/null
      ```
      Behavior: if any check has `conclusion=failure`, surface in the boot report: "PR #{N} has K failing CI check(s): [names]." If all checks pass, include "PR #{N} CI: green". Only FAILED checks are enumerated; `pending` checks are silent (a mid-workflow resume is not a failure); green checks collapse into the summary line. One `gh` call at boot (rate-limit guard). **Skip silently if:** `GIT_HOST` is not `github`, or no open PR for the current branch (the common case). On any `gh` error (auth, rate limit, network), skip silently; never block the boot. Origin: S14, where PR #865's `lint-all` was red for 20 days (a `cargo fmt --check` failure) while `/dsm-go` reported "awaiting re-review" from MEMORY; the user had to ask "check PR #865" to surface it.
-   - **2a.8. CLAUDE.md section completeness (Module A §23):** Check whether CLAUDE.md contains all 4 required sections (DSM_0.2 Alignment, participation pattern, project type, project specific). If all present, pass silently. If sections are missing, report which ones and suggest completing them before implementation. This is a hard gate: no implementation work until all 4 sections exist. Existing complete projects pass silently.
+   - **2a.8. CLAUDE.md section completeness (Module A §23, BL-608):** Run the snippet and report its single line in the boot report. Section 1 counts anywhere; sections 2-4 count only outside the alignment delimiters (Module A §23.2). The snippet is authoritative for this step.
+
+     ```bash
+     F=.claude/CLAUDE.md
+     if [ ! -f "$F" ]; then
+       echo "UNRESOLVED: $F not found - sections NOT checked"
+     else
+       MISSING=""
+       grep -qE '^## 1\.' "$F" || MISSING="1"
+       OUTSIDE=$(awk '/<!-- BEGIN DSM_0.2 ALIGNMENT/{a=1} !a{print} /<!-- END DSM_0.2 ALIGNMENT/{a=0}' "$F")
+       for n in 2 3 4; do
+         printf '%s\n' "$OUTSIDE" | grep -qE "^## $n\." || MISSING="${MISSING:+$MISSING }$n"
+       done
+       if [ -z "$MISSING" ]; then
+         echo "OK: CLAUDE.md sections 1-4 present"
+       else
+         HINT=""
+         case " $MISSING " in *" 1 "*) HINT="; section 1 is written by /dsm-align" ;; esac
+         HIST=""
+         [ -f .claude/last-wrap-up.txt ] && HIST=marker
+         [ -z "$HIST" ] && find dsm-docs/checkpoints .claude/transcripts -maxdepth 2 -name '*.md' ! -name 'README.md' 2>/dev/null | grep -q . && HIST=files
+         if [ -n "$HIST" ]; then
+           echo "REPORT: CLAUDE.md missing section(s) $MISSING (project has session history: report only, DSM_0.2.A §23.4)$HINT"
+         else
+           echo "BLOCK: CLAUDE.md missing section(s) $MISSING (no session history yet: complete them before implementation work, or type defer; DSM_0.2.A §23.3)$HINT"
+         fi
+       fi
+     fi
+     ```
+
+     | Line | Action |
+     |---|---|
+     | `OK` | None. |
+     | `REPORT` | Report the line; it never blocks. The project has session history, so a missing section is a completeness gap, not an onboarding gate. Offer the Module A §23.4 workflow. |
+     | `BLOCK` | **Non-suppressible (per DSM_0.2 §8.9.1):** report the line and wait for the user. No implementation work (code, notebooks, application features, experiments; Module A §23.3) until the missing sections exist, or until the user types `defer` for this session. Research, planning and writing the sections are not blocked; offer the §23.4 workflow. |
+     | `UNRESOLVED` | Report the line; the check did not run. |
+
+     **Session history** is any of: `.claude/last-wrap-up.txt`, a checkpoint under `dsm-docs/checkpoints/` (including `done/`), or an archived worklog under `.claude/transcripts/`. The marker alone is not enough: it is gitignored, so a clone of an established project (a test clone, a new machine) has the tracked checkpoints but not the marker. **What a wrong result looks like (DSM_0.2 §19.1):** `OK` needs a positive match for all four headings, so a broken pattern prints a missing-section line, never `OK`.
    - **2b. Inbox check (behavior depends on project type from 2a):** If this is an External Contribution, do NOT create `_inbox/` in the external repo (see DSM_0.2 External Contribution exception). **Inbox location and resolution by project type:**
 
      **DSM hub (DSM Central) / DSM spoke:**

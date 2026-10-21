@@ -773,7 +773,7 @@ matching hardened by BL-564) and backstopped by the discovery sweep (BL-563).
 
 Projects that handle sensitive data treat the worklog, `MEMORY.md`, and the
 reasoning-lessons files as an **egress zone**: local content that can later cross an
-air-gap to the hub (`/dsm-wrap-up` pushes new lessons to Central's inbox, and `/dsm-go`
+air-gap to the hub (`/dsm-staa` Step 8b shares the lessons the user approves, and `/dsm-go`
 Step 1.5 reads the compact mirror at every boot) and must stay free of personal data.
 The standard control is a **leak-scan**: grep the egress zone for person-name tokens
 before close-out.
@@ -897,6 +897,8 @@ This section builds on, and does not restate, the §5 rules it depends on: §5.1
 Restricted class that is the trigger basis; §5.7 and §5.8 govern the briefing's name-free
 egress and its leak-scan; §8.9.2 is the over-firing guard the declarative-primary trigger
 honors; §21.3 governed the test evidence for the surfacing wiring, built by BL-583.
+The only routine path by which lesson text leaves such a project for its hub is the reviewed
+`/dsm-staa` Step 8b (DSM_0.2.A §8.3).
 
 **Origin:** take-ai-bite issue #127 with reference PR #128, an external fork contribution
 (credited). The direction was proposed externally and absorbed per BL-582; Central authored

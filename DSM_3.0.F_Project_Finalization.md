@@ -80,7 +80,7 @@ gaps that appeared repeatedly, and techniques that evolved over the project.
 
 Extracted reasoning lessons are classified and routed:
 - **Project-specific** lessons stay in the spoke's `.claude/reasoning-lessons.md`
-- **DSM-methodology-relevant** lessons are pushed to DSM Central's inbox
+- **DSM-methodology-relevant** lessons are shared with DSM Central only through the reviewed `/dsm-staa` share step (DSM_0.2.A §8.3); finalization reports how many are waiting
 - **Reusable patterns** are flagged for the Context Library when available
 
 A context budget gate applies: projects with many transcripts offer sampling
@@ -294,8 +294,8 @@ project closure is:
 The Reasoning Lessons Protocol (DSM_0.2 Module A) defines per-session
 extraction and reading of reasoning lessons. Finalization extends this to
 project-level scope: the project-level STAA in Section A looks for
-cross-session patterns that per-session extraction misses, and routes
-DSM-relevant lessons to Central's inbox.
+cross-session patterns that per-session extraction misses, and reports the
+DSM-relevant lessons still waiting for the reviewed `/dsm-staa` share step.
 
 ### 5.4. Relationship to STAA
 
