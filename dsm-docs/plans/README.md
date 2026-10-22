@@ -22,4 +22,3 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-015 | Append a Revised Plan Before Acting Against the Current Plan | Low | Proposed (upstream proposal) |
 | BACKLOG-016 | Worklog Rules for Harnesses Where the Hooks Do Not Run | Low | Proposed (upstream proposal) |
 | BACKLOG-017 | Check Each Draft Bite Against Its Section Budget at Gate 3 | Medium | Proposed (upstream proposal) |
-| BACKLOG-021 | Send Central a Fix So the Mirror-Sync Manifest Stops Listing the Scanner as Mirrored | Low | In Progress (Central PR open) |

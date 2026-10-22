@@ -1,6 +1,8 @@
 # BACKLOG-021: Send Central a Fix So the Mirror-Sync Manifest Stops Listing the Scanner as Mirrored
 
-**Status:** In Progress (Central PR open, awaiting the owner)
+**Status:** Implemented (absorbed upstream, shipped in v1.37.1)
+**Date Implemented:** 2026-10-22
+**Central BL:** BACKLOG-611 (v1.37.1)
 **Priority:** Low
 **Extends:** Central's `dsm-docs/guides/mirror-sync-manifest.md` (category 7, section 3 "Out-of-Scope Items", section 5 cross-references)
 **Date Created:** 2026-10-22
@@ -78,4 +80,4 @@ Sweep (§21.4): the other mentions in Central's mirrored files (DSM_0.2 core, DS
 ### Pending verification
 
 - [x] PR body approved by the user, branch pushed, PR opened on Central (no push to `main`): opened 2026-10-22, head = local HEAD, base `main` unchanged, open and mergeable, live body = approved file.
-- [ ] Owner's merge and the release that ships it; then Status Implemented and move to `done/`.
+- [x] Owner's merge and the release that ships it: merged by the owner, shipped as Central BACKLOG-611 in v1.37.1 and merged into this fork in S20 (2026-10-22); the fork's manifest now lists only `scripts/sync-commands.sh` in category 7 and names the scanner as Central-only in section 3.
