@@ -33,7 +33,7 @@ When the `UserPromptSubmit` per-turn reminder hook fires and tells you to append
        *) if kill -0 "$LOCK_PID" 2>/dev/null && ps -p "$LOCK_PID" -o comm= 2>/dev/null | grep -q claude
           then echo "VERDICT=LIVE"; else echo "VERDICT=STALE"; fi ;;
      esac
-     echo "TRANSCRIPT_AGE_MIN=$(( ( $(date +%s) - $(stat -c %Y "$ROOT/.claude/worklog.md" 2>/dev/null || date +%s) ) / 60 ))"
+     echo "TRANSCRIPT_AGE_MIN=$(( ( $(date +%s) - $(stat -c %Y "$ROOT/.claude/worklog.md" 2>/dev/null || stat -f %m "$ROOT/.claude/worklog.md" 2>/dev/null || date +%s) ) / 60 ))"
    else
      echo "LOCK_ABSENT"
    fi

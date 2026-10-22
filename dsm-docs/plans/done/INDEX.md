@@ -491,6 +491,9 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-590 | Stop the /dsm-go boot-turn plan from landing in the previous session's archive | v1.35.0 | 2026-10-15 | DSM_0.2.G Boot-turn ordering + transcript-reminder.sh silent on /dsm-go |
 | BACKLOG-591 | Define when a fork-local BL is done and where it is archived | v1.35.0 | 2026-10-15 | DSM_0.2 §21.5 (done-and-archive rule, done/fork-INDEX.md); take-ai-bite #144 |
 | BACKLOG-592 | Make the Worklog Protocol readable on strict models (trim §7 by priority; remove Module G's two flagged blocks) | v1.34.0 | 2026-10-15 | DSM_0.2 §7 (trimmed) + DSM_0.2.G (Worklog Protocol Detail) |
+| BACKLOG-609 | Make the boot and wrap-up snippets work on macOS and zsh (BSD stat, full-path process name, zsh's path variable) | v1.37.1 | 2026-10-22 | macOS/zsh portability of `/dsm-go` Steps 0.7a + 6, `/dsm-staa` Step 0, `/dsm-parallel-session-go`, `/dsm-wrap-up` Step 0.5, DSM_0.2.A §26, transcript-reminder.sh |
+| BACKLOG-610 | Make /dsm-align's done-index check use a fork's own done/fork-INDEX.md instead of Central's INDEX.md | v1.37.1 | 2026-10-22 | `/dsm-align` Step 11b (done/fork-INDEX.md switch; row IDs as BACKLOG-NNN or bare NNN) |
+| BACKLOG-611 | Correct the mirror-sync manifest, which lists the content scanner as mirrored although take-ai-bite does not carry it | v1.37.1 | 2026-10-22 | dsm-docs/guides/mirror-sync-manifest.md (category 7, section 3: scanner Central-only) |
 
 ---
 

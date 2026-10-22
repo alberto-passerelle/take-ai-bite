@@ -47,9 +47,9 @@ At the start, run `git rev-parse --is-inside-work-tree 2>/dev/null`. Cache the r
    # which non-deterministically returns some OTHER project's MEMORY.md.
    add_target "$HOME/.claude/projects/$(pwd | sed 's#[/_]#-#g')/memory"
    # Ecosystem _inbox parents (registry-resolved; absent entries skipped by add_target)
-   for name in dsm-central portfolio blog-spoke contributions-docs; do
-     path=$(awk -F'|' -v n="$name" '$0 ~ "\\| *"n" *\\|" {gsub(/^ *| *$/,"",$3); print $3; exit}' .claude/dsm-ecosystem.md 2>/dev/null)
-     add_target "${path:+${path%/}/_inbox}"
+   for name in dsm-central portfolio blog-spoke contributions-docs; do  # not `path`: zsh ties it to PATH
+     target_path=$(awk -F'|' -v n="$name" '$0 ~ "\\| *"n" *\\|" {gsub(/^ *| *$/,"",$3); print $3; exit}' .claude/dsm-ecosystem.md 2>/dev/null)
+     add_target "${target_path:+${target_path%/}/_inbox}"
    done
    ```
 
