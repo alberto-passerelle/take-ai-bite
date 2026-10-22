@@ -1,6 +1,6 @@
 # BACKLOG-017: Check Each Draft Bite Against Its Section Budget at Gate 3
 
-**Status:** Proposed
+**Status:** Proposed (sent to Central as an issue, S20)
 **Priority:** Medium
 **Extends:** DSM_0.2.F §8.10 (Chunked Drafting Protocol, Gates 2 and 3)
 **Date Created:** 2026-10-19
@@ -55,6 +55,9 @@ For whoever implements it upstream:
 
 Route: one issue on TAB with this body attached, listed in tracking issue #130. Drafted with the
 S17 feedback batch; posted only after the user approves its text.
+
+**Sent (S20, 2026-10-22):** as an issue on Central after a recheck against v1.37.1, with the
+user-approved text. The TAB-issue route above predates this fork's Central access (S19).
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
