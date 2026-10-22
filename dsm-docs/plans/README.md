@@ -24,3 +24,4 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-017 | Check Each Draft Bite Against Its Section Budget at Gate 3 | Medium | Proposed (upstream proposal) |
 | BACKLOG-022 | Send Central a Fix So the /dsm-research-add Stub Puts Sources Last | Low | In Progress (Central PR open) |
 | BACKLOG-023 | Send Central a Fix So /dsm-go Step 2b Counts Inbox Entries, Not Inbox Files | Medium | In Progress (Central PR open) |
+| BACKLOG-024 | Send Central a Fix So Worklog User Blocks Keep the User's Words | Medium | In Progress (Central PR open) |
