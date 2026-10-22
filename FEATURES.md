@@ -6,12 +6,14 @@ Methodology (DSM), the human-AI collaboration framework behind
 feature is numbered for easy reference (F-000 is the first, newest entries
 appear at the top).
 
-**Current count:** 203 features.
+**Current count:** 205 features.
 
 ---
 
 ## October 2026
 
+- **F-204 (2026-10-22) A fork's closed-backlog check reads the fork's own index (BACKLOG-610, `/dsm-align` Step 11b)** — `/dsm-align` checks a fork's closed items against `done/fork-INDEX.md` instead of Central's numbering, so it stops reporting fork items missing or passing them by a coincidental match.
+- **F-203 (2026-10-22) DSM's session-start, wrap-up and analysis steps work on macOS and zsh (BACKLOG-609)** — On a Mac the lock check shows the real age of a session's log, a parallel session gets its own reminder, and wrap-up keeps the shell's search path under zsh; Linux behaves as before.
 - **F-202 (2026-10-21) Lessons reach the hub only after a person approves them, and a hub's lesson files never become public (BACKLOG-606, DSM_0.2.A §8.3)** — Wrap-up keeps reasoning lessons in the project. `/dsm-staa` shows each shareable lesson with a privacy scan and sends only what you approve, and take-ai-bite's `.gitignore` keeps a hub's lesson files out of a public fork.
 - **F-201 (2026-10-21) The CLAUDE.md section check prints one line and holds back only new projects (BACKLOG-608, DSM_0.2.A §23)** — Every session start reports in one line whether the project's instructions file has its four sections. Only a project that has never wrapped up is held back until they exist, and `defer` lets it continue for one session.
 - **F-200 (2026-10-19) Session wrap-up merges on any git host and never reaches the upstream repository from a fork (BACKLOG-600, DSM_0.2.A §27)** — The end-of-session merge now works on GitHub (pull request), GitLab (merge request), any other host (local merge, then push) and with no remote, and a failed push is reported as failed. Every GitHub call names the project's own repository, so in a fork neither the wrap-up pull request nor the session-start checks can land on the project it was forked from.

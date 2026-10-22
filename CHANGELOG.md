@@ -5,6 +5,28 @@ All notable changes to the Deliberate Systematic Methodology (DSM) will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.1] - 2026-10-22
+
+Patch: DSM's session-start, wrap-up and session-analysis snippets now work on macOS and zsh (BACKLOG-609). On a fork, `/dsm-align`'s closed-backlog check reads the fork's own index (BACKLOG-610). The mirror-sync manifest no longer lists the content scanner as mirrored (BACKLOG-611).
+
+### Fixed
+
+- **macOS and zsh portability (BACKLOG-609; `/dsm-go`, `/dsm-staa`, `/dsm-parallel-session-go`, `/dsm-wrap-up`, DSM_0.2.A §26, `transcript-reminder.sh`).** Three snippets gave a plausible but wrong result on macOS:
+  - The session-lock age always read 0, because `stat -c` is GNU-only. BSD `stat -f %m` is now the fallback.
+  - The session's Claude process was never found, because macOS `ps` prints the full binary path. The match now compares the basename, so a parallel session records its process ID and gets its own reminder.
+  - Under zsh, wrap-up Step 0.5's `path` variable emptied `PATH` and skipped the remaining pre-confirmed targets. The variable is renamed.
+
+  Linux behaviour is unchanged.
+  **Spoke action:** refresh the user-level commands (`scripts/sync-commands.sh --deploy`). `/dsm-align` updates the reminder hook at the next session start.
+  **Fork action:** merge this release, then redeploy the commands.
+- **Closed-backlog check on forks (BACKLOG-610, `/dsm-align` Step 11b).** On a fork the check compared closed items against the inherited `done/INDEX.md`, which carries Central's numbering. Fork items were reported missing, or passed only because a Central item had the same number. The check now uses `done/fork-INDEX.md` when it exists, and accepts row IDs written as `BACKLOG-NNN` or a bare `NNN`. Central's result is unchanged.
+  **Spoke action:** covered by the command refresh.
+- **Mirror-sync manifest (BACKLOG-611).** The manifest listed the content scanner among the scripts mirrors receive. The scanner is Central-only by design (BACKLOG-560), and take-ai-bite has no copy; the manifest now says so.
+
+### Spawned
+
+- **BACKLOG-612** (Medium): under zsh, a file pattern that matches nothing is a shell error, so some published snippets print errors on macOS and one may report `UNRESOLVED` instead of a count; measure each site under zsh, then fix.
+
 ## [1.37.0] - 2026-10-21
 
 Minor: reasoning lessons no longer leave a project before a person has read them, and a hub's lesson files never become public (BACKLOG-606, from take-ai-bite #150). The `/dsm-go` CLAUDE.md section check now prints one line at every boot and holds back only a project that has never wrapped up (BACKLOG-608). Acceptance: test plans T-1 to T-12 of both BLs passed in scratch projects, and a full `/dsm-go` of the release candidate on Opus 5.5, in a fresh clone, finished normally. Still to verify: the first real hub wrap-up after the release (BACKLOG-606 T-7) and a tester's run on a fork.
