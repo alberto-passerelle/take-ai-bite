@@ -1,6 +1,8 @@
 # Session 18 Handoff: upstream issue batch, triaged and rechecked
 
 **Date:** 2026-10-19
+**Date Completed:** 2026-10-22
+**Outcome Reference:** Consumed at session 19 start
 **Read with:** the S18 checkpoint (pending item 1), `dsm-docs/handoffs/done/2026-10-16_s17_backlog-011-and-upstream-feedback.md`
 (the 13 S16/S17 feedback items) and fork BACKLOG-014 to -017.
 **Status:** triaged; no issue drafted or posted. Every body is posted under the user's name and
