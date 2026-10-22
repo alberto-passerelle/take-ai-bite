@@ -483,6 +483,7 @@ updated when `/dsm-backlog-done` moves a BL.
 | BACKLOG-581 | Sanctioned independent fork-local backlog line for public-mirror forks | v1.30.0 | 2026-10-09 | DSM_0.2 §21.5 (fork-local backlog line) + DSM_7.0 §2.1 cross-ref |
 | BACKLOG-582 | By-design data-protection / compliance briefing for projects handling personal data | v1.31.0 | 2026-10-10 | DSM_0.2.C §5.9 (DP/compliance briefing by design); take-ai-bite #127/#128 |
 | BACKLOG-583 | Wire the §5.9 DP/compliance briefing surfacing check into session-start | v1.32.0 | 2026-10-11 | /dsm-go Step 2g (DP/compliance surfacing) + DSM_0.2.C §5.9 reconcile + DSM_0.2.A §23 cross-ref |
+| BACKLOG-585 | Propagate the BL-584 boot-safeguard fix across the DSM ecosystem (spokes, TAB mirror, forks) | v1.33.0/v1.33.1 (rollout) | 2026-10-19 | — (rollout: TAB sync, fork migration guide, first spoke migrated; remaining spokes split to BACKLOG-593) |
 | BACKLOG-586 | Give /dsm-staa a read-only concurrent-session check on entry | v1.34.0 | 2026-10-14 | /dsm-staa Step 0 (read-only lock check) + Notes write scope + DSM_0.2.A §26.2 row; take-ai-bite #135/#136 |
 | BACKLOG-587 | Require a clean staged index before creating a Level 3 task branch | v1.35.0 | 2026-10-15 | DSM_0.2 §20.9 (clean staged index before a Level 3 branch); take-ai-bite #137/#138 |
 | BACKLOG-588 | Keep fork-local backlog on main and document the fork BL workflow | v1.35.0 | 2026-10-15 | DSM_0.2 §21.5 (visible-from-every-session rule + fork-local BL workflow); take-ai-bite #139/#140 |
