@@ -107,7 +107,7 @@ Thumbs.db
 # *.sqlite
 # scratch/
 # experiments/
-.claude/worklog.md
+.claude/session-transcript.md
 .claude/session-baseline.txt
 .claude/parallel-sessions.txt
 .claude/commit-lock
@@ -122,16 +122,13 @@ contributions-docs/
 .claude/last-wrap-up.txt
 .claude/*.code-workspace
 
-# Mirror inbox guard (mirror-sync-manifest category 10): transit inbox entries are
-# local hub-spoke comms and should NOT land in the public mirror. Ignore the whole
-# _inbox/ tree INCLUDING the done/ archive — inbox archives can carry client-topic
-# names, which must not reach a public repo (data protection). The tracked scaffold
-# (README + the Hello-world example) is kept. Note: .gitignore never untracks files
-# already committed; this only stops new/untracked inbox files from being staged.
+# Hub knowledge stays private (BACKLOG-606; DSM_0.2.A §8.3 "Lesson files are never public")
+dsm-docs/reasoning-lessons-ecosystem.md
 _inbox/*
 !_inbox/README.md
-!_inbox/done/
-_inbox/done/*
-!_inbox/done/Hello-world.md
-# Belt-and-suspenders for a downstream spoke's inbox files outside _inbox/: the name
-# pattern lives in .git/info/exclude (local, untracked), so this tracked file stays name-free.
+.claude/worklog.md
+.claude/reasoning-lessons-compact.md
+.claude/memory/
+.claude/last-staa.txt
+.claude/lessons-shared.txt
+.claude/leak-scan-patterns.txt

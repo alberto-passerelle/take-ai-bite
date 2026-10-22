@@ -1,3 +1,5 @@
+**Consumed at:** Session 19 start (2026-10-22)
+
 # Session 18 Checkpoint
 **Date:** 2026-10-19
 **Branch:** session-17/2026-10-16 (resumed; merged to main via PR #16 at this wrap-up)
