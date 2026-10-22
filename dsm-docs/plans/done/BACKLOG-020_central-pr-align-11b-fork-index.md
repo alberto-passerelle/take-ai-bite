@@ -1,6 +1,8 @@
 # BACKLOG-020: Send Central a Fix So /dsm-align Step 11b Checks a Fork Against fork-INDEX.md
 
-**Status:** In Progress (Central PR open, awaiting the owner)
+**Status:** Implemented (absorbed upstream, shipped in v1.37.1)
+**Date Implemented:** 2026-10-22
+**Central BL:** BACKLOG-610 (v1.37.1)
 **Priority:** Medium
 **Extends:** Central's `/dsm-align` Step 11b (done-index currency); DSM_0.2 §21.5 ("Done and archive": fork-local BLs are indexed in `done/fork-INDEX.md`, never in the inherited `INDEX.md`)
 **Date Created:** 2026-10-22
@@ -90,4 +92,4 @@ rerun gave the same 16 lines.
 ### Pending verification
 
 - [x] PR body approved by the user, branch pushed, PR opened on Central (no push to `main`): opened 2026-10-22, head = local HEAD, base `main` unchanged, open and mergeable, live body = approved file.
-- [ ] Owner's merge and the release that ships it; then Status Implemented and move to `done/`.
+- [x] Owner's merge and the release that ships it: merged by the owner, shipped as Central BACKLOG-610 in v1.37.1 and merged into this fork in S20 (2026-10-22). The release also accepts bare `NNN` row IDs. S20's `/dsm-align` Step 11b printed `OK: fork-INDEX.md covers all 12 closed BLs` on this fork.
