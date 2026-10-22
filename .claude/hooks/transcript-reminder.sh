@@ -66,7 +66,7 @@ for _ in $(seq 1 10); do
   [ "$pid" = "1" ] && break
   read ppid comm < <(ps -o ppid=,comm= -p "$pid" 2>/dev/null)
   [ -z "$ppid" ] && break
-  if [ "$comm" = "claude" ]; then
+  if [ "$(basename "$comm")" = "claude" ]; then  # basename: macOS ps prints the full binary path
     MY_CLAUDE_PID=$pid
     break
   fi

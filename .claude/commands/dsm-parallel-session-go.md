@@ -114,7 +114,7 @@ Run `git rev-parse --is-inside-work-tree 2>/dev/null`. If false, stop:
    for _ in $(seq 1 10); do
      read ppid comm < <(ps -o ppid=,comm= -p "$pid" 2>/dev/null)
      [ -z "$ppid" ] && break
-     if [ "$comm" = "claude" ]; then CLAUDE_PID=$pid; break; fi
+     if [ "$(basename "$comm")" = "claude" ]; then CLAUDE_PID=$pid; break; fi  # basename: macOS ps prints the full binary path
      pid=$ppid
      [ "$pid" = "1" ] && break
    done

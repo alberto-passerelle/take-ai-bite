@@ -92,7 +92,7 @@ if [ -f "$ROOT/.claude/session.lock" ]; then
     *) if kill -0 "$LOCK_PID" 2>/dev/null && ps -p "$LOCK_PID" -o comm= 2>/dev/null | grep -q claude
        then echo "VERDICT=LIVE"; else echo "VERDICT=STALE"; fi ;;
   esac
-  echo "TRANSCRIPT_AGE_MIN=$(( ( $(date +%s) - $(stat -c %Y "$ROOT/.claude/worklog.md" 2>/dev/null || date +%s) ) / 60 ))"
+  echo "TRANSCRIPT_AGE_MIN=$(( ( $(date +%s) - $(stat -c %Y "$ROOT/.claude/worklog.md" 2>/dev/null || stat -f %m "$ROOT/.claude/worklog.md" 2>/dev/null || date +%s) ) / 60 ))"
 else
   echo "LOCK_ABSENT"
 fi
@@ -1093,7 +1093,7 @@ The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-
      for _ in $(seq 1 10); do
        read ppid comm < <(ps -o ppid=,comm= -p "$pid" 2>/dev/null)
        [ -z "$ppid" ] && break
-       if [ "$comm" = "claude" ]; then LOCK_PID=$pid; break; fi
+       if [ "$(basename "$comm")" = "claude" ]; then LOCK_PID=$pid; break; fi  # basename: macOS ps prints the full binary path
        pid=$ppid
        [ "$pid" = "1" ] && break
      done

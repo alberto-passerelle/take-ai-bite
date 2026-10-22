@@ -1,6 +1,8 @@
 # BACKLOG-019: Send Central a Fix for Boot and Wrap-Up Snippets That Fail on macOS and zsh
 
-**Status:** In Progress (Central PR open, awaiting the owner)
+**Status:** Implemented (absorbed upstream, shipped in v1.37.1)
+**Date Implemented:** 2026-10-22
+**Central BL:** BACKLOG-609 (v1.37.1)
 **Priority:** Medium
 **Extends:** Central's `/dsm-go` Steps 0.7a and 6, `/dsm-staa` Step 0, `/dsm-parallel-session-go`, `/dsm-wrap-up` Step 0.5, DSM_0.2.A §26 (lockfile `pid` snippet) and `.claude/hooks/transcript-reminder.sh`; DSM_0.2 §19.1 (published snippets are run before they ship)
 **Date Created:** 2026-10-22
@@ -101,5 +103,5 @@ the step's own fallback keeps the uncanonicalized path. Named in the PR body as 
 ### Pending verification
 
 - [x] PR body approved by the user, branch pushed, PR opened on Central (no push to `main`): opened 2026-10-22, head = local HEAD, base `main` unchanged, open and mergeable, live body = approved file.
-- [ ] T-6 (GNU side).
-- [ ] Owner's merge and the release that ships it; then Status Implemented and move to `done/`.
+- [x] T-6 (GNU side): closed by its second trigger, the owner's review; the v1.37.1 release notes state Linux behaviour is unchanged. Not run on a Linux host here.
+- [x] Owner's merge and the release that ships it: merged by the owner, shipped as Central BACKLOG-609 in v1.37.1 and merged into this fork in S20 (2026-10-22); all six files carry the fix (grep after the merge: `stat -f %m` fallback in `/dsm-go` and `/dsm-staa`, basename compare in `/dsm-go`, DSM_0.2.A §26, `/dsm-parallel-session-go` and the reminder hook, `target_path` in `/dsm-wrap-up` Step 0.5); upstream diff +9/-9 over the same six files, matching T-1.
