@@ -398,19 +398,21 @@ Before starting alignment, check if git is initialized:
 
 11b. **Check done/INDEX.md currency (DSM Central only):**
    - Skip this step if the project is not DSM Central (no `scripts/commands/` directory).
-   - Collect the `BACKLOG-NNN` entries in **both** `done/` trees and the `BACKLOG-NNN` rows present in `dsm-docs/plans/done/INDEX.md`, then take the set difference:
+   - Collect the `BACKLOG-NNN` entries in **both** `done/` trees and the `BACKLOG-NNN` rows present in the done index (`dsm-docs/plans/done/INDEX.md`, or `done/fork-INDEX.md` on a fork, see below), then take the set difference:
 
      ```bash
+     IDX=dsm-docs/plans/done/INDEX.md
+     [ -f dsm-docs/plans/done/fork-INDEX.md ] && IDX=dsm-docs/plans/done/fork-INDEX.md
      DONE=$( { ls dsm-docs/plans/done/ ; ls plan/backlog/done/ ; } 2>/dev/null \
              | grep -oE '^BACKLOG-[0-9]+' | sort -u )
-     ROWS=$(grep -oE 'BACKLOG-[0-9]+' dsm-docs/plans/done/INDEX.md 2>/dev/null | sort -u)
+     ROWS=$(awk -F'|' '{c=$2; gsub(/[[:space:]]/,"",c); if (c ~ /^(BACKLOG-)?[0-9]+$/) {sub(/^BACKLOG-/,"",c); print "BACKLOG-" c}}' "$IDX" 2>/dev/null | sort -u)
      if [ -z "$DONE" ] || [ -z "$ROWS" ]; then
-       echo "UNRESOLVED: collected $(printf '%s' "$DONE" | grep -c .) BL entries and $(printf '%s' "$ROWS" | grep -c .) index rows; set difference NOT computed"
+       echo "UNRESOLVED: collected $(printf '%s' "$DONE" | grep -c .) BL entries and $(printf '%s' "$ROWS" | grep -c .) rows in ${IDX##*/}; set difference NOT computed"
      else
        MISSING=$(comm -23 <(printf '%s\n' "$DONE") <(printf '%s\n' "$ROWS"))
        N=$(printf '%s' "$MISSING" | grep -c .)
-       [ "$N" -eq 0 ] && echo "OK: INDEX.md covers all $(printf '%s' "$DONE" | grep -c .) closed BLs" \
-                      || echo "MISSING $N row(s): $(printf '%s' "$MISSING" | tr '\n' ' ')"
+       [ "$N" -eq 0 ] && echo "OK: ${IDX##*/} covers all $(printf '%s' "$DONE" | grep -c .) closed BLs" \
+                      || echo "MISSING $N row(s) in ${IDX##*/}: $(printf '%s' "$MISSING" | tr '\n' ' ')"
      fi
      ```
 
@@ -419,7 +421,9 @@ Before starting alignment, check if git is initialized:
      **`ls` over the directory, never a file test.** `BACKLOG-236` is a **directory**, not a file. Matching `^BACKLOG-[0-9]+` against `ls` output never inspects the filesystem type, so a directory is collected exactly once like any other entry. This is structural rather than a special case, which matters because a special case written for one entry rots the moment a second directory appears.
 
      **The empty guard is the point, not defensive padding.** If either tree path is wrong, or a rename moves one, the collected set is empty, the set difference is empty, and a version without this guard reports "no missing rows" , a false all-clear indistinguishable from a real one (DSM_0.2 §19.1's second question). `UNRESOLVED` and `OK` must never be the same line. Note also that the guard covers `ROWS`: an unreadable or relocated `INDEX.md` would otherwise make every closed BL look missing, which fails loudly and is therefore the less dangerous direction, but is still not a measurement.
-   - If any `done/` BL has no INDEX row, **report as warning**: "done/INDEX.md is missing N row(s): [BL numbers]. These BLs were closed without `/dsm-backlog-done` Step 8 (typically a manual `git mv` to done/). Backfill the rows, deriving version/date/resolver from CHANGELOG.md."
+
+     **A fork checks `fork-INDEX.md` (DSM_0.2 §21.5).** This step runs on a fork too, because a fork carries `scripts/commands/`. A fork's closed BLs are fork-local and are indexed in `done/fork-INDEX.md`, never in the inherited `INDEX.md`, which carries Central's numbering; the mirror ships `done/` with `INDEX.md` and no bodies. Checked against `INDEX.md`, a fork BL whose number Central does not use is reported missing, and one whose number collides with a Central row passes without its own row being checked. The file's presence is the switch, so Central, which has no `fork-INDEX.md`, is unaffected. Row IDs come from the first table column because `fork-INDEX.md`'s Outcome column names Central BL numbers; on Central's `INDEX.md` every row ID is in the first column, so the result there is the same. A row ID may be `BACKLOG-NNN` or the plans README's bare `NNN`, because §21.5 moves a fork's README row into `fork-INDEX.md` as it stands; a bare `NNN` is read as `BACKLOG-NNN`, so it must carry the same zero-padding as the body's filename (an unpadded `1` is reported missing, loudly).
+   - If any `done/` BL has no INDEX row, **report as warning**: "{index} is missing N row(s): [BL numbers]. These BLs were closed without `/dsm-backlog-done` Step 8 (typically a manual `git mv` to done/). Backfill the rows, deriving version/date/resolver from CHANGELOG.md." ({index} is `done/INDEX.md`; on a fork it is `done/fork-INDEX.md`, whose rows follow DSM_0.2 §21.5 instead of CHANGELOG.md.)
    - **Root cause this catches:** `/dsm-backlog-done` Step 8 updates the index, but a BL closed by manual `git mv` instead of the skill bypasses Step 8, so the index silently drifts behind `done/`.
    - Do NOT auto-backfill; report for user action (version/date/resolver derivation needs a CHANGELOG cross-reference and judgment). For a large gap, a Sonnet subagent can generate the rows for review.
    - Origin: BL-459 (S217). The index had drifted 27+ BLs behind because manual closes bypassed `/dsm-backlog-done`.

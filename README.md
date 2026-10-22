@@ -96,6 +96,7 @@ They are not theoretical; they emerged from daily practice with AI agents across
 <details>
 <summary>Latest additions to the framework (click to expand)</summary>
 
+- **Works on macOS and zsh** — Session start, wrap-up and the session-analysis agent give the right results on a Mac: the lock check shows the real age of a session's log, a parallel session gets its own reminder, and wrap-up keeps the shell's search path under zsh
 - **Lessons shared only after review** — Wrap-up keeps reasoning lessons in the project; they reach the hub only through a review step that shows each lesson with a privacy scan, and a hub's lesson files stay out of public forks
 - **One-line instructions-file check** — Session start reports in one line whether the project's instructions file has its four sections, and holds back only a project that has never wrapped up
 - **Getting started from your own fork** — A step-by-step guide, with a check at every step, takes a newcomer or the AI assistant helping them from installing git to a first finished session on their own fork of Take AI Bite
@@ -122,7 +123,7 @@ They are not theoretical; they emerged from daily practice with AI agents across
 
 </details>
 
-See the full timeline of 203 features → [FEATURES.md](FEATURES.md)
+See the full timeline of 205 features → [FEATURES.md](FEATURES.md)
 
 ## What's Coming
 
