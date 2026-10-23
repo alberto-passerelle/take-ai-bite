@@ -26,3 +26,4 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-023 | Send Central a Fix So /dsm-go Step 2b Counts Inbox Entries, Not Inbox Files | Medium | In Progress (Central PR open) |
 | BACKLOG-024 | Send Central a Fix So Worklog User Blocks Keep the User's Words | Medium | In Progress (Central PR open) |
 | BACKLOG-025 | Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule | Medium | Proposed (S22-S26, after BACKLOG-011) |
+| BACKLOG-026 | Approve Every Spoke-Hub Message, Let Only Methodology Concepts Cross, and Replace /dsm-align's Inbox Notice | High | Proposed (to be addressed later) |
