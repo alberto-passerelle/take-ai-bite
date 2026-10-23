@@ -59,6 +59,7 @@ informs an active BL but is not its primary deliverable.
 | 2026-04-17 | [lean-ctx applicability assessment](2026-04-17_lean-ctx-assessment.md) | Run 2nd behavioral pass on DSM files? | 2nd pass recommended, not yet done |
 | 2026-04-17 | [Plan framing across DSM spoke projects](2026-04-17_plan-framing-across-projects.md) | Did this feed an implemented BL? | Ambiguous; verify and move or file BL |
 | 2026-04-19 | [Which BLs are parallel-session candidates](2026-04-19_which-bls-parallel-candidates.md) | Snapshot is stale; recurring or one-off? | Likely move to done or file recurring-audit BL |
+| 2026-10-23 | [Distributing a Claude skill to a team so it runs on each member's laptop](2026-10-23_claude-skill-team-distribution.md) | Provisioning route and the open tests (§5) for the `/tab-update` skill draft | Active; written in parallel session 21.1 |
 
 ### Untracked (S201 carryover, not committed)
 
