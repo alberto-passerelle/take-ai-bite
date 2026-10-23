@@ -22,10 +22,13 @@ runs the window and applies the rule.
 
 - Run the protocol from the guide BACKLOG-011 creates in sessions S22-S26, logging every exchange
   and every correction in the trial log (`.claude/reference-read-log.md`, untracked).
-- At the end of S26, take the counts from the log by command and apply the decision rule:
-  - **Keep** if the window holds at least one human correction.
-  - **Narrow the trigger** if it fires more than 5 times per session with no correction.
-  - **Drop** if there are no corrections of either kind.
+- At the end of S26, take the counts from the log by command and apply the decision rule, first
+  match wins (guide `dsm-docs/guides/reference-read-protocol.md` §5; order and the last case
+  settled with the user in S21):
+  1. **Keep** if the window holds at least one human correction.
+  2. **Drop** if there are no corrections of either kind.
+  3. **Narrow the trigger** if it fires more than 5 times per session on average over the window.
+  4. **Otherwise** (self-corrections only, at most 5 per session on average), the user decides.
 - Record the counts and the decision here (counts only; the log stays local because its entries
   can quote private or confidential sources and the user's words).
 - If kept: decide whether to offer it upstream (BACKLOG-011's Upstream Contribution
@@ -37,16 +40,18 @@ runs the window and applies the rule.
 - [ ] Sessions S22-S26 each have their exchanges logged, or a logged "no exchange" line.
 - [ ] Counts per category (exchanges, human corrections, self-corrections) are produced by a
       command over the log and recorded here with the command.
-- [ ] The decision (keep / narrow / drop) follows the rule above and is recorded with its counts.
+- [ ] The decision (keep / drop / narrow / user decision) follows the rule above and is recorded
+      with its counts.
 - [ ] Follow-up recorded: guide kept, trigger narrowed (with the change), or guide and CLAUDE.md
       line removed; upstream offer decided if kept.
 
 ## Test Plan
 
-- [ ] T-6 (trial; moved here from BACKLOG-011): the log has one entry per exchange with session,
-      location, passage, reading, outcome (confirmed / human correction / self-correction) and,
-      for a human correction, the user's words quoted; a session without exchanges has a
-      "no exchange" line. Check: every session S22-S26 appears in the log (`grep -c` per session).
+- [ ] T-6 (trial; moved here from BACKLOG-011): the log has one entry per exchange in the format of
+      guide §5: session, the human's answer (confirmed / human-correction), the self-corrected
+      mark, location, passage, reading and, for a human correction, the user's words quoted; a
+      session without exchanges has a `no-exchange` line. Check: every session S22-S26 appears in
+      the log (`grep -c` per session).
 - [ ] T-7: the recorded counts equal a recount from the log by the same command, run at close.
 - [ ] T-8: the decision matches the rule applied to the recorded counts (show the arithmetic).
 
