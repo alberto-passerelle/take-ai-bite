@@ -40,7 +40,8 @@ Options not chosen (A, D) and set aside (F-H): research section 3.5.
 **Placement inside DSM_0.2.B.** §1 and §2 hold Composition Challenge and Edit Explanation Stop.
 Adding C as a section of a methodology document needs explicit user confirmation either way
 (Destructive Command Protocol, `.claude/CLAUDE.md`). Placing it directly beside §1 and §2 also
-renumbers §3-§8; appending it as a new last section does not. Decided with open question 5.
+renumbers §3-§8; appending it as a new last section does not. Decided with open question 5:
+not needed during the trial (answer 5).
 
 ## Open Questions (resolve before implementation)
 
@@ -59,9 +60,30 @@ Added at filing:
    `.claude/CLAUDE.md` avoids the conflicts, but loads by a different path than an upstream
    proposal would. This question also settles the placement inside DSM_0.2.B.
 
+### Answers (2026-10-23, S21; the user accepted the recommendations)
+
+1. **Confirmation.** The human in the session confirms. When the claim goes back to the
+   source's owner (a PR, an issue, a message), the outgoing text quotes the passage, so the
+   owner sees it as well.
+2. **Trial location.** This hub only. Its work is largely checking claims against Central's
+   text; the reporting spoke's material is confidential, so a trial log there would hold client
+   content.
+3. **Correction.** Two categories, counted separately: a *human correction* is a confirmation
+   that changes what the claim asserts (not only its wording), logged with the human's words
+   quoted; a *self-correction* is a change the agent makes to the claim while quoting the
+   passage, before showing it (research case 2). Counts are taken from the log by a command.
+4. **Window and decision rule.** Five working sessions, S22-S26. Keep the rule if the window
+   holds at least one human correction; narrow the trigger if it fires more than 5 times per
+   session with no correction; drop it if there are no corrections of either kind. The numbers
+   are set without calibration data.
+5. **Location.** A fork-local guide, `dsm-docs/guides/reference-read-protocol.md`, with a line in
+   the project-specific part of `.claude/CLAUDE.md` naming the trigger. No in-place edits to
+   DSM_0.2.B, DSM_6.0 or DSM_0.2 during the trial; text moves into those files only with an
+   upstream proposal. The placement inside DSM_0.2.B is therefore not needed for the trial.
+
 ## Success Criteria
 
-- [ ] Open questions 1-5 are answered and recorded in this BL before implementation starts.
+- [x] Open questions 1-5 are answered and recorded in this BL before implementation starts.
 - [ ] C: the reference-read protocol holds the trigger, the four-part exchange, the pointer case
       and the exemptions of research section 3.4.
 - [ ] B: DSM_6.0 §1.3 carries the bullet.
