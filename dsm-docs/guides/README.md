@@ -76,3 +76,4 @@ DSM. Each row is added in the same commit as its guide.
 | Guide | Subject |
 |-------|---------|
 | [fork-contribution-workflow.md](fork-contribution-workflow.md) | How this fork contributes methodology improvements back to upstream TAB / DSM Central |
+| [reference-read-protocol.md](reference-read-protocol.md) | Checking a claim against its source passage before using it; trial S22-S26 (BACKLOG-011, BACKLOG-025) |

@@ -17,7 +17,6 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BL# | Title | Priority | Status |
 |-----|-------|----------|--------|
 | BACKLOG-008 | Fork-to-Central Contribution Mechanics | Low | Proposed (narrowed in S17 to what DSM_0.2 §21.5 leaves out; Central issue open) |
-| BACKLOG-011 | Reference-Read Protocol: Check Claims Against Their Source Passage Before Use | Medium | Proposed (questions answered S21; trial setup next) |
 | BACKLOG-014 | Check Open Task Branches Whenever a Plan Merges Into Main | Medium | Proposed (Central issue open) |
 | BACKLOG-015 | Append a Revised Plan Before Acting Against the Current Plan | Low | Proposed (Central issue open) |
 | BACKLOG-016 | Worklog Rules for Harnesses Where the Hooks Do Not Run | Low | Proposed (Central issue open) |

@@ -1,6 +1,7 @@
 # BACKLOG-011: Reference-Read Protocol: Check Claims Against Their Source Passage Before Use
 
-**Status:** Proposed
+**Status:** Implemented (trial setup; the trial runs as BACKLOG-025)
+**Date Implemented:** 2026-10-23
 **Priority:** Medium
 **Extends:** DSM_0.2.B (new protocol, recommendation C); DSM_6.0 §1.3 Earn Your Assertions (bullet, recommendation B); DSM_0.2 §10 and §10.1 (scope clarification, recommendation E)
 **Date Created:** 2026-10-19
@@ -75,7 +76,10 @@ Added at filing:
 4. **Window and decision rule.** Five working sessions, S22-S26. Keep the rule if the window
    holds at least one human correction; narrow the trigger if it fires more than 5 times per
    session with no correction; drop it if there are no corrections of either kind. The numbers
-   are set without calibration data.
+   are set without calibration data. *Refined in S21 with the user while drafting the guide:*
+   first match wins (keep; drop; narrow if more than 5 per session on average; otherwise the user
+   decides), which settles the overlap of "narrow" and "drop" and the case the three rules left
+   open (guide §5, BACKLOG-025).
 5. **Location.** A fork-local guide, `dsm-docs/guides/reference-read-protocol.md`, with a line in
    the project-specific part of `.claude/CLAUDE.md` naming the trigger. No in-place edits to
    DSM_0.2.B, DSM_6.0 or DSM_0.2 during the trial; text moves into those files only with an
@@ -84,30 +88,32 @@ Added at filing:
 ## Success Criteria
 
 - [x] Open questions 1-5 are answered and recorded in this BL before implementation starts.
-- [ ] C: the reference-read protocol holds the trigger, the four-part exchange, the pointer case
-      and the exemptions of research section 3.4.
-- [ ] B: DSM_6.0 §1.3 carries the bullet.
-- [ ] E: §10/§10.1 state whether the internal-read exemption applies to §10.1, consistent with C.
-- [ ] The dispatch table routes to C.
-- [ ] The trial logs each exchange and each correction at the location fixed with question 2,
-      and reports the counts at the end of the window fixed with question 4.
-- [ ] If question 5 moves the trial text out of the DSM files, the criteria above apply to that
-      location and the Test Plan paths are updated before implementation.
+- [x] C: the guide `dsm-docs/guides/reference-read-protocol.md` (§2-§3) holds the trigger, the
+      four-part exchange, the pointer case and the exemptions of research section 3.4.
+- [x] B: the guide (§4) carries the principle line (answer 5: not DSM_6.0 §1.3 during the trial).
+- [x] E: the guide (§4) states this fork's reading of the §10 exemption and §10.1, consistent with
+      C's exemptions, and labels it as the fork's reading.
+- [x] Routing (replaces the dispatch row): `.claude/CLAUDE.md` §4 names the trigger and the guide
+      path; the guide index (`dsm-docs/guides/README.md`) lists the guide.
+- [x] The trial log exists at `.claude/reference-read-log.md` with the format of guide §5. Running
+      the trial and reporting its counts moved to BACKLOG-025 (split in S21, DSM_0.2 §21).
+- [x] Question 5 moved the trial text out of the DSM files; the criteria above and the Test Plan
+      below were updated to the guide before implementation (S21).
 
 ## Test Plan
 
-- [ ] T-1 (structural): the protocol section exists and names the trigger, passage, location,
-      reading, confirmation, pointer case and exemptions; grep each term inside the section.
-- [ ] T-2 (structural): DSM_6.0 §1.3 contains the bullet; grep.
-- [ ] T-3 (consistency): the §10/§10.1 statement and C's exemptions agree; quote both passages
-      side by side in the Test Execution Log.
-- [ ] T-4 (cross-reference, DSM_0.2 §19): the dispatch row's module link and protocol name
-      resolve to the new section header; no other DSM_0.2.B section number changed unless the
-      renumbering was confirmed.
-- [ ] T-5 (resolver, DSM_0.2 §21.4): removed-or-renamed-string sweep for every heading or section
-      number the change moved, recorded even when empty.
-- [ ] T-6 (trial; blocked on questions 3 and 4): written before implementation, once "correction"
-      and the trial window are defined.
+Updated to the guide in S21 (answer 5); T-6 moved to BACKLOG-025.
+
+- [x] T-1 (structural): guide §2-§3 name the trigger, passage, location, reading, confirmation,
+      pointer case and exemptions; grep each term inside those sections.
+- [x] T-2 (structural): guide §4 contains the principle line; grep.
+- [x] T-3 (consistency): guide §4's §10/§10.1 statement and §3's exemptions agree; quote both
+      passages side by side in the Test Execution Log.
+- [x] T-4 (cross-reference, DSM_0.2 §19): the CLAUDE.md line and the guide index resolve to the
+      guide; every reference inside the guide resolves; no DSM methodology file changed.
+- [x] T-5 (resolver, DSM_0.2 §21.4): removed-or-renamed-string sweep for every string this change
+      replaced, recorded even when empty.
+- T-6 (trial): moved to BACKLOG-025.
 
 ## Risks (per DSM_0.2 §21.2)
 
@@ -136,8 +142,29 @@ travels upstream with this BL, not as a separate issue.
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented._
+Executed 2026-10-23 (S21) on `bl-011/reference-read-protocol`, guide drafted section by section
+with the user's approval of each section and a full consistency read.
+
+- **T-1 pass.** Matches inside guide §2-§3: trigger 3, `**Passage:**` 2, `**Location:**` 2,
+  `**Reading:**` 2, `**Confirmation:**` 1, `**Pointer case.**` 1, `**Exempt,**` 1 (the 2s include
+  the example block).
+- **T-2 pass.** Guide §4, first content paragraph: "**Principle.** A claim drawn from a source is
+  checked against the passage, not against the memory of a read."
+- **T-3 pass after one fix.** §3: "values checkable at a glance (a version number, a path, a count
+  shown with its output) and claims already confirmed with their passage" are exempt. §4 first
+  said a repository-file claim "also gets the section 2 exchange" without naming §3's exemptions;
+  it now reads "also gets the section 2 exchange unless section 3 exempts it". Read together, §4
+  narrows nothing in §3 and adds the §10.1 passes only for deliverable-critical claims.
+- **T-4 pass.** Guide, research file, BACKLOG-011 and BACKLOG-025 exist; `.claude/CLAUDE.md` names
+  the guide path once; the guide index links `reference-read-protocol.md`; guide sections 2 and 5
+  exist; DSM_6.0 §1.1, §1.3, §1.4, §1.10 and DSM_0.2 §10, §10.1 headings exist; DSM methodology
+  files changed by this BL: 0.
+- **T-5 pass.** Positive control: `with no correction` found once in this file. Sweep of
+  `DSM_*.md`, `scripts/commands/*.md`, `dsm-docs/plans`, `dsm-docs/guides` for the replaced
+  strings: `with no correction` 1 hit (answer 4 above, kept deliberately as the record of the
+  user's answer, with the S21 refinement beside it); `keep, narrow or drop` 0; `dispatch table
+  routes to C` 0; `DSM_6.0 §1.3 carries the bullet` 0.
 
 ### Pending verification
 
-- [ ] All Test Plan items (deferred: Proposed, not implemented)
+- None for this BL. The trial (former T-6) runs under BACKLOG-025 from S22.
