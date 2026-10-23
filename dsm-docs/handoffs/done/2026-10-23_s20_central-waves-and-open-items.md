@@ -5,6 +5,8 @@
 **Branch:** session-20/2026-10-22 (merged into `main` by the wrap-up; if that merge did not complete, `/dsm-go` Step 0c finds the leftover branch)
 **Author:** Alberto (with AI assistance)
 **Consumer:** the next `/dsm-go` (Step 3 reads this in full and surfaces the pending items)
+**Date Completed:** 2026-10-23
+**Outcome Reference:** Consumed at session 21 start
 
 This file ships with the public fork. It therefore names no Central PR or issue numbers, no
 Central commit IDs, no Central active-backlog numbers and no spoke or client names. The

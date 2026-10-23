@@ -67,3 +67,13 @@ There is no `/dsm-guide-add` command. Whether guides should get the paired
 add/done commands `dsm-docs/research/` has is a later question; manual maintenance
 is the current convention, and drift between this index and the folder is a
 protocol-violation signal under DSM_0.2 §22.
+
+## Fork-local guides
+
+Guides this fork adds for its own use (DSM_0.2 §21.5). They are not part of upstream
+DSM. Each row is added in the same commit as its guide.
+
+| Guide | Subject |
+|-------|---------|
+| [fork-contribution-workflow.md](fork-contribution-workflow.md) | How this fork contributes methodology improvements back to upstream TAB / DSM Central |
+| [reference-read-protocol.md](reference-read-protocol.md) | Checking a claim against its source passage before using it; trial S22-S26 (BACKLOG-011, BACKLOG-025) |
