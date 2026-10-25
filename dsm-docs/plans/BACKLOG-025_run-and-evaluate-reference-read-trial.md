@@ -76,7 +76,16 @@ Decided at close (see Proposed Solution).
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet run._
+**S22 (2026-10-25, light wrap-up).** Counts by the guide §5 commands over the log: exchanges 0,
+human corrections 0, self-corrections 0; one `- S22 |` line. Eleven claims were shown in two
+blocks during inbox processing and none was answered before wrap-up, so the log holds one
+`unanswered` line, which the commands do not count; the answers carry over to S23 (handoff
+`2026-10-25_s22`). One shown passage was misquoted (a word repeated in place of another) and the
+agent found it after showing it.
+
+**Gaps found in S22:** the guide has no value for an exchange that is shown but not answered, and
+none for an error the agent finds after showing (field 3 covers only changes made before showing).
+Decide at S23 whether unanswered exchanges count once answered, and how.
 
 ### Pending verification
 
