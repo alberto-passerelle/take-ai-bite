@@ -74,9 +74,33 @@ runs the window and applies the rule.
 
 Decided at close (see Proposed Solution).
 
+**Related (S22):** BACKLOG-027 (source maps and a validator per drafted bite) is kept separate.
+Both check a statement against the passage instead of the memory of a read; 027 covers drafted
+prose in a deliverable, this trial covers claims used in plans, decisions and messages.
+
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet run._
+**S22 (2026-10-25, light wrap-up).** Counts by the guide §5 commands over the log: exchanges 0,
+human corrections 0, self-corrections 0; one `- S22 |` line. Eleven claims were shown in two
+blocks during inbox processing and none was answered before wrap-up, so the log holds one
+`unanswered` line, which the commands do not count; the answers carry over to S23 (handoff
+`2026-10-25_s22`). One shown passage was misquoted (a word repeated in place of another) and the
+agent found it after showing it.
+
+**Gaps found in S22:** the guide has no value for an exchange that is shown but not answered, and
+none for an error the agent finds after showing (field 3 covers only changes made before showing).
+Decide at S23 whether unanswered exchanges count once answered, and how.
+
+**S22, continued (light continuation and full wrap-up, 2026-10-25).** Counts by the guide §5
+commands over the whole log at wrap-up: exchanges 11, human corrections 0, self-corrections 0.
+All 11 claims shown in S22 were answered in the continuation: 6 through the user's approval of a
+package whose message said beforehand that approving it confirms the readings it rests on, and 5
+with an explicit "readings ok" given in the same reply as an outbound approval. The log also holds
+two `unanswered` status lines and two `note` lines (a typed time in one log line, then a wrong time
+in its first correction); the commands count none of them.
+
+**Added for the S23 decision:** whether a confirmation bundled with another approval counts the
+same as a separate answer. All 11 S22 confirmations were bundled.
 
 ### Pending verification
 
