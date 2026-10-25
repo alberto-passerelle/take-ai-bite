@@ -1,6 +1,6 @@
 # BACKLOG-027: Offer Source Maps and an Independent Validator for Each Drafted Bite as a Gate 1 Option in Chunked Drafting
 
-**Status:** Proposed (Central issue drafted in S22; posted only after the user approves its text)
+**Status:** Proposed (sent to Central as an issue, S22)
 **Priority:** High
 **Extends:** DSM_0.2.F §8.10 (Chunked Drafting Protocol, Gates 1, 3 and 4); DSM_3.0.E §6.7.3 (AI Collaboration Norms); a validator agent template shipped with the skills
 **Date Created:** 2026-10-25
@@ -83,7 +83,7 @@ text. Split it out if Central accepts the proposal.
 
 ## Success Criteria
 
-- [ ] Central issue posted with the text the user approved; its number stays out of this fork.
+- [x] Central issue posted with the text the user approved; its number stays out of this fork.
 - [ ] Central's response recorded here: accepted (with `**Central BL:**` when known), declined with
       a reason, or deferred.
 - [ ] If Central ships it: §8.10 offers the option at Gate 1 and pairs each bite with a map and a
@@ -128,6 +128,9 @@ Route chosen in S22 (decision B2): a Central issue now, stating that the evidenc
 carrying the three open questions and the spoke's measurements (no document content, no spoke
 name). Posted only after the user approves the full text (voice-attribution gate). Its number is
 kept out of this fork.
+
+**Sent (S22, 2026-10-25):** as an issue on Central with the user-approved text; read back after
+posting, title and body equal to the approved draft.
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
