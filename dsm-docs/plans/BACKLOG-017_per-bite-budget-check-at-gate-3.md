@@ -59,6 +59,9 @@ S17 feedback batch; posted only after the user approves its text.
 **Sent (S20, 2026-10-22):** as an issue on Central after a recheck against v1.37.1, with the
 user-approved text. The TAB-issue route above predates this fork's Central access (S19).
 
+**Related (S22):** BACKLOG-027 also adds to what each Gate 3 bite carries (a source map and a
+validator run, opt-in at Gate 1). If both land, coordinate the bite-delivery wording.
+
 ## Test Execution Log (per DSM_0.2 §21.3)
 
 _Not yet implemented._

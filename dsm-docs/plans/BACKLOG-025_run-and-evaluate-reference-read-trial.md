@@ -74,6 +74,10 @@ runs the window and applies the rule.
 
 Decided at close (see Proposed Solution).
 
+**Related (S22):** BACKLOG-027 (source maps and a validator per drafted bite) is kept separate.
+Both check a statement against the passage instead of the memory of a read; 027 covers drafted
+prose in a deliverable, this trial covers claims used in plans, decisions and messages.
+
 ## Test Execution Log (per DSM_0.2 §21.3)
 
 **S22 (2026-10-25, light wrap-up).** Counts by the guide §5 commands over the log: exchanges 0,
