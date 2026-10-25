@@ -1,3 +1,5 @@
+**Consumed at:** Session 22 wrap-up (2026-10-25); superseded by 2026-10-25_s22_wrap-up_open-items.md
+
 # Session 22 Handoff: one spoke's inbox file checked, its priority entry at Gate 1, all decisions open
 
 **Date:** 2026-10-25
