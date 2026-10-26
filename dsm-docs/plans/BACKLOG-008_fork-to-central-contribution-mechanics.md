@@ -1,6 +1,6 @@
 # BACKLOG-008: Fork-to-Central Contribution Mechanics
 
-**Status:** Proposed (scope narrowed in S17, 2026-10-16, after DSM_0.2 §21.5 v1.35.0; the four rules sent to Central as an issue, S20)
+**Status:** Proposed (scope narrowed in S17, 2026-10-16, after DSM_0.2 §21.5 v1.35.0; the four rules sent to Central as an issue, S20; recorded by Central as design input, not as a rule, 2026-10-24)
 **Priority:** Low (was Medium; most of the original scope is now upstream)
 **Extends:** DSM_0.2 §21.5, the "Upstream contribution is optional but recommended" bullet
 **Date Created:** 2026-10-09
@@ -132,3 +132,8 @@ _Not yet implemented._
 - [x] Sent to Central (S20, 2026-10-22) as an issue offering the four rules of the S17 scope note as
       input to Central's own design work on inbound contributions; user-approved text. Close this BL
       when Central ships a change covering them, or narrow it if Central declines some.
+- [ ] Central disposition (S23 check, 2026-10-26): the issue was closed on 2026-10-24 and the four
+      rules recorded as design input, not as a rule; where they land is still open. The first
+      success criterion names §21.5 as the home. If the rules land elsewhere (for example only in
+      CONTRIBUTING.md), that criterion no longer fits, and the user decides whether to narrow it
+      to placement-neutral wording.

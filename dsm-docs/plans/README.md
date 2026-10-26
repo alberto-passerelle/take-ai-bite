@@ -16,14 +16,14 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 
 | BL# | Title | Priority | Status |
 |-----|-------|----------|--------|
-| BACKLOG-008 | Fork-to-Central Contribution Mechanics | Low | Proposed (narrowed in S17 to what DSM_0.2 §21.5 leaves out; Central issue open) |
-| BACKLOG-014 | Check Open Task Branches Whenever a Plan Merges Into Main | Medium | Proposed (Central issue open) |
-| BACKLOG-015 | Append a Revised Plan Before Acting Against the Current Plan | Low | Proposed (Central issue open) |
-| BACKLOG-016 | Worklog Rules for Harnesses Where the Hooks Do Not Run | Low | Proposed (Central issue open) |
-| BACKLOG-017 | Check Each Draft Bite Against Its Section Budget at Gate 3 | Medium | Proposed (Central issue open) |
-| BACKLOG-022 | Send Central a Fix So the /dsm-research-add Stub Puts Sources Last | Low | In Progress (Central PR open) |
-| BACKLOG-023 | Send Central a Fix So /dsm-go Step 2b Counts Inbox Entries, Not Inbox Files | Medium | In Progress (Central PR open) |
-| BACKLOG-024 | Send Central a Fix So Worklog User Blocks Keep the User's Words | Medium | In Progress (Central PR open) |
+| BACKLOG-008 | Fork-to-Central Contribution Mechanics | Low | Proposed (narrowed in S17 to what DSM_0.2 §21.5 leaves out; Central recorded it as design input) |
+| BACKLOG-014 | Check Open Task Branches Whenever a Plan Merges Into Main | Medium | Proposed (in Central's backlog, not shipped) |
+| BACKLOG-015 | Append a Revised Plan Before Acting Against the Current Plan | Low | Proposed (in Central's backlog, not shipped) |
+| BACKLOG-016 | Worklog Rules for Harnesses Where the Hooks Do Not Run | Low | Proposed (in Central's backlog, not shipped) |
+| BACKLOG-017 | Check Each Draft Bite Against Its Section Budget at Gate 3 | Medium | Proposed (in Central's backlog, not shipped) |
+| BACKLOG-022 | Send Central a Fix So the /dsm-research-add Stub Puts Sources Last | Low | In Progress (merged on Central, awaiting the release) |
+| BACKLOG-023 | Send Central a Fix So /dsm-go Step 2b Counts Inbox Entries, Not Inbox Files | Medium | In Progress (merged on Central, awaiting the release) |
+| BACKLOG-024 | Send Central a Fix So Worklog User Blocks Keep the User's Words | Medium | In Progress (Central PR open, held until the next release) |
 | BACKLOG-025 | Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule | Medium | Proposed (S22-S26, after BACKLOG-011) |
 | BACKLOG-026 | Approve Every Spoke-Hub Message, Let Only Methodology Concepts Cross, and Replace /dsm-align's Inbox Notice | High | Proposed (to be addressed later) |
 | BACKLOG-027 | Offer Source Maps and an Independent Validator for Each Drafted Bite as a Gate 1 Option in Chunked Drafting | High | Proposed (Central issue open) |

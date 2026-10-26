@@ -5,6 +5,8 @@
 **Branch:** session-22/2026-10-25, merged into `main` at this wrap-up
 **Author:** Alberto (with AI assistance)
 **Consumer:** S23 (`/dsm-go` Step 3)
+**Date Completed:** 2026-10-26
+**Outcome Reference:** Consumed at session 23 start
 **Supersedes:** `2026-10-25_s22_inbox-priority-and-open-decisions.md`, moved to `done/` at this
 wrap-up. Every decision it asked for was settled in S22.
 
