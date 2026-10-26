@@ -1,6 +1,6 @@
 # BACKLOG-022: Send Central a Fix So the /dsm-research-add Stub Puts Sources Last
 
-**Status:** In Progress (Central PR open, awaiting the owner)
+**Status:** In Progress (merged on Central 2026-10-24; awaiting the release that ships it)
 **Priority:** Low
 **Extends:** Central's `/dsm-research-add` ("Header stub template"); DSM_0.1 §8 (Citation Standards: research documents end with a `## Sources` section, categorized by topic)
 **Date Created:** 2026-10-22
@@ -63,4 +63,7 @@ base (`cmp`) before the change was copied in.
 ### Pending verification
 
 - [x] PR body approved by the user, branch pushed, PR opened on Central (no push to `main`): opened 2026-10-22, PR head = local HEAD, live body = approved file.
-- [ ] Owner's merge and the release that ships it; then Status Implemented and move to `done/`.
+- [x] Owner's merge: merged into Central `main` on 2026-10-24. S23 check (2026-10-26): the file there
+      is byte-identical to the PR head, and the stub order is Purpose / Question, Findings,
+      Conclusion, Sources.
+- [ ] The release that ships it; then Status Implemented and move to `done/`.

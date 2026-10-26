@@ -1,6 +1,6 @@
 # BACKLOG-014: Check Open Task Branches Whenever a Plan Merges Into Main
 
-**Status:** Proposed (sent to Central as an issue, S20)
+**Status:** Proposed (sent to Central as an issue, S20; accepted into Central's backlog 2026-10-24, not shipped)
 **Priority:** Medium
 **Extends:** DSM_0.2 §20.2 ("Merge to Level 1") and `/dsm-wrap-up` Step 10
 **Date Created:** 2026-10-19
@@ -67,6 +67,10 @@ Route: one issue on TAB carrying (a) to (c), with this body attached, listed in 
 
 **Sent (S20, 2026-10-22):** as an issue on Central after a recheck against v1.37.1, with the
 user-approved text. The TAB-issue route above predates this fork's Central access (S19).
+
+**Central disposition (S23 check, 2026-10-26):** the issue was closed into Central's backlog on
+2026-10-24 (Proposed, not shipped). The success criterion is checked at the release that ships
+the change.
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 

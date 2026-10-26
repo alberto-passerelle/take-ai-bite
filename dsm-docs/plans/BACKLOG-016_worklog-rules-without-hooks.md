@@ -1,6 +1,6 @@
 # BACKLOG-016: Worklog Rules for Harnesses Where the Hooks Do Not Run
 
-**Status:** Proposed (sent to Central as an issue, S20)
+**Status:** Proposed (sent to Central as an issue, S20; accepted into Central's backlog 2026-10-24, not shipped)
 **Priority:** Low
 **Extends:** DSM_0.2.G (worklog enforcement) and DSM_0.2 §6 (delimiter time stamps)
 **Date Created:** 2026-10-19
@@ -62,6 +62,10 @@ S17 feedback batch; posted only after the user approves its text.
 **Sent (S20, 2026-10-22):** as an issue on Central after a recheck against v1.37.1, with the
 user-approved text. The TAB-issue route above predates this fork's Central access (S19).
 
+**Central disposition (S23 check, 2026-10-26):** the issue was closed into Central's backlog on
+2026-10-24 (Proposed, not shipped). At the release, check the shipped text against points 1 to 3
+of this BL, one by one.
+
 ## Test Execution Log (per DSM_0.2 §21.3)
 
 _Not yet implemented._
@@ -69,3 +73,5 @@ _Not yet implemented._
 ### Pending verification
 
 - [ ] All Test Plan items (deferred: Proposed, upstream proposal)
+- [ ] At the release that ships the change: the shipped text covers points 1, 2 and 3, checked
+      one by one.

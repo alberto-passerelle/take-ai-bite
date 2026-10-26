@@ -1,6 +1,6 @@
 # BACKLOG-015: Append a Revised Plan Before Acting Against the Current Plan
 
-**Status:** Proposed (sent to Central as an issue, S20)
+**Status:** Proposed (sent to Central as an issue, S20; accepted into Central's backlog 2026-10-24, not shipped)
 **Priority:** Low
 **Extends:** DSM_0.2 §7 Worklog Protocol (per-turn flow) and DSM_0.2.G
 **Date Created:** 2026-10-19
@@ -56,6 +56,10 @@ S17 feedback batch; posted only after the user approves its text.
 
 **Sent (S20, 2026-10-22):** as an issue on Central after a recheck against v1.37.1, with the
 user-approved text. The TAB-issue route above predates this fork's Central access (S19).
+
+**Central disposition (S23 check, 2026-10-26):** the issue was closed into Central's backlog on
+2026-10-24 (Proposed, not shipped). The success criterion is checked at the release that ships
+the change.
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 

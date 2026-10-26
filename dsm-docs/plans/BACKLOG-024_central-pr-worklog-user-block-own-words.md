@@ -1,6 +1,6 @@
 # BACKLOG-024: Send Central a Fix So Worklog User Blocks Keep the User's Words
 
-**Status:** In Progress (Central PR open, awaiting the owner)
+**Status:** In Progress (Central PR open; held until the next release)
 **Priority:** Medium
 **Extends:** Central's DSM_0.2 §6 (Worklog Delimiter Format, User row) and §7 (per-turn flow, step 1)
 **Date Created:** 2026-10-22
@@ -65,3 +65,5 @@ was byte-identical to the reviewed base before the change.
 
 - [x] PR body approved by the user, branch pushed, PR opened on Central (no push to `main`): opened 2026-10-22, PR head = local HEAD, live body = approved file.
 - [ ] Owner's merge and the release that ships it; then Status Implemented and move to `done/`.
+      S23 check (2026-10-26): the PR is held until the next release. Held, not declined; no
+      fork action until then.

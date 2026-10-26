@@ -1,6 +1,6 @@
 # BACKLOG-017: Check Each Draft Bite Against Its Section Budget at Gate 3
 
-**Status:** Proposed (sent to Central as an issue, S20)
+**Status:** Proposed (sent to Central as an issue, S20; accepted into Central's backlog 2026-10-24, not shipped)
 **Priority:** Medium
 **Extends:** DSM_0.2.F §8.10 (Chunked Drafting Protocol, Gates 2 and 3)
 **Date Created:** 2026-10-19
@@ -58,6 +58,10 @@ S17 feedback batch; posted only after the user approves its text.
 
 **Sent (S20, 2026-10-22):** as an issue on Central after a recheck against v1.37.1, with the
 user-approved text. The TAB-issue route above predates this fork's Central access (S19).
+
+**Central disposition (S23 check, 2026-10-26):** the issue was closed into Central's backlog on
+2026-10-24 (Proposed, not shipped). The success criterion is checked at the release that ships
+the change.
 
 **Related (S22):** BACKLOG-027 also adds to what each Gate 3 bite carries (a source map and a
 validator run, opt-in at Gate 1). If both land, coordinate the bite-delivery wording.

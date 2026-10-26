@@ -1,6 +1,6 @@
 # BACKLOG-023: Send Central a Fix So /dsm-go Step 2b Counts Inbox Entries, Not Inbox Files
 
-**Status:** In Progress (Central PR open, awaiting the owner)
+**Status:** In Progress (merged on Central 2026-10-24 with one owner amendment; awaiting the release that ships it)
 **Priority:** Medium
 **Extends:** Central's `/dsm-go` Step 2b ("Processing", inbox lazy-load); DSM_0.2.A §19 (enumerate-each-entry rule, BL-421); DSM_0.2 §19.1 (published snippets are run before they ship)
 **Date Created:** 2026-10-22
@@ -78,4 +78,9 @@ while reviewing the diff and fixed before T-2 to T-6 were rerun.
 ### Pending verification
 
 - [x] PR body approved by the user, branch pushed, PR opened on Central (no push to `main`): opened 2026-10-22, PR head = local HEAD, live body = approved file.
-- [ ] Owner's merge and the release that ships it; then Status Implemented and move to `done/`.
+- [x] Owner's merge: merged into Central `main` on 2026-10-24 with one amendment the owner approved,
+      to the report line only (the snippet is unchanged). A file with no entry header now counts
+      as one entry in the total and is listed as "not in entry format". S23 check (2026-10-26):
+      the second criterion still holds, because the snippet still prints 0 for such a file and
+      the report never calls it empty.
+- [ ] The release that ships it; then Status Implemented and move to `done/`.
