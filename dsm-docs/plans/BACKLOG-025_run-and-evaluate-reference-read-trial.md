@@ -102,6 +102,16 @@ in its first correction); the commands count none of them.
 **Added for the S23 decision:** whether a confirmation bundled with another approval counts the
 same as a separate answer. All 11 S22 confirmations were bundled.
 
+**S23 (2026-10-26, full wrap-up).** Counts by the guide §5 commands over the whole log at wrap-up:
+exchanges 18, human corrections 0, self-corrections 0; S23 alone: 7, 0, 0, with no `unanswered`,
+`note` or `no-exchange` lines. The 7 claims (readings of an upstream project's text, used to
+check fork BLs against it) were shown in one block and confirmed in one reply whose own clause
+confirmed them ("confirm readings 1-7"), in the same message as an action approval: a third
+bundling shape next to S22's two. The three gaps and the scope question were not decided in S23;
+the options, with the decision rule applied to today's counts, are prepared for S24. Applied to
+today's counts, rule 2 (drop) matches; counting S22's after-show misquote as a self-correction
+would make rule 3 (narrow, 18 exchanges over 2 sessions) match instead.
+
 ### Pending verification
 
 - [ ] T-6, T-7, T-8 (deferred to S26, end of the trial window)
