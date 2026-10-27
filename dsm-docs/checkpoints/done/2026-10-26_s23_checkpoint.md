@@ -1,3 +1,5 @@
+**Consumed at:** Session 24 start (2026-10-27)
+
 # Session 23 Checkpoint
 **Date:** 2026-10-26
 **Branch:** session-23/2026-10-26 (merged into `main` at this wrap-up)

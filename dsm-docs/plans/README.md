@@ -24,6 +24,6 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-022 | Send Central a Fix So the /dsm-research-add Stub Puts Sources Last | Low | In Progress (merged on Central, awaiting the release) |
 | BACKLOG-023 | Send Central a Fix So /dsm-go Step 2b Counts Inbox Entries, Not Inbox Files | Medium | In Progress (merged on Central, awaiting the release) |
 | BACKLOG-024 | Send Central a Fix So Worklog User Blocks Keep the User's Words | Medium | In Progress (Central PR open, held until the next release) |
-| BACKLOG-025 | Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule | Medium | Proposed (S22-S26, after BACKLOG-011) |
+| BACKLOG-025 | Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule | Medium | In Progress (S22-S26; S22-S24 run, rule 3 "narrow" matches at the current rate) |
 | BACKLOG-026 | Approve Every Spoke-Hub Message, Let Only Methodology Concepts Cross, and Replace /dsm-align's Inbox Notice | High | Proposed (to be addressed later) |
 | BACKLOG-027 | Offer Source Maps and an Independent Validator for Each Drafted Bite as a Gate 1 Option in Chunked Drafting | High | Proposed (Central issue open) |

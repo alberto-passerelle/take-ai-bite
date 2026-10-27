@@ -6,7 +6,8 @@ and how the trial of that rule is logged and decided. It is fork-local and not p
 **Applies when:** both hold.
 
 1. The session runs in this hub during the trial window, S22-S26, or after BACKLOG-025 recorded a
-   decision that keeps the rule in force.
+   decision that keeps the rule in force. A `/dsm-staa` run does not count: it analyses a closed
+   session and reviews its lessons one by one.
 2. A claim drawn from a file is about to be used in a plan, a decision, a brief or a message.
 
 If either does not hold, stop reading.
@@ -85,13 +86,24 @@ This section fixes where each exchange is recorded, how it is counted and how th
 
 **Log.** `.claude/reference-read-log.md`, untracked: entries quote sources that can be private and
 the user's own words, so only counts leave it. One line per exchange, appended when the human
-answers. Field 2 is that answer: `human-correction` only when it changes what the claim asserts,
-not just its wording. Field 3 marks a claim the agent changed while quoting, before showing it. A
+answers and labelled with the session that showed it; until then an `unanswered` status line
+records it. An exchange still unanswered when S26 closes is listed separately at the decision and
+counts toward rule 3's rate only, never toward rules 1-2. Field 2 is that answer:
+`human-correction` only when it changes what the claim asserts, not just its wording. Field 3 is
+`self-corrected` for a claim the agent changed while quoting, before showing it, and
+`self-corrected-after-show` for an error the agent found after showing it; both count as
+self-corrections. The agent asks for confirmation as its own question. A confirmation the human
+gave only by approving a package whose message said beforehand that approving confirms the
+readings still counts as `confirmed`, with a trailing `| bundling: implied` field. Earlier lines
+are never rewritten: a later finding about one is a `note` line carrying the new field-3 or
+bundling value. A parallel session logs under the main session's label (`S24`, not `S24.1`). A
 session without exchanges writes `- S23 | no-exchange`.
 
 ```
 - S22 | confirmed | - | DSM_0.2 §10.1 | passage: "..." | reading: ...
 - S22 | human-correction | self-corrected | <file> §N | passage: "..." | reading: ... | user: "..."
+- S24 | confirmed | self-corrected-after-show | <file> §N | passage: "..." | reading: ... | bundling: implied
+- S24 | note | self-corrected-after-show | retro for log line N | ...
 ```
 
 **Counts,** by command, never from memory; anchored, because a quoted passage can contain the
@@ -101,7 +113,8 @@ field words. At each wrap-up, the session's counts go into BACKLOG-025's Test Ex
 L=.claude/reference-read-log.md
 grep -cE '^- S[0-9]+ [|] (confirmed|human-correction) [|]' "$L"   # exchanges
 grep -cE '^- S[0-9]+ [|] human-correction [|]' "$L"                # human corrections
-grep -cE '^- S[0-9]+ [|] [a-z-]+ [|] self-corrected [|]' "$L"      # self-corrections
+grep -cE '^- S[0-9]+ [|] [a-z-]+ [|] self-corrected(-after-show)? [|]' "$L"   # self-corrections
+grep -cE '^- S[0-9]+ [|] [a-z-]+ [|] .*[|] bundling: implied$' "$L"   # implied confirmations
 ```
 
 **Decision after S26,** first match wins: (1) keep, if at least one human correction; (2) drop, if

@@ -130,8 +130,11 @@ decoded at run time; all printed output was redacted.
 
 ### Pending verification
 
-- [ ] T-2 on `origin/main`: once the S18 session PR (#16) merges at wrap-up, `git grep -l -i`
-      over `origin/main` returns 0 files, with the T-1 self-test.
+- [x] T-2 on `origin/main`: once the S18 session PR (#16) merges at wrap-up, `git grep -l -i`
+      over `origin/main` returns 0 files, with the T-1 self-test. Done in S24 (2026-10-27) on
+      `origin/main` after a fresh fetch: `git grep -l -i -w -F -f` with the name list (one entry)
+      returns 0 files (exit 1, no match) and 0 file names; the same command with a word known to be
+      present returns 44 files (exit 0), and the list matches 1 line in `.git/info/exclude`.
 - [x] T-7: done in S18 after the list was created (one entry): `git grep -l -i -w -F` with the
       list over `HEAD` and over `origin/session-17` returns 0 files; the self-test with the same
       list matches 1 line in `.git/info/exclude`.
