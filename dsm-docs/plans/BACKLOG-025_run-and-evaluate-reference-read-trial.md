@@ -134,6 +134,11 @@ counts: rule 1 does not match (no human correction), rule 2 does not match (one 
 rule 3 matches (18 exchanges over S22-S23, 9 per session, more than 5): narrow. S24's first seven
 readings are so far logged as unanswered.
 
+**External evidence (S24, inbox):** a downstream spoke reported two more cases of the failure this
+trial tests: a delegated read's framing carried unverified into plans and a message, and a
+paraphrased key term that changed meaning in four plan files. Both were corrected from the source
+side (the document's owner; a verification pass).
+
 ### Pending verification
 
 - [ ] T-6, T-7, T-8 (deferred to S26, end of the trial window)
