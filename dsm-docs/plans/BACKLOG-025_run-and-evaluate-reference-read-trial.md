@@ -1,6 +1,6 @@
 # BACKLOG-025: Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule
 
-**Status:** Proposed (starts at S22, after BACKLOG-011 sets the trial up)
+**Status:** In Progress (trial window S22-S26; S22-S24 run)
 **Priority:** Medium
 **Extends:** BACKLOG-011 (trial setup); DSM_0.2 §10/§10.1 and DSM_6.0 §1.3 only if the result goes upstream
 **Date Created:** 2026-10-23
@@ -138,6 +138,18 @@ readings are so far logged as unanswered.
 trial tests: a delegated read's framing carried unverified into plans and a message, and a
 paraphrased key term that changed meaning in four plan files. Both were corrected from the source
 side (the document's owner; a verification pass).
+
+**S24 (2026-10-27, full wrap-up).** Counts by the guide §5 commands over the whole log at wrap-up:
+exchanges 54, human corrections 0, self-corrections 2, implied confirmations 6. S24 alone: 36
+exchanges, 0 human corrections, 1 self-correction, 0 implied; plus 1 `unanswered` line (closed
+by a note when the seven readings were answered) and 3 `note` lines. Every S24 confirmation was
+asked as its own question, as the gap-3 decision requires. The S24 self-correction is an
+after-show one: a confirmed reading called a snippet's failure "silent", and running the snippet
+showed an error message and a blocked write. One of the notes corrects a time typed into a log
+line instead of taken from the clock. Applied to these counts: rule 1 does not match, rule 2
+does not match (two self-corrections), rule 3 matches (54 exchanges over S22-S24, 18 per session,
+more than 5): narrow. S24 alone fired the trigger 36 times, mostly over inbox lessons and
+upstream backlog passages, which is the volume the narrow rule would have to address.
 
 ### Pending verification
 
