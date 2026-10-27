@@ -112,6 +112,28 @@ the options, with the decision rule applied to today's counts, are prepared for 
 today's counts, rule 2 (drop) matches; counting S22's after-show misquote as a self-correction
 would make rule 3 (narrow, 18 exchanges over 2 sessions) match instead.
 
+**S24 (2026-10-27): the three gaps and the scope decided.** The user chose the recommended option
+for each; the guide's "Applies when" and §5 changed in the same commit as this entry.
+
+- Gap 1: an exchange is logged when answered, under the session that showed it; an `unanswered`
+  status line holds it until then. One still unanswered when S26 closes counts toward rule 3's
+  rate only.
+- Gap 2: field 3 gains `self-corrected-after-show`, counted as a self-correction. S22's after-show
+  misquote is marked by one retro `note` line; the original line is not rewritten.
+- Gap 3: a confirmation given only through a package approval still counts as `confirmed`, with a
+  trailing `bundling: implied` field and its own count. The six S22 lines of that shape are marked
+  by retro `note` lines; the agent now asks for confirmations as their own question.
+- Scope: `/dsm-staa` runs are exempt; a parallel session logs under the main session's label.
+
+Test of the guide's four commands, extracted from the guide and run on a scratch log with one
+line per shape (including a passage that holds the field words): exchanges 6, human corrections
+1, self-corrections 3, implied confirmations 2, all as expected; the old self-correction pattern
+gives 1 on the same log, so the widening shows. Recount of the real log by the same commands:
+exchanges 18, human corrections 0, self-corrections 1, implied confirmations 6. Applied to these
+counts: rule 1 does not match (no human correction), rule 2 does not match (one self-correction),
+rule 3 matches (18 exchanges over S22-S23, 9 per session, more than 5): narrow. S24's first seven
+readings are so far logged as unanswered.
+
 ### Pending verification
 
 - [ ] T-6, T-7, T-8 (deferred to S26, end of the trial window)
