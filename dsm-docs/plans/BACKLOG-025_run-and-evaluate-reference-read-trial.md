@@ -166,6 +166,16 @@ these counts: rule 1 matches (one human correction): keep. Rule 3 would also mat
 over S22-S25, about 20 per session), and the user's stop is direct evidence for narrowing the
 trigger, so the S26 decision should weigh both.
 
+**S26 (2026-10-28, full wrap-up), the last trial session.** Counts by the guide §5 commands over the
+whole log at wrap-up: exchanges 86, human corrections 1, self-corrections 4, implied confirmations
+10. S26 alone: 5 exchanges, 0 human corrections, 1 self-correction, 0 implied. The five readings
+(spoke rule texts and DSM_0.2.C §5) were confirmed in one question asked on its own, beside two
+route questions. The self-correction is a `note` line: a confirmed reading cited a line range two
+lines off, found while drafting the next artifact; the reading itself did not change. Applied to
+these counts: rule 1 still matches (one human correction): keep; rule 3 would also match (86
+exchanges over S22-S26, about 17 per session). The user deferred the decision to S27 at the S26
+wrap-up, so the classification question and the rule are still open.
+
 ### Pending verification
 
-- [ ] T-6, T-7, T-8 (deferred to S26, end of the trial window)
+- [ ] T-6, T-7, T-8 (deferred to S27: the trial window closed at S26, the user moved the decision to the next session)
