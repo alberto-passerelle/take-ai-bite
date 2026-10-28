@@ -151,6 +151,21 @@ does not match (two self-corrections), rule 3 matches (54 exchanges over S22-S24
 more than 5): narrow. S24 alone fired the trigger 36 times, mostly over inbox lessons and
 upstream backlog passages, which is the volume the narrow rule would have to address.
 
+**S25 (2026-10-28, full wrap-up).** Counts by the guide §5 commands over the whole log at wrap-up:
+exchanges 81, human corrections 1, self-corrections 3, implied confirmations 10. S25 alone: 27
+exchanges, 1 human correction, 1 self-correction, 4 implied; plus 3 `note` lines. The human
+correction is the trial's first: a reading said that adopting BACKLOG-027 in the fork needed a new
+BL, and the user's question whether 027 would be enough changed the claim to "027 suffices once
+amended". It is logged as a correction because the question changed what the claim asserted, not
+its wording; that classification decides the rule, so the user should confirm it at S26. The four
+implied confirmations come from one question round whose wording said beforehand that choosing an
+option confirms the comparison. At the fifth bite of a drafted guide the user stopped the question
+rounds and asked for a validator agent instead; from then on, claims inside drafted bites were
+checked by the validator and not logged as exchanges (a `note` line records the switch). Applied to
+these counts: rule 1 matches (one human correction): keep. Rule 3 would also match (81 exchanges
+over S22-S25, about 20 per session), and the user's stop is direct evidence for narrowing the
+trigger, so the S26 decision should weigh both.
+
 ### Pending verification
 
 - [ ] T-6, T-7, T-8 (deferred to S26, end of the trial window)
