@@ -1,9 +1,10 @@
 # BACKLOG-027: Offer Source Maps and an Independent Validator for Each Drafted Bite as a Gate 1 Option in Chunked Drafting
 
-**Status:** In Progress (fork adoption decided S25; Central issue open)
+**Status:** Implemented (S25, 2026-10-28; kept local; Central issue open)
 **Priority:** High
 **Extends:** DSM_0.2.F §8.10 (Chunked Drafting Protocol, Gates 1, 3 and 4); DSM_3.0.E §6.7.3 (AI Collaboration Norms); a validator agent template shipped with the skills
 **Date Created:** 2026-10-25
+**Date Implemented:** 2026-10-28
 **Origin:** Backlog proposal from a downstream spoke, received 2026-10-24 through the inbox and processed in S22. The user named it the only priority in that inbox file and approved the scope, route and evidence decisions (S22, B1-B4).
 **Author:** Alberto (with AI assistance)
 **Backlog line:** Fork-local independent numbering (BL-027).
@@ -89,11 +90,11 @@ text. Split it out if Central accepts the proposal.
 
 - [x] Central issue posted with the text the user approved; its number stays out of this fork.
 - [x] Fork-local adoption decided: adopt now, before Central answers (S25).
-- [ ] `dsm-docs/guides/consequential-drafting.md` exists: name-free, R1-R4 and the six validator
+- [x] `dsm-docs/guides/consequential-drafting.md` exists: name-free, R1-R4 and the six validator
       checks stated generally, an invented example, and a validator agent template that a project
       copies into its `.claude/agents/` at Gate 1.
-- [ ] The guide has its row in the Fork-local guides section of `dsm-docs/guides/README.md`.
-- [ ] DSM_0.2.F §8.10 Gate 1 offers the option in one line that points to the guide.
+- [x] The guide has its row in the Fork-local guides section of `dsm-docs/guides/README.md`.
+- [x] DSM_0.2.F §8.10 Gate 1 offers the option in one line that points to the guide.
 
 Not blocking the close (§21.5: "kept local and its local work is complete"):
 
@@ -105,20 +106,20 @@ Not blocking the close (§21.5: "kept local and its local work is complete"):
 
 For the fork implementation (S25); run on the `bl-027` branch before merge:
 
-- [ ] T-1: DSM_0.2.F §8.10 Gate 1 holds the option line, and the line names the guide path; `grep`
+- [x] T-1: DSM_0.2.F §8.10 Gate 1 holds the option line, and the line names the guide path; `grep`
       returns 1 hit for the path in F.
-- [ ] T-2: every spoke's `@` line resolves to this hub's DSM_0.2 core, the file that dispatches to
+- [x] T-2: every spoke's `@` line resolves to this hub's DSM_0.2 core, the file that dispatches to
       F (`grep` over the spokes' `.claude/CLAUDE.md`, a count, no names).
-- [ ] T-3: on a sample draft in a scratch directory, the counts of bite markers and map markers are
+- [x] T-3: on a sample draft in a scratch directory, the counts of bite markers and map markers are
       equal (`grep -c`), and removing one map makes the counts differ (positive control).
-- [ ] T-4: a validator run from the guide's template, on a sample bite of a few lines with one
+- [x] T-4: a validator run from the guide's template, on a sample bite of a few lines with one
       deliberately wrong verbatim term, reports a verbatim finding and ends with "writes: none".
-- [ ] T-5: the guide lists the R4 fields (source IDs and where they resolve, reading rule, copies
+- [x] T-5: the guide lists the R4 fields (source IDs and where they resolve, reading rule, copies
       policy, confidentiality boundary, validator setup); `grep` per field.
-- [ ] T-6: the guide's row is in the Fork-local guides section of `dsm-docs/guides/README.md`.
-- [ ] T-7: the added lines are name-free: the fork's pre-commit sweep (numbers, IDs, the name list
+- [x] T-6: the guide's row is in the Fork-local guides section of `dsm-docs/guides/README.md`.
+- [x] T-7: the added lines are name-free: the fork's pre-commit sweep (numbers, IDs, the name list
       with its coverage) plus the spoke directory names built by script, 0 hits.
-- [ ] T-8 (resolver, DSM_0.2 §21.4): sweep for any string the change removes or renames; record the
+- [x] T-8 (resolver, DSM_0.2 §21.4): sweep for any string the change removes or renames; record the
       sweep even when empty.
 
 The upstream version (Gate 3 wording in §8.10, R4 fields in DSM_3.0.E §6.7.3, a distribution path
@@ -152,8 +153,33 @@ posting, title and body equal to the approved draft.
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-_Not yet implemented._
+Run on `bl-027/consequential-drafting-guide`, 2026-10-28 (S25), after the guide commit.
+
+- T-1: pass. `grep -c` for the guide path in DSM_0.2.F returns 1 (§8.10 Gate 1 item 6).
+- T-2: pass. 4 of 4 spokes' `.claude/CLAUDE.md` files carry an `@` line that resolves to this
+  hub's `DSM_0.2_Custom_Instructions_v1.1.md` (the file exists); the core names DSM_0.2.F 3 times.
+- T-3: pass. A 2-bite sample draft in a gitignored scratch folder counts BITE / MAP / /MAP as
+  1 / 1 / 1 for n = 1 and 2. Control: the same draft with map 2 removed counts 1 / 0 / 0 for n = 2.
+- T-4: pass. A Sonnet subagent given the template's instructions checked a one-sentence sample bite
+  whose map carried a verbatim term that differs from the original. It reported a V2 blocker on
+  that term and a V3 fix following from it, used Read only, and ended with "writes: none". The run
+  used the general-purpose fallback the guide describes, not an installed agent file.
+- T-5: pass. The guide's §2 table names all five R4 fields (Source IDs, Reading rule, Copies policy,
+  Confidentiality boundary, Validator setup); `grep`, at least 1 hit each.
+- T-6: pass. One row for the guide, in the Fork-local guides section of `dsm-docs/guides/README.md`.
+- T-7: pass. Sweep of the 207 added lines: `#NNN` 0, hex IDs 0, BL references 2 (both this BL),
+  Central item numbers 0, name list 0 hits against a 1-entry list, spoke directory names 0 hits
+  against 4.
+- T-8: the guide commit removes or renames nothing. The amendment commit replaced 16 lines of this
+  BL; their opening fragments occur 18 times in 6 sibling fork BLs (008, 014-017, 026), each in
+  that BL's own text for a proposal still with Central: deliberate, none stale. Control: a known
+  string elsewhere in the corpus was found (1 hit).
+
+Drafting record: 8 bites under §8.10. Bites 1-4 were checked by per-claim reading confirmations
+(BACKLOG-025 trial); from bite 5 on, at the user's request, a Sonnet validator checked the bites
+against the spoke's name-free proposal (header to §5 in one run; §6 to §8 twice, because the first
+run stopped on an API safety filter before any check). Its fixes were applied before approval.
 
 ### Pending verification
 
-- [ ] All Test Plan items (run on the bl-027 branch before merge)
+- [x] All Test Plan items run on the bl-027 branch before merge (S25). Nothing deferred.
