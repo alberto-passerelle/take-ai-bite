@@ -991,6 +991,9 @@ Trigger does NOT apply to:
 3. Outcome (what should the document produce or enable?)
 4. Length budget (target word count or page count)
 5. In/out of scope (which topics belong; which don't)
+6. Optional, fork-local: should every bite carry a source map and a validator run? Offer it when
+   the document draws on sources whose wording matters; the method is in
+   `dsm-docs/guides/consequential-drafting.md` under the directory that holds this file.
 
 User signs off on the definition before Gate 2. This makes the existing
 collaborative-definition gate (§8.0) explicit for prose; agents must not
