@@ -75,5 +75,6 @@ DSM. Each row is added in the same commit as its guide.
 
 | Guide | Subject |
 |-------|---------|
+| [consequential-drafting.md](consequential-drafting.md) | Source map and validator run per drafted bite, offered at DSM_0.2.F §8.10 Gate 1; applies when the user turns it on (BACKLOG-027) |
 | [fork-contribution-workflow.md](fork-contribution-workflow.md) | How this fork contributes methodology improvements back to upstream TAB / DSM Central |
 | [reference-read-protocol.md](reference-read-protocol.md) | Checking a claim against its source passage before using it; trial S22-S26 (BACKLOG-011, BACKLOG-025) |
