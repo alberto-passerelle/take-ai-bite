@@ -1,6 +1,6 @@
 # BACKLOG-027: Offer Source Maps and an Independent Validator for Each Drafted Bite as a Gate 1 Option in Chunked Drafting
 
-**Status:** Proposed (sent to Central as an issue, S22)
+**Status:** In Progress (fork adoption decided S25; Central issue open)
 **Priority:** High
 **Extends:** DSM_0.2.F §8.10 (Chunked Drafting Protocol, Gates 1, 3 and 4); DSM_3.0.E §6.7.3 (AI Collaboration Norms); a validator agent template shipped with the skills
 **Date Created:** 2026-10-25
@@ -30,8 +30,12 @@ Checked in S22 against this fork (TAB 1.37.1) and Central's main, identical for 
 
 ## Proposed Solution
 
-A proposal for Central; this fork does not edit the methodology files (§21.5). The spoke's design,
-in name-free form:
+Sent to Central as a proposal (S22). In S25 the user decided to adopt it in this fork without
+waiting for Central's answer: a fork-local guide, `dsm-docs/guides/consequential-drafting.md`,
+carries the method (the spoke's name for it: consequential drafting) and the validator agent
+template, and DSM_0.2.F §8.10 Gate 1 gains one line offering it. Every spoke imports this hub's
+DSM_0.2, so the line reaches all of them. This adds an option and contradicts no Central rule
+(§21.5). The spoke's design, in name-free form:
 
 - **Option at Gate 1.** §8.10 Gate 1 gains a sixth item next to purpose, audience, outcome, length
   and scope: "Should every bite carry a source map and a validator run?" Worth offering when the
@@ -84,27 +88,41 @@ text. Split it out if Central accepts the proposal.
 ## Success Criteria
 
 - [x] Central issue posted with the text the user approved; its number stays out of this fork.
-- [ ] Central's response recorded here: accepted (with `**Central BL:**` when known), declined with
-      a reason, or deferred.
-- [ ] If Central ships it: §8.10 offers the option at Gate 1 and pairs each bite with a map and a
-      validator run when it is on; §6.7.3 lists the R4 fields; the validator template has a
-      distribution path.
-- [ ] Fork-local adoption decided: use the option in this hub before Central ships it, or wait.
+- [x] Fork-local adoption decided: adopt now, before Central answers (S25).
+- [ ] `dsm-docs/guides/consequential-drafting.md` exists: name-free, R1-R4 and the six validator
+      checks stated generally, an invented example, and a validator agent template that a project
+      copies into its `.claude/agents/` at Gate 1.
+- [ ] The guide has its row in the Fork-local guides section of `dsm-docs/guides/README.md`.
+- [ ] DSM_0.2.F §8.10 Gate 1 offers the option in one line that points to the guide.
+
+Not blocking the close (§21.5: "kept local and its local work is complete"):
+
+- Central's response, recorded here when it arrives: accepted (with `**Central BL:**` when known),
+  declined with a reason, or deferred. If Central ships its own version, the fork's line and guide
+  are reconciled with Central's text at the next fork-sync, Central's text winning.
 
 ## Test Plan
 
-For whoever implements it upstream:
+For the fork implementation (S25); run on the `bl-027` branch before merge:
 
-- [ ] T-1: §8.10 Gate 1 lists the option; Gate 3 names the map and the validator run; `grep`.
-- [ ] T-2: on a sample draft, the counts of bite markers and map markers are equal (`grep -c`), and
-      removing one map makes the counts differ (positive control).
-- [ ] T-3: a validator run on a sample bite with one deliberately wrong verbatim term reports a
-      verbatim finding and ends with "writes: none".
-- [ ] T-4: §6.7.3 lists the R4 fields; `grep`.
-- [ ] T-5: the validator template reaches a spoke through the deploy mechanism (`diff -q` against
-      the deployed copy).
-- [ ] T-6 (resolver, DSM_0.2 §21.4): sweep for any string the change renames; record the sweep even
-      when empty.
+- [ ] T-1: DSM_0.2.F §8.10 Gate 1 holds the option line, and the line names the guide path; `grep`
+      returns 1 hit for the path in F.
+- [ ] T-2: every spoke's `@` line resolves to this hub's DSM_0.2 core, the file that dispatches to
+      F (`grep` over the spokes' `.claude/CLAUDE.md`, a count, no names).
+- [ ] T-3: on a sample draft in a scratch directory, the counts of bite markers and map markers are
+      equal (`grep -c`), and removing one map makes the counts differ (positive control).
+- [ ] T-4: a validator run from the guide's template, on a sample bite of a few lines with one
+      deliberately wrong verbatim term, reports a verbatim finding and ends with "writes: none".
+- [ ] T-5: the guide lists the R4 fields (source IDs and where they resolve, reading rule, copies
+      policy, confidentiality boundary, validator setup); `grep` per field.
+- [ ] T-6: the guide's row is in the Fork-local guides section of `dsm-docs/guides/README.md`.
+- [ ] T-7: the added lines are name-free: the fork's pre-commit sweep (numbers, IDs, the name list
+      with its coverage) plus the spoke directory names built by script, 0 hits.
+- [ ] T-8 (resolver, DSM_0.2 §21.4): sweep for any string the change removes or renames; record the
+      sweep even when empty.
+
+The upstream version (Gate 3 wording in §8.10, R4 fields in DSM_3.0.E §6.7.3, a distribution path
+for the template) is Central's to test if it ships its own.
 
 ## Risks (per DSM_0.2 §21.2)
 
@@ -138,4 +156,4 @@ _Not yet implemented._
 
 ### Pending verification
 
-- [ ] All Test Plan items (deferred: Proposed, upstream implementation)
+- [ ] All Test Plan items (run on the bl-027 branch before merge)
