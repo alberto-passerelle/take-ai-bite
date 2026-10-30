@@ -69,7 +69,6 @@ spokes, which follow after the hub trial.
 - [ ] Report and history contain no prompt or tool-output content.
 - [ ] A missing or ambiguous log stops the script with a message and writes no report.
 - [ ] The wiring lives in the local `.claude/CLAUDE.md` §4; no tracked command file changes.
-- [ ] `history.md` holds rows for at least two sessions: the baseline for BACKLOG-030.
 
 ## Test Plan
 
@@ -140,4 +139,3 @@ uncertain; from S28 on the categories are exact.
 ### Pending verification
 
 - [ ] T-6: the wrap-up runs the script in one call and reads the report.
-- [ ] `history.md` holds rows for two sessions.
