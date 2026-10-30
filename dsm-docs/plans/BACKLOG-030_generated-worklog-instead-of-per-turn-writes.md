@@ -13,6 +13,8 @@ wrap-up" run in the chat, and chose to test it on this machine first.
 **Author:** Alberto (with AI assistance)
 **Backlog line:** Fork-local independent numbering (BL-030).
 **Depends on:** BACKLOG-029 (the log reader and a baseline of two or three sessions).
+**Start condition:** `.claude/tool-use/history.md` holds rows for at least two sessions (moved
+here from BACKLOG-029's success criteria in S27, so that BACKLOG-029 can close in one session).
 
 ---
 
