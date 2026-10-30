@@ -1,6 +1,6 @@
 # BACKLOG-029: Build a Tool-Use Report From the Claude Code Session Log at Wrap-Up
 
-**Status:** Proposed (Gate 1 approved in S27)
+**Status:** Done (S27: built, tested, wired into wrap-up through the local CLAUDE.md §4)
 **Priority:** High
 **Extends:** DSM_0.2 §7 (Worklog Protocol): adds a measured record of tool use next to the worklog
 and changes nothing in §7; feeds `/dsm-wrap-up` Step 0 and `/dsm-staa`.
@@ -128,8 +128,11 @@ S27, on a frozen copy of the S27 session log (89 tool calls, 78 requests at copy
   match").
 - [x] T-5 PASS: a request that lacks two usage fields exits 3 and names them; a log without usage
   data exits 3.
-- [ ] T-6: deferred to the S27 wrap-up, after the wiring text for `.claude/CLAUDE.md` §4 is
-  approved.
+- [x] T-6 PASS at the S27 wrap-up: the wiring text was approved and added to the local
+  `.claude/CLAUDE.md` §4; the wrap-up ran the script and wrote `S27.md` (38 lines) and the S27 row
+  of `history.md`. The first call exited 2 because the script still lived only on the task branch;
+  the run then used the committed version (`git show <branch>:scripts/tool-use-report.py | python3 -I -`).
+  From the merge on, the path in the wiring exists on the session branch.
 - [x] T-7: run by the pre-commit and commit-msg hooks at this commit.
 
 Finding: 22 of the 35 worklog-only calls in S27 are guessed, because the description prefix
@@ -138,4 +141,4 @@ uncertain; from S28 on the categories are exact.
 
 ### Pending verification
 
-- [ ] T-6: the wrap-up runs the script in one call and reads the report.
+- [x] none (T-6 ran at the S27 wrap-up)
