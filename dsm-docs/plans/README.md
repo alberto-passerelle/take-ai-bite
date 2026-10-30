@@ -27,3 +27,5 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-025 | Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule | Medium | In Progress (S22-S26 run; decision deferred to S27; rule 1 "keep" matches, its one correction still to confirm) |
 | BACKLOG-026 | Approve Every Spoke-Hub Message, Let Only Methodology Concepts Cross, and Replace /dsm-align's Inbox Notice | High | Proposed (to be addressed later) |
 | BACKLOG-028 | Add a Protected Tier (Art. 9 Data, Individual Employee Ratings, Personnel Files) to DSM_0.2.C §5 and State That §5 Governs Storage, Not Reading | Medium | Proposed (Gate 1 approved in S26) |
+| BACKLOG-029 | Build a Tool-Use Report From the Claude Code Session Log at Wrap-Up | High | Proposed (Gate 1 approved in S27) |
+| BACKLOG-030 | Build the Worklog From the Session Log at Wrap-Up and Switch Off the Per-Turn Writes in the Hub | High | Proposed (Gate 1 approved in S27; starts after BACKLOG-029's baseline) |
