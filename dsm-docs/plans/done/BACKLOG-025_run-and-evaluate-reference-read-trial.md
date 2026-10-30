@@ -1,6 +1,6 @@
 # BACKLOG-025: Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule
 
-**Status:** In Progress (trial window S22-S26; S22-S24 run)
+**Status:** Done (S27: narrowed by rule 3; the guide's trigger now covers only claims that leave the hub or decide something)
 **Priority:** Medium
 **Extends:** BACKLOG-011 (trial setup); DSM_0.2 §10/§10.1 and DSM_6.0 §1.3 only if the result goes upstream
 **Date Created:** 2026-10-23
@@ -40,9 +40,9 @@ runs the window and applies the rule.
 - [ ] Sessions S22-S26 each have their exchanges logged, or a logged "no exchange" line.
 - [ ] Counts per category (exchanges, human corrections, self-corrections) are produced by a
       command over the log and recorded here with the command.
-- [ ] The decision (keep / drop / narrow / user decision) follows the rule above and is recorded
+- [x] The decision (keep / drop / narrow / user decision) follows the rule above and is recorded
       with its counts.
-- [ ] Follow-up recorded: guide kept, trigger narrowed (with the change), or guide and CLAUDE.md
+- [x] Follow-up recorded: guide kept, trigger narrowed (with the change), or guide and CLAUDE.md
       line removed; upstream offer decided if kept.
 
 ## Test Plan
@@ -176,6 +176,23 @@ these counts: rule 1 still matches (one human correction): keep; rule 3 would al
 exchanges over S22-S26, about 17 per session). The user deferred the decision to S27 at the S26
 wrap-up, so the classification question and the rule are still open.
 
+S27 decision. The user classified S25's human correction: it changed the wording, not what the
+claim asserted, so for the decision it counts as confirmed. Recorded as a `note` line in the log;
+line 79 itself is not rewritten (guide §5).
+
+- [x] T-6: every session S22-S26 appears in the log (lines per session: S22 22, S23 7, S24 40, S25 30, S26 6).
+- [x] T-7: recount by the guide's commands at close: exchanges 86, human corrections 1,
+  self-corrections 4, implied confirmations 10, equal to the counts recorded at the S26 wrap-up.
+  The human-correction count by command stays 1, because line 79 keeps its label; after the S27
+  classification note, human corrections for the decision: 0.
+- [x] T-8: rule 1 (keep, at least one human correction): 0, no match. Rule 2 (drop, no correction of
+  either kind): 4 self-corrections, no match. Rule 3 (narrow, more than 5 exchanges per session):
+  86 / 5 sessions = 17.2, match. **Decision: narrow the trigger.**
+
 ### Pending verification
 
-- [ ] T-6, T-7, T-8 (deferred to S27: the trial window closed at S26, the user moved the decision to the next session)
+- [x] Follow-up: the narrower trigger, agreed with the user in S27 and written into the guide:
+  condition 2 and §2 now name text that leaves the hub (Central, a spoke inbox note, the public
+  fork) and decisions the user is asked to make; §2 asks for passages copied from numbered tool
+  output. The local CLAUDE.md line changed the same way. Several readings in one turn already went
+  into one question (§2), so that part needed no change.

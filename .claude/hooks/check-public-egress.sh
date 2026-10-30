@@ -23,7 +23,12 @@
 #   2. .claude/settings.json, hooks.PreToolUse, matcher "Bash", command:
 #        .claude/hooks/check-public-egress.sh --tool-use
 #
-# Exit codes: 0 allow; 1 refuse the push (--pre-push); 2 block the tool call (--tool-use).
+#   3. (S27) .git/hooks/pre-commit and .git/hooks/commit-msg, executable:
+#        exec "$(git rev-parse --show-toplevel)/.claude/hooks/check-public-egress.sh" --pre-commit
+#        exec "$(git rev-parse --show-toplevel)/.claude/hooks/check-public-egress.sh" --commit-msg "$1"
+#
+# Exit codes: 0 allow; 1 refuse the push or commit (--pre-push, --pre-commit, --commit-msg);
+# 2 block the tool call (--tool-use).
 
 MODE="$1"
 [ $# -gt 0 ] && shift
@@ -31,7 +36,8 @@ MODE="$1"
 case "$MODE" in
   --pre-push) BLOCK_CODE=1 ;;
   --tool-use) BLOCK_CODE=2 ;;
-  *) echo "[BACKLOG-013] usage: check-public-egress.sh --pre-push|--tool-use" >&2; exit 2 ;;
+  --pre-commit|--commit-msg) BLOCK_CODE=1 ;;
+  *) echo "[BACKLOG-013] usage: check-public-egress.sh --pre-push|--tool-use|--pre-commit|--commit-msg FILE" >&2; exit 2 ;;
 esac
 
 block() {
@@ -99,6 +105,38 @@ if [ "$MODE" = "--pre-push" ]; then
   Values are not shown (DSM_0.2.C §5.8). Find them with a redacted search, fix them, and push again.
   Deliberate bypass: git push --no-verify (only on the user's explicit request)."
   fi
+  exit 0
+fi
+
+# --pre-commit (staged added lines and file names) / --commit-msg FILE (the message).
+# Blocks on a listed name; prints the rest of the .claude/CLAUDE.md §2 pre-commit sweep
+# as counts only (report, never block): #NNN, hex IDs, non-fork BL numbers, and lines
+# that mention Central, upstream or the owner, which still need reading.
+if [ "$MODE" = "--pre-commit" ] || [ "$MODE" = "--commit-msg" ]; then
+  load_patterns
+  if [ "$MODE" = "--pre-commit" ]; then
+    TEXT=$(git diff --cached -U0 --no-color --no-ext-diff | grep '^+' | grep -v '^+++ ')
+    FILES=$(git diff --cached --name-only)
+    WHERE="staged added lines"
+  else
+    [ -r "$1" ] || block "Refused: the commit message file cannot be read, so it cannot be checked."
+    TEXT=$(grep -v '^#' "$1")
+    FILES=""
+    WHERE="commit message"
+  fi
+  a=$(printf '%s\n' "$TEXT" | count_hits)
+  f=$(printf '%s\n' "$FILES" | count_hits)
+  if [ "$a" = "ERR" ] || [ "$f" = "ERR" ]; then block "Refused: matching failed on the $WHERE."; fi
+  if [ "$a" -gt 0 ] || [ "$f" -gt 0 ]; then
+    block "Commit refused: listed names in the $WHERE ($a line(s)) or in file names ($f).
+  Values are not shown (DSM_0.2.C §5.8). Fix them and commit again.
+  Deliberate bypass: git commit --no-verify (only on the user's explicit request)."
+  fi
+  h=$(printf '%s\n' "$TEXT" | grep -cE '#[0-9]+')
+  x=$(printf '%s\n' "$TEXT" | grep -cE '(^|[^0-9A-Za-z])[0-9a-f]{7,40}([^0-9A-Za-z]|$)')
+  b=$(printf '%s\n' "$TEXT" | grep -oE 'BL-[0-9]{3}|BACKLOG-[0-9]{3}' | grep -vcE '^(BL|BACKLOG)-0[0-3][0-9]$')
+  c=$(printf '%s\n' "$TEXT" | grep -ciE 'central|upstream|owner')
+  echo "[egress $MODE] names: 0 hits against a $(grep -c . "$PATTERNS")-entry list; report only: #NNN=$h hex=$x non-fork-BL=$b central/upstream/owner lines=$c" >&2
   exit 0
 fi
 
