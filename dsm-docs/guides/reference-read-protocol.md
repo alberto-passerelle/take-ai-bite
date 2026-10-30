@@ -6,9 +6,11 @@ and how the trial of that rule is logged and decided. It is fork-local and not p
 **Applies when:** both hold.
 
 1. The session runs in this hub during the trial window, S22-S26, or after BACKLOG-025 recorded a
-   decision that keeps the rule in force. A `/dsm-staa` run does not count: it analyses a closed
-   session and reviews its lessons one by one.
-2. A claim drawn from a file is about to be used in a plan, a decision, a brief or a message.
+   decision that keeps or narrows the rule (S27: narrowed). A `/dsm-staa` run does not count: it
+   analyses a closed session and reviews its lessons one by one.
+2. A claim drawn from a file is about to be used in text that leaves the hub (an issue, PR or
+   comment on Central, a spoke inbox note, a tracked file or commit message in the public fork), or
+   as the basis of a decision the user is asked to make.
 
 If either does not hold, stop reading.
 
@@ -19,20 +21,25 @@ and the correction comes only from the source side (research
 `dsm-docs/research/2026-10-15_reference-reading.md`, §3.1); no DSM rule puts the passage in front
 of the human at the point of use (§3.3). This guide is a fork-local trial of such a rule:
 BACKLOG-011 sets it up, and BACKLOG-025 runs it in S22-S26 and decides by the rule in section 5.
+The trial ended in S27 with rule 3, narrow: the trigger now covers only claims that leave the hub
+or decide something (condition 2 at the top).
 
 ## 2. Reference-Read Trigger and Four-Part Exchange
 
 This section defines when the check starts and what the agent shows (research §3.4).
 
 An *ingestion read* is a broad read for orientation and supports no specific claim. A *reference
-read* starts when a claim drawn from a file is about to be used in a plan, a decision, a brief or a
-message. The trigger is the use, not the earlier read, so a file read hours ago and one read a
+read* starts when a claim drawn from a file is about to be used in text that leaves the hub, or as
+the basis of a decision the user is asked to make (condition 2 at the top). The trigger is the use, not the earlier read, so a file read hours ago and one read a
 moment ago are treated alike.
 
 At the trigger, before the claim is used, the agent shows four parts in the conversation:
 
-1. **Passage:** the wording the claim rests on, quoted as a small bite (DSM_6.0 §1.1).
-2. **Location:** file and section, with line numbers where the tool output gives them.
+1. **Passage:** the wording the claim rests on, quoted as a small bite (DSM_6.0 §1.1) and copied
+   from a numbered tool output (`grep -n` on an anchor phrase, or `sed -n 'a,bp' f | nl -ba -v a`),
+   never retyped.
+2. **Location:** file, section and line numbers, taken from the same numbered output as the
+   passage.
 3. **Reading:** the agent's interpretation, stated apart from the quote so a gap between them
    shows (DSM_6.0 §1.4).
 4. **Confirmation:** the human's answer, awaited before the claim is used (DSM_6.0 §1.10).

@@ -24,7 +24,6 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-022 | Send Central a Fix So the /dsm-research-add Stub Puts Sources Last | Low | In Progress (merged on Central, awaiting the release) |
 | BACKLOG-023 | Send Central a Fix So /dsm-go Step 2b Counts Inbox Entries, Not Inbox Files | Medium | In Progress (merged on Central, awaiting the release) |
 | BACKLOG-024 | Send Central a Fix So Worklog User Blocks Keep the User's Words | Medium | In Progress (Central PR open, held until the next release) |
-| BACKLOG-025 | Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule | Medium | In Progress (S27 decision: narrow, by rule 3; the narrower trigger is still to be agreed) |
 | BACKLOG-026 | Approve Every Spoke-Hub Message, Let Only Methodology Concepts Cross, and Replace /dsm-align's Inbox Notice | High | Proposed (to be addressed later) |
 | BACKLOG-028 | Add a Protected Tier (Art. 9 Data, Individual Employee Ratings, Personnel Files) to DSM_0.2.C §5 and State That §5 Governs Storage, Not Reading | Medium | Proposed (Gate 1 approved in S26) |
 | BACKLOG-029 | Build a Tool-Use Report From the Claude Code Session Log at Wrap-Up | High | Proposed (Gate 1 approved in S27) |

@@ -1,6 +1,6 @@
 # BACKLOG-025: Run the Reference-Read Trial for Five Sessions and Decide Whether to Keep, Narrow or Drop the Rule
 
-**Status:** In Progress (S27 decision: narrow, by rule 3; the narrower trigger is still to be agreed)
+**Status:** Done (S27: narrowed by rule 3; the guide's trigger now covers only claims that leave the hub or decide something)
 **Priority:** Medium
 **Extends:** BACKLOG-011 (trial setup); DSM_0.2 §10/§10.1 and DSM_6.0 §1.3 only if the result goes upstream
 **Date Created:** 2026-10-23
@@ -40,9 +40,9 @@ runs the window and applies the rule.
 - [ ] Sessions S22-S26 each have their exchanges logged, or a logged "no exchange" line.
 - [ ] Counts per category (exchanges, human corrections, self-corrections) are produced by a
       command over the log and recorded here with the command.
-- [ ] The decision (keep / drop / narrow / user decision) follows the rule above and is recorded
+- [x] The decision (keep / drop / narrow / user decision) follows the rule above and is recorded
       with its counts.
-- [ ] Follow-up recorded: guide kept, trigger narrowed (with the change), or guide and CLAUDE.md
+- [x] Follow-up recorded: guide kept, trigger narrowed (with the change), or guide and CLAUDE.md
       line removed; upstream offer decided if kept.
 
 ## Test Plan
@@ -191,5 +191,8 @@ line 79 itself is not rewritten (guide §5).
 
 ### Pending verification
 
-- [ ] Follow-up: the narrower trigger, agreed with the user and written into the guide (success
-  criterion "trigger narrowed (with the change)").
+- [x] Follow-up: the narrower trigger, agreed with the user in S27 and written into the guide:
+  condition 2 and §2 now name text that leaves the hub (Central, a spoke inbox note, the public
+  fork) and decisions the user is asked to make; §2 asks for passages copied from numbered tool
+  output. The local CLAUDE.md line changed the same way. Several readings in one turn already went
+  into one question (§2), so that part needed no change.
