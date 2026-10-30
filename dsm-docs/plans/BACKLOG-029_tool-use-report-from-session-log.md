@@ -42,7 +42,7 @@ Three threads in one BL: T2 makes T1 exact, and T3 gets the report into the anal
   with `python3 -I`). It reads this session's log under `~/.claude/projects/<project-slug>/`,
   matched by the session start time in the worklog header, and stops with a message when no log
   or more than one log matches. It writes into `.claude/tool-use/` (ignored, stays local):
-  - `S{N}.md`, at most 30 lines, per turn and in total: tool calls by tool and by prefix,
+  - `S{N}.md`, at most 40 lines, per turn and in total: tool calls by tool and by prefix,
     bookkeeping calls, requests, cache-read, cache-creation and output tokens per request (exact),
     tool time and the wait for the next model step, errors, outputs over 10,000 characters, files
     read more than once, single-call requests directly followed by another single-call request
@@ -65,7 +65,7 @@ spokes, which follow after the hub trial.
 
 - [ ] The S27 report matches an independent count of tool calls, requests and cache-read tokens
   from the same log.
-- [ ] Running the report costs one tool call at wrap-up, and `S{N}.md` has at most 30 lines.
+- [ ] Running the report costs one tool call at wrap-up, and `S{N}.md` has at most 40 lines.
 - [ ] Report and history contain no prompt or tool-output content.
 - [ ] A missing or ambiguous log stops the script with a message and writes no report.
 - [ ] The wiring lives in the local `.claude/CLAUDE.md` §4; no tracked command file changes.
@@ -78,7 +78,8 @@ spokes, which follow after the hub trial.
 - [ ] T-2: run with S26's start time and check that it selects S26's log; run with a start time
   that matches no log and check that it stops, exit status read directly (§19.2).
 - [ ] T-3: grep the S27 report for a line known from a tool output of that session: 0 hits; name
-  list sweep: 0 hits, reported with coverage.
+  list sweep: 0 hits, reported with coverage; a made-up project name in a call description comes
+  out as `[project]`.
 - [ ] T-4: two logs overlapping in time (a STAA run in a second window), in a scratch copy: the
   script reports the ambiguity and picks neither.
 - [ ] T-5: an unreadable or field-less log prints a line different from a clean run's
@@ -96,8 +97,9 @@ spokes, which follow after the hub trial.
   Mitigation: the script names a missing field and stops; it never reports 0 for a field it could
   not read (T-5).
 - **Names in the report:** call descriptions are the agent's own text but can name a project.
-  Mitigation: repeated reads are counted, not listed by path; T-3's name sweep; the report stays
-  ignored and local.
+  Mitigation: only flagged calls are listed (at most 5), with listed names and sibling project
+  folder names replaced by `[project]` and outside paths by `[outside repo]`; T-3's name sweep;
+  the report stays ignored and local.
 - **Reading the report costs tokens:** Mitigation: the 30-line cap; details only on request.
 - **Logs expire:** Claude Code deletes old session logs (`cleanupPeriodDays`, 30 days by
   default). Accepted: the report is built at wrap-up, while the log exists.
@@ -110,8 +112,32 @@ the before-and-after numbers from `history.md`, once a Central PR slot is free (
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-<!-- Filled at close. -->
+S27, on a frozen copy of the S27 session log (89 tool calls, 78 requests at copy time):
+
+- [x] T-1 PASS: tool calls 89 = 89, requests 78 = 78, cache read 16,962,556 = 16,962,556 against
+  an independent count (a recursive walk instead of the script's loop).
+- [x] T-2 PASS after a fix: the S27 worklog selects the live S27 log, S26's archived worklog
+  selects the S26 log, and a session with no log exits 2 ("0 session logs match"). The first run
+  FAILED: the no-log case picked the live log, because the test command itself quoted both header
+  strings. The match now requires a call that overwrites `.claude/worklog.md` (the `/dsm-go`
+  reset).
+- [x] T-3 PASS: 0 hits in the report for 3 probes taken from the session's tool outputs; 0 hits
+  against the 1-entry name list and the 7 sibling folder names; a made-up project name and an
+  outside path come out as `[project]` and `[outside repo]`, a repository path as a relative
+  path, and a real sibling folder name is removed.
+- [x] T-4 PASS: two copies of the S27 log in a scratch project folder exit 2 ("2 session logs
+  match").
+- [x] T-5 PASS: a request that lacks two usage fields exits 3 and names them; a log without usage
+  data exits 3.
+- [ ] T-6: deferred to the S27 wrap-up, after the wiring text for `.claude/CLAUDE.md` §4 is
+  approved.
+- [x] T-7: run by the pre-commit and commit-msg hooks at this commit.
+
+Finding: 22 of the 35 worklog-only calls in S27 are guessed, because the description prefix
+started mid-session. The S27 share of cache reads after worklog-only calls (40%) is therefore
+uncertain; from S28 on the categories are exact.
 
 ### Pending verification
 
-- [ ] none yet
+- [ ] T-6: the wrap-up runs the script in one call and reads the report.
+- [ ] `history.md` holds rows for two sessions.
