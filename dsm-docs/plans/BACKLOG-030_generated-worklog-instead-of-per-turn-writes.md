@@ -41,6 +41,9 @@ live, and the session log records it with its time.
   with the hand-written one; record what each holds that the other lacks, and fix or accept each
   difference. No live session pays for this test.
 - **T3, switch the hub** (local files only):
+  - first, dated copies of `.claude/settings.json`, `.claude/CLAUDE.md` and
+    `.claude/reasoning-lessons.md` (for example `settings.json.pre-bl030`); none of the three is in
+    git;
   - a rule in `.claude/CLAUDE.md` §4 that replaces §7's per-turn appends: a `**Plan:**` line in
     the chat before the first tool call of a turn and after each stop, and the generated file at
     wrap-up. The "Read as / Not read as" line goes into the plan line only when the user's message
@@ -52,7 +55,7 @@ live, and the session log records it with its time.
     header;
   - the wrap-up lists turns that have tool calls but no `**Plan:**` line;
   - `validate-transcript-edit.sh` stays if the generator's append passes it (T-2 below).
-  - Rollback: restore the hook entry from the backup and delete the §4 lines.
+  - Rollback: see the Rollback section below.
 
 Open at Gate 2: how parallel sessions use the worklog under the new rule (`/dsm-parallel-session-go`
 mentions it on four lines), and the reasoning lessons that describe per-turn blocks, to be reworded
@@ -69,7 +72,7 @@ trial is done.
   worklog exists before wrap-up Step 0; STAA reads it without change.
 - [ ] Each wrap-up reports the turns without a `**Plan:**` line, with a count.
 - [ ] `history.md` (BACKLOG-029) shows cache-read tokens per turn before and after the switch.
-- [ ] The rollback was run once and the reminder fired again.
+- [ ] The full rollback (T-6) was run once, and the hub was switched on again afterwards.
 
 ## Test Plan
 
@@ -83,7 +86,8 @@ trial is done.
   with coverage.
 - [ ] T-5: crash case in a scratch copy: a header-only worklog and no wrap-up marker; the boot
   step builds the worklog before archiving it.
-- [ ] T-6: rollback: restore the hook entry from the backup; the next prompt shows the reminder.
+- [ ] T-6: full rollback, once: restore the three dated copies; the next prompt shows the reminder,
+  the §4 rule is gone and the lessons have their old wording. Then switch on again.
 - [ ] T-7: a scratch turn with tool calls and no `**Plan:**` line appears in the wrap-up list.
 - [ ] T-8: egress sweep of the diff and the commit message: `#NNN`, hex IDs, Central BL numbers
   and the name list, reported as counts with coverage.
@@ -104,6 +108,25 @@ trial is done.
   are checked for worklog changes, and the rollback takes one minute.
 - **Stale lessons and protocol references:** lessons on the Open line or on block boundaries at a
   stop describe the per-turn blocks. Mitigation: reword them at the next STAA prune.
+
+## Rollback
+
+Nothing in DSM text or in Central's files changes, so a rollback touches only this fork's own
+files.
+
+| Layer | Change | Undo |
+|---|---|---|
+| Local `.claude/settings.json` | Reminder hook entry removed | Restore the dated copy |
+| Local `.claude/CLAUDE.md` §4 | Worklog rule (and BACKLOG-029's wiring, if that goes too) | Restore the dated copy, or delete the lines |
+| Local `.claude/reasoning-lessons.md` | Lessons on per-turn blocks reworded | Restore the dated copy: the file is not in git, and wrap-up backs up only MEMORY.md |
+| Tracked `scripts/tool-use-report.py` | Generator added | `git revert` the merge, or leave it unused |
+| Worklogs built during the trial | Same format as before | Nothing to undo |
+| Spokes, if a later step rolled it out | Their own local switch | One inbox note per project |
+| Central, if proposed | A proposal | Withdraw it |
+
+Partial rollback, the most likely one: keep BACKLOG-029's report and undo only this BL by
+restoring the hook entry and deleting the worklog rule. The report works with per-turn writes too.
+If the trial ends in a rollback, this BL closes as withdrawn (DSM_0.2 §21.5).
 
 ## Upstream Contribution
 
