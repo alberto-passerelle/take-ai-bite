@@ -5,6 +5,8 @@
 **Branch:** session-27/2026-10-30, merged into `main` at this wrap-up
 **Author:** Alberto (with AI assistance)
 **Consumer:** S28 (`/dsm-go` Step 3)
+**Date Completed:** 2026-10-31
+**Outcome Reference:** Consumed at session 28 start
 
 This file ships with the public fork. It names no Central PR, issue, commit or active-backlog
 numbers, describes none of Central's unreleased text, and names no spoke, client or person. The

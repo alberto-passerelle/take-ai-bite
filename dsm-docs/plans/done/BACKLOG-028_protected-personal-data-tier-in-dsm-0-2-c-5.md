@@ -1,6 +1,7 @@
 # BACKLOG-028: Add a Protected Tier (Art. 9 Data, Individual Employee Ratings, Personnel Files) to DSM_0.2.C §5 and State That §5 Governs Storage, Not Reading
 
-**Status:** Proposed (Gate 1 approved in S26)
+**Status:** Implemented (S28; Gate 1 approved in S26, T1 amended in S28 after a downstream spoke's inbox entry)
+**Date Completed:** 2026-10-31
 **Priority:** Medium
 **Extends:** DSM_0.2.C §5 (intro), §5.1 (Data Sensitivity Classification) and §5.9 (Data-Protection and Compliance Briefing by Design)
 **Date Created:** 2026-10-28
@@ -39,7 +40,7 @@ Three additions; no existing sentence or table row is changed.
 
   | Level | Examples | Handling rule |
   |---|---|---|
-  | Restricted, protected | Special categories under GDPR Art. 9 (for example health data and trade-union membership), ratings of an individual employee's performance or behaviour, personnel and application files | As Restricted. In addition: the agent may read such data where a source contains it, but carries it into outputs (summaries, minutes, files, messages) only when the task is about exactly that, and then says so. Agree such tasks beforehand with whoever the project names for data protection, or with the user if nobody is named. |
+  | Restricted, protected | Special categories under GDPR Art. 9 (for example health data and trade-union membership), ratings of an individual employee's performance or behaviour, personnel and application files | As Restricted. In addition: the agent may read such data where a source contains it, but carries it into outputs (summaries, minutes, files, messages) only when the task is about exactly that, and then says so. Agree such tasks beforehand with whoever the project names for data protection, or with the user if nobody is named. Store such data only in gitignored files, never in tracked files or in the §5.8 egress zone. |
 
 - **T2, §5 intro:** one sentence after the first paragraph: "This section governs where data
   lands (tracked files and anything that leaves the project), not what the agent may
@@ -54,7 +55,7 @@ spokes' own rule texts, which get project-specific notes outside this BL.
 
 ## Success Criteria
 
-- [ ] §5.1 carries the `Restricted, protected` row; the existing `Restricted` row is byte-identical
+- [ ] §5.1 carries the `Restricted, protected` row, including its storage sentence; the existing `Restricted` row is byte-identical
   to `upstream/main`.
 - [ ] The §5 intro carries the storage-versus-reading sentence.
 - [ ] §5.9's data-scope requirement and template line B name all three protected kinds.
@@ -65,7 +66,8 @@ spokes' own rule texts, which get project-specific notes outside this BL.
 
 - [ ] T-1: `git diff upstream/main -- DSM_0.2.C_Security_Safety.md` shows additions only in §5.1,
   plus the two replaced §5.9 lines; the `Restricted` row is unchanged.
-- [ ] T-2: anchored grep finds the new row, the T2 sentence and both T3 lines (one hit each).
+- [ ] T-2: anchored grep finds the new row, its storage sentence, the T2 sentence and both T3 lines
+  (one hit each).
 - [ ] T-3: the heading list (`grep -nE '^#{2,4} '`) is identical before and after.
 - [ ] T-4: `grep -c 'Data-Protection and Compliance Briefing'` in DSM_0.2.C is unchanged, and the
   Step 2g snippet still finds an existing briefing in a scratch copy.
@@ -90,6 +92,10 @@ spokes' own rule texts, which get project-specific notes outside this BL.
 - **Legal statements:** the row names Art. 9 with two examples and draws no legal conclusion; it
   sets handling, not lawfulness. The §5.9 briefing remains the place for professional review.
 - **A project with no named data-protection contact:** the T1 handling falls back to the user.
+- **Storage sentence read as banning all results about protected data from tracked files:** it
+  covers "such data", so pseudonymized data stays out, while anonymized results, which are no
+  longer personal data, may still be tracked. Accepted: a project whose deliverable must name
+  the data keeps that deliverable untracked.
 
 ## Upstream Contribution
 
@@ -98,8 +104,31 @@ carrying the DSM_0.2.C change (DSM_0.2 §21.5).
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-<!-- Filled at close. -->
+S28, 2026-10-31, on `bl-028/protected-tier`.
+
+- [x] T-1: `git diff --numstat upstream/main -- DSM_0.2.C_Security_Safety.md` gives `10 2`:
+  5 lines in the §5 intro, 1 row in §5.1, and the two removed lines are the §5.9 data-scope
+  line and template line B, each replaced by two wrapped lines. The `Restricted` row matches
+  upstream exactly (1/1). Differs from this item's wording in two approved ways: the T2
+  sentence sits in the §5 intro as T2 specifies, not in §5.1, and the two §5.9 lines are
+  wrapped (shown and approved at Gate 3).
+- [x] T-2: one hit each for the new row (anchored), its storage sentence, the T2 sentence and
+  the T3 data-scope line (searched as newline-joined text), and T3 line B.
+- [x] T-3: the heading lists of `upstream/main` and the working tree are identical (19 headings).
+- [x] T-4: `Data-Protection and Compliance Briefing` occurs 3 times before and after. The
+  Step 2g snippet, run in two gitignored scratch projects with the trigger set, stays silent
+  with a briefing carrying the template title and prints its `WARN` without one.
+- [x] T-5: §21.4 sweep across `DSM_*.md`, `scripts/commands/*.md` and `dsm-docs/`; control:
+  each pattern finds 1 hit in upstream's DSM_0.2.C. `Art. 9 yes/no`: 3 hits, all deliberate
+  (this BL's problem statement and test plan; `done/BACKLOG-001`, the closed record of the
+  template as filed). `whether special categories (GDPR Art. 9) are present`: 1 hit,
+  deliberate (this BL's problem statement). No stale hit. The new text's references, §5.1
+  and the §5.8 egress zone, resolve.
+- [x] T-6: `git merge-tree --write-tree --name-only HEAD upstream/main` exits 0, no conflicts.
+- [x] T-7: the commit hooks on the implementation commit and its message report 0 hits against
+  a 1-entry name list, and `#NNN`, hex IDs, non-fork BL numbers and Central/upstream/owner
+  lines all at 0.
 
 ### Pending verification
 
-- [ ] none yet
+- None: every item ran in S28. The upstream offer waits for a free Central PR slot.
