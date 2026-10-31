@@ -1,6 +1,7 @@
 # BACKLOG-028: Add a Protected Tier (Art. 9 Data, Individual Employee Ratings, Personnel Files) to DSM_0.2.C §5 and State That §5 Governs Storage, Not Reading
 
-**Status:** Proposed (Gate 1 approved in S26; T1 amended in S28 after a downstream spoke's inbox entry)
+**Status:** Implemented (S28; Gate 1 approved in S26, T1 amended in S28 after a downstream spoke's inbox entry)
+**Date Completed:** 2026-10-31
 **Priority:** Medium
 **Extends:** DSM_0.2.C §5 (intro), §5.1 (Data Sensitivity Classification) and §5.9 (Data-Protection and Compliance Briefing by Design)
 **Date Created:** 2026-10-28
@@ -103,8 +104,31 @@ carrying the DSM_0.2.C change (DSM_0.2 §21.5).
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-<!-- Filled at close. -->
+S28, 2026-10-31, on `bl-028/protected-tier`.
+
+- [x] T-1: `git diff --numstat upstream/main -- DSM_0.2.C_Security_Safety.md` gives `10 2`:
+  5 lines in the §5 intro, 1 row in §5.1, and the two removed lines are the §5.9 data-scope
+  line and template line B, each replaced by two wrapped lines. The `Restricted` row matches
+  upstream exactly (1/1). Differs from this item's wording in two approved ways: the T2
+  sentence sits in the §5 intro as T2 specifies, not in §5.1, and the two §5.9 lines are
+  wrapped (shown and approved at Gate 3).
+- [x] T-2: one hit each for the new row (anchored), its storage sentence, the T2 sentence and
+  the T3 data-scope line (searched as newline-joined text), and T3 line B.
+- [x] T-3: the heading lists of `upstream/main` and the working tree are identical (19 headings).
+- [x] T-4: `Data-Protection and Compliance Briefing` occurs 3 times before and after. The
+  Step 2g snippet, run in two gitignored scratch projects with the trigger set, stays silent
+  with a briefing carrying the template title and prints its `WARN` without one.
+- [x] T-5: §21.4 sweep across `DSM_*.md`, `scripts/commands/*.md` and `dsm-docs/`; control:
+  each pattern finds 1 hit in upstream's DSM_0.2.C. `Art. 9 yes/no`: 3 hits, all deliberate
+  (this BL's problem statement and test plan; `done/BACKLOG-001`, the closed record of the
+  template as filed). `whether special categories (GDPR Art. 9) are present`: 1 hit,
+  deliberate (this BL's problem statement). No stale hit. The new text's references, §5.1
+  and the §5.8 egress zone, resolve.
+- [x] T-6: `git merge-tree --write-tree --name-only HEAD upstream/main` exits 0, no conflicts.
+- [x] T-7: the commit hooks on the implementation commit and its message report 0 hits against
+  a 1-entry name list, and `#NNN`, hex IDs, non-fork BL numbers and Central/upstream/owner
+  lines all at 0.
 
 ### Pending verification
 
-- [ ] none yet
+- None: every item ran in S28. The upstream offer waits for a free Central PR slot.
