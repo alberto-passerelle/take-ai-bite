@@ -613,6 +613,11 @@ data across multiple sensitivity levels, and the agent must apply appropriate
 protection at write-time, before content reaches git. This protocol complements
 §1 (filename check at staging) by addressing content-level protection.
 
+This section governs where data lands (tracked files and anything that leaves the
+project), not what the agent may read to do a task; what the agent may process
+follows the organization's and the project's own instructions, within the
+protected-tier rule in §5.1.
+
 References: [OpenSSF Security-Focused Guide for AI Code Assistant Instructions](https://best.openssf.org/Security-Focused-Guide-for-AI-Code-Assistant-Instructions.html),
 [NIST SP 1800-39 Data Classification Practices](https://www.nccoe.nist.gov/data-classification),
 [OWASP GenAI Data Security 2026](https://genai.owasp.org/resource/owasp-genai-data-security-risks-mitigations-2026/).
@@ -627,6 +632,7 @@ Before writing content to a tracked file, classify the data by sensitivity level
 | Internal | Project architecture, internal IDs, file paths | Do not expose in web queries, logs, or external-facing artifacts |
 | Confidential | API keys, tokens, passwords, database credentials | Never in plaintext; use env var references (`$ENV_VAR`) or vault placeholders (`{API_KEY}`) |
 | Restricted | PII (names, addresses, financial data), health data, GDPR-scoped personal data | Anonymize or pseudonymize before inclusion; see §5.4 |
+| Restricted, protected | Special categories under GDPR Art. 9 (for example health data and trade-union membership), ratings of an individual employee's performance or behaviour, personnel and application files | As Restricted. In addition: the agent may read such data where a source contains it, but carries it into outputs (summaries, minutes, files, messages) only when the task is about exactly that, and then says so. Agree such tasks beforehand with whoever the project names for data protection, or with the user if nobody is named. Store such data only in gitignored files, never in tracked files or in the §5.8 egress zone. |
 
 The classification applies to all DSM project types. Data science projects
 commonly handle Restricted data (datasets with PII); private projects
@@ -840,7 +846,8 @@ dismiss the signal.
 - **Context** — what the project does, why personal data arises, the processing
   environment (device, local or remote, the model context).
 - **Data scope** — categories of data subjects and affected groups; sensitivity, including
-  whether special categories (GDPR Art. 9) are present.
+  whether special categories (GDPR Art. 9), ratings of individual employees, or personnel
+  and application files are present.
 - **Data flows and storage** — zones, what crosses each boundary, processing in the model
   context, retention relevance.
 - **Control model and TOMs** — the technical and organizational measures in place, and the
@@ -865,7 +872,8 @@ Purpose · Audience · Status (OPEN | APPROVED | CONDITIONS) · Date
 Scope note (name-free; asserts no legal conclusions) · References
 
 A. Context               — project, why personal data arises, processing environment
-B. Data scope            — subject categories, affected groups, sensitivity; Art. 9 yes/no
+B. Data scope            — subject categories, affected groups, sensitivity;
+                           Art. 9 / individual ratings / personnel files: yes/no
 C. Data flows & storage  — zones, boundary crossings, model-context processing, retention
 D. Control model & TOMs  — protections in place; open TOM points
 E. Open review questions — legal basis, processor/third-country, controller role,
