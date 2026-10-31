@@ -26,3 +26,5 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-024 | Send Central a Fix So Worklog User Blocks Keep the User's Words | Medium | In Progress (Central PR open, held until the next release) |
 | BACKLOG-026 | Approve Every Spoke-Hub Message, Let Only Methodology Concepts Cross, and Replace /dsm-align's Inbox Notice | High | Proposed (to be addressed later) |
 | BACKLOG-030 | Build the Worklog From the Session Log at Wrap-Up and Switch Off the Per-Turn Writes in the Hub | High | Proposed (Gate 1 approved in S27; starts after BACKLOG-029's baseline) |
+| BACKLOG-031 | Let a Project Declare That Its Work Documents May Hold the Names the Work Needs (Egress-Zone Tiers in DSM_0.2.C §5.8) | Medium | Proposed (Gate 1 open) |
+| BACKLOG-032 | Let /dsm-go Step 2g Find a Data-Protection Briefing by a Marker Line, Not Only by Its English Title | Low | Proposed (Gate 1 open) |
