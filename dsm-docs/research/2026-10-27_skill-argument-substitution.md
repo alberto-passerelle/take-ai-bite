@@ -1,7 +1,7 @@
 # Skill argument substitution in command files: what is replaced, and whether escaping protects snippets
 
 **Date:** 2026-10-27
-**Linked BL:** (none, candidate for promotion; sent upstream as an issue in S24)
+**Linked BL:** BACKLOG-036 (S29); sent upstream as an issue in S24
 **Author:** Alberto (with AI assistance)
 **Status:** Active
 **Validation depth:** Multi-pass (per DSM_0.2 §10.1): a source pass and a behavioral pass

@@ -1,4 +1,4 @@
-# BACKLOG-036: Keep $1-$9 Out of Command-File Snippets, Because the Harness Substitutes Skill Arguments Into Them
+# BACKLOG-036: Keep $0-$9 Out of Command-File Snippets, Because the Harness Substitutes Skill Arguments Into Them
 
 **Status:** Proposed (Gate 1 open)
 **Priority:** Medium
@@ -6,8 +6,9 @@
 infrastructure edits).
 **Date Created:** 2026-11-04
 **Origin:** Inbox entry from a downstream spoke, processed in S29. `/dsm-go` was invoked with an
-argument, and the rendered Step 6 lockfile snippet carried the argument in place of `$1`. This hub
-met the same substitution in S24 (a lesson in the Skills category); it was never filed.
+argument, and the rendered Step 6 lockfile snippet carried an argument word in place of `$1`. This
+hub measured the substitution in S24 (`dsm-docs/research/2026-10-27_skill-argument-substitution.md`:
+14 cases, two runs) and sent the finding upstream as an issue then; no fork BL was filed.
 **Author:** Alberto (with AI assistance)
 **Backlog line:** Fork-local independent numbering (BL-036).
 
@@ -15,29 +16,33 @@ met the same substitution in S24 (a lesson in the Skills category); it was never
 
 ## Problem Statement
 
-When a skill is invoked with arguments, the harness replaces `$1` to `$9` inside the skill text.
-The source file stays correct; the rendered copy the agent reads does not. `scripts/commands/dsm-go.md`
-L1116:
+When a skill is invoked with arguments, the harness replaces `$0`, `$1`, ... inside the skill text
+with the argument words, counting from 0 (`$0` is the first word); a number without a matching word
+stays. Fenced code is not exempt (S24 research file, Pass 2). The source file stays correct; the
+rendered copy the agent reads does not. `scripts/commands/dsm-go.md` L1116:
 
 > `ANCHOR=$(md5sum .claude/worklog.md | awk '{print $1}')`
 
-With an argument, the agent copies an `awk` program that prints the argument, and the lockfile gets a
-wrong anchor with no error. In S29 the command files hold 20 occurrences of `$1`-`$9` on 13 lines in
-4 files (`dsm-go.md` 8 lines, `dsm-staa.md` 2, `dsm-wrap-up.md` 2, `dsm-align.md` 1).
+With two or more argument words, the agent copies an `awk` program that prints the second word, and
+the lockfile gets a wrong anchor with no error. In S29 the command files hold 22 occurrences of
+`$0`-`$9` on 14 lines in 4 files (`dsm-go.md` 9 lines, `dsm-staa.md` 2, `dsm-wrap-up.md` 2,
+`dsm-align.md` 1).
 
 ## Proposed Solution (sketch for Gate 1)
 
 - Rewrite each occurrence in a form the harness leaves alone, for example `awk '{print $(1)}'` or
   `cut -d' ' -f1` for fields, and named variables for shell function arguments.
-- Add one line to the DSM_0.2.B §8.2 review: a `grep -nE '\$[1-9]' scripts/commands/*.md` check
+- Not a backslash escape: S24 found that `\$1` survives delivery but breaks the snippet when it runs
+  straight from the file (BSD awk reports a syntax error).
+- Add one line to the DSM_0.2.B §8.2 review: a `grep -nE '\$[0-9]' scripts/commands/*.md` check
   before a command-file commit.
 
-Open for Gate 1: which forms survive delivery (tested first, see T-1); whether the check also goes
-into a commit hook.
+Open for Gate 1: the rewrite form (`$(N)` in awk is the one candidate S24 did not run, see T-1);
+whether the check also goes into a commit hook.
 
 ## Success Criteria (draft)
 
-- [ ] No bare `$1`-`$9` remains in `scripts/commands/*.md`, or each remaining one is shown to be
+- [ ] No bare `$0`-`$9` remains in `scripts/commands/*.md`, or each remaining one is shown to be
   outside any substitution.
 - [ ] Every rewritten snippet gives the same result as before on real input.
 - [ ] The §8.2 review names the check.
@@ -45,9 +50,9 @@ into a commit hook.
 
 ## Test Plan (draft)
 
-- [ ] T-1: a scratch command holding each candidate form, run by the user with and without
-  arguments (the S24 method); record which forms arrive unchanged.
-- [ ] T-2: `grep -cE '\$[1-9]'` over `scripts/commands/*.md`: 0, or the listed exceptions.
+- [ ] T-1: the S24 measurement covers 14 forms; run the S24 method (a scratch command the user runs
+  with and without arguments) for the forms it did not cover, at least awk `$(N)`.
+- [ ] T-2: `grep -cE '\$[0-9]'` over `scripts/commands/*.md`: 0, or the listed exceptions.
 - [ ] T-3: each rewritten snippet run against its real input in a Claude Code Bash session, before
   and after, same output (DSM_0.2 §19.1).
 - [ ] T-4: `git merge-tree --write-tree --name-only HEAD upstream/main` on the four files.
@@ -63,8 +68,8 @@ into a commit hook.
 
 ## Upstream Contribution
 
-Offer to Central as an issue plus a PR on the four command files and DSM_0.2.B §8.2 (DSM_0.2 §21.5),
-when a PR slot is free.
+The finding went upstream as an issue in S24. Offer the fix as a PR on the four command files and
+DSM_0.2.B §8.2 when a PR slot is free (DSM_0.2 §21.5).
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
