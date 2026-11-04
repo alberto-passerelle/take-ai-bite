@@ -1,6 +1,6 @@
 # BACKLOG-035: Let the User Keep a Persistent Allowlist of Inbox Folders That the Cross-Repo Write Hook Accepts Without Per-Session Confirmation
 
-**Status:** Proposed (Gate 1 decisions taken in S29; Gate 2 open)
+**Status:** In Progress (Gate 2 approved in S29)
 **Priority:** High
 **Extends:** `.claude/hooks/validate-cross-repo-write.sh` (Write/Edit and Bash branches);
 DSM_0.2.C §2 (cross-repo writes and its anti-pattern list); `DSM_0.2.T_Alignment_Templates.md`
