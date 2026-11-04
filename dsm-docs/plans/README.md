@@ -35,3 +35,4 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-038 | Let the Agent See the Worklog Clock-Drift Warning, Not Only the User | Low | Proposed (Gate 1 open) |
 | BACKLOG-039 | Let /dsm-new-spoke Copy a Hub's "Portfolio Not Applicable" Record Instead of Writing a Placeholder Row | Low | Proposed (Gate 1 open) |
 | BACKLOG-040 | Let a Project Use a Neutral Alias for Hub-Facing Inbox File Names and the Source Line, So a Client Name in Its Folder Name Does Not Reach the Hub | Medium | Proposed (Gate 1 open) |
+| BACKLOG-041 | Let the Egress Checker Read the Fork's BL Numbers From Its Own Indexes Instead of a Fixed 000-039 Range | Medium | Proposed (Gate 1 open) |
