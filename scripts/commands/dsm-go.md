@@ -564,6 +564,35 @@ Run unconditionally on every `/dsm-go`:
 
 The session-scoped confirmation file used by `validate-cross-repo-write.sh` (BL-391, DSM_0.2.C §2 enforcement) is cleared at session start so confirmations from a prior session do not leak. The file is gitignored. The hook degrades gracefully if the file is absent; the reset is a defense-in-depth measure ensuring exactly the contents the user confirmed in this session, no more, no less.
 
+**Report the inbox allowlist (fork-local, BACKLOG-035).** `.claude/cross-repo-allowlist.txt` is
+NOT reset: it is the user's standing confirmation for listed `_inbox` folders (DSM_0.2.C §2), and
+only the user edits it. When it exists, run this snippet and put its lines in the boot report; it
+prints nothing when the file is absent. In the worklog, record the counts only: the paths name
+other projects.
+
+```bash
+A=.claude/cross-repo-allowlist.txt
+if [ -f "$A" ]; then
+  OK=0; BAD=0
+  while IFS= read -r L || [ -n "$L" ]; do
+    case "$L" in ""|"#"*) continue ;; esac
+    D="${L/#\~/$HOME}"; D="${D%/}"
+    R=$(realpath "$D" 2>/dev/null)
+    if [ "$(basename "$D")" = "_inbox" ] && [ -n "$R" ] && [ "$(basename "$R")" = "_inbox" ] && [ -d "$R" ]; then
+      OK=$((OK+1)); echo "  allowed: $L"
+    else
+      BAD=$((BAD+1)); echo "  ignored (not an existing _inbox folder): $L"
+    fi
+  done < "$A"
+  if git check-ignore -q "$A" 2>/dev/null; then IGN=yes; else IGN="NO (it holds other projects' paths: ignore it before committing)"; fi
+  echo "ALLOWLIST: $OK inbox folder(s) allowed, $BAD line(s) ignored; git-ignored: $IGN"
+fi
+```
+
+A line counts under the rule the hook applies: its last folder is `_inbox` before and after
+`realpath`, and the folder exists. The hook skips an ignored line too; the report exists so the
+user sees every entry and whether git ignores the file.
+
 ## Steps
 
 1. **Read MEMORY.md:** Find and load this project's MEMORY.md from the auto memory directory to restore session context. **If MEMORY.md does not exist or fails to load**, continue to Step 2 but note that the agent is operating without prior session context, which increases the risk of applying generic rules to a project with specific overrides.

@@ -85,6 +85,16 @@ CLAUDE.md.
   Per-session cache means one confirmation per cross-repo target, not per call.
   The doc rule above is authoritative; the hook is the validation layer that
   catches doc-rule drift.
+  **Standing confirmation for inbox targets (fork-local, BACKLOG-035).** The user
+  may list `_inbox` folders of other projects in `.claude/cross-repo-allowlist.txt`
+  (gitignored, one path per line, never reset by `/dsm-go`). A listed folder counts
+  as confirmed in every session, for `.md` files directly inside it only: a
+  subfolder such as `done/`, another file type, or a path that resolves elsewhere
+  still needs the session confirmation. A line counts only if its last folder is
+  `_inbox` before and after `realpath` and the folder exists. Only the user edits
+  the file: the hook blocks Write and Edit on it and warns on a Bash write to it,
+  and `/dsm-go` Step 0f lists its entries at every boot. The list confirms the
+  path only; Voice-Attribution Review (§2.3) still governs what a message says.
 
   **Coverage and its limits (BL-484).** The two matchers behave differently on
   purpose, and the difference is a property of what each tool call reveals:
@@ -205,7 +215,8 @@ to non-bash agent operations. Both protocols apply simultaneously.
 
 **DO NOT:**
 - Treat inbox pushes as exempt because they are "routine"; the first write to
-  a new cross-repo path in a session always requires confirmation
+  a new cross-repo path in a session always requires confirmation, unless the
+  user has listed that `_inbox` folder in `.claude/cross-repo-allowlist.txt`
 - Delete methodology sections to "clean up" without explicit request
 - Batch destructive operations to reduce confirmation prompts; each operation
   gets its own confirmation
