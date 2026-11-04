@@ -5,6 +5,8 @@
 **Extends:** DSM_0.2.C §2.3 (Voice-Attribution) and §5 (Sensitive Data Protection); DSM_0.2.A §1 (Session-End Inbox Push); `/dsm-wrap-up` Steps 0.5, 1 and 6; `/dsm-align` Steps 6 and 12b; `/dsm-go` Steps 1.8 and 2b
 **Date Created:** 2026-10-23
 **Origin:** User request, S21: human approval before spokes and hub exchange files, with the strictest data protection, and messages limited to methodology concepts that improve the methodology. The user's source states that wrap-up still sends methodology feedback and notifications to the hub without per-message approval, and that the approval step is planned but not implemented. Part B added by the user at filing: the `/dsm-align` inbox notice is over-engineered.
+**Amended:** 2026-11-04 (S29): input from a downstream spoke on the cross-repo path confirmation,
+recorded under Proposed Solution.
 **Author:** Alberto (with AI assistance)
 **Backlog line:** Fork-local independent numbering (BL-026).
 
@@ -64,6 +66,18 @@ is not `pass`. On a version match the line appears only when the stored result i
 unresolved warnings stay visible in later sessions. Update the two texts that cite the Step 12b
 notice (the enumerate-each-entry rule in `/dsm-go` Step 2b and DSM_0.2.A). Exact wording decided at
 implementation.
+
+**Input from a downstream spoke (S29): the path confirmation.** A spoke that routes delegated work
+to its own execution spokes writes inbox entries every day. `/dsm-go` Step 0f empties
+`.claude/cross-repo-writes-session.txt` at each boot, so every session starts with a confirmation
+before the first entry. The spoke reports this in two sessions in a row, and once one of two
+confirmation lines did not reach the file. It proposes a persistent allowlist
+(`.claude/cross-repo-allowlist.txt`, gitignored, not reset at boot, written only by the user) that
+the hook accepts only for a direct `.md` child of a listed directory whose last path segment is
+`_inbox`; `/dsm-go` lists its entries at boot. This conflicts with A1 as written ("Step 0.5 stops
+pre-confirming inbox directories"). Open for Gate 1: once A1 makes the user approve each message's
+full text, does the path confirmation for `_inbox` targets still add protection, or can an
+allowlist the user maintains replace it?
 
 **Scope note (DSM_0.2 §21).** A and B have independent success criteria. They are filed together
 at the user's request because both cut unreviewed inbox traffic; split them when they are worked
