@@ -30,3 +30,4 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-032 | Let /dsm-go Step 2g Find a Data-Protection Briefing by a Marker Line, Not Only by Its English Title | Low | Proposed (Gate 1 open) |
 | BACKLOG-033 | Extend an Existing Reasoning Lesson Instead of Appending a Duplicate at Wrap-Up Step 0 | Medium | Proposed (Gate 1 open) |
 | BACKLOG-034 | Tell the Inbox Lifecycle Block to Move Untracked Entries With Plain mv, Because git mv -k Exits 0 Without Moving | Low | Proposed (Gate 1 open) |
+| BACKLOG-035 | Let the User Keep a Persistent Allowlist of Inbox Folders That the Cross-Repo Write Hook Accepts Without Per-Session Confirmation | High | Proposed (Gate 1 decisions taken in S29; Gate 2 open) |

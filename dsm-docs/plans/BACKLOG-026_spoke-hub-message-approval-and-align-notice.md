@@ -79,6 +79,10 @@ pre-confirming inbox directories"). Open for Gate 1: once A1 makes the user appr
 full text, does the path confirmation for `_inbox` targets still add protection, or can an
 allowlist the user maintains replace it?
 
+**Split out (S29).** BACKLOG-035 implements the allowlist in the fork for `_inbox` targets. A1's
+approval of each message's content is unaffected; its "stops pre-confirming" line still covers the
+agent's own pre-confirmation in `/dsm-wrap-up` Step 0.5.
+
 **Scope note (DSM_0.2 §21).** A and B have independent success criteria. They are filed together
 at the user's request because both cut unreviewed inbox traffic; split them when they are worked
 separately.
