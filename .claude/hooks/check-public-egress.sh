@@ -134,7 +134,12 @@ if [ "$MODE" = "--pre-commit" ] || [ "$MODE" = "--commit-msg" ]; then
   fi
   h=$(printf '%s\n' "$TEXT" | grep -cE '#[0-9]+')
   x=$(printf '%s\n' "$TEXT" | grep -cE '(^|[^0-9A-Za-z])[0-9a-f]{7,40}([^0-9A-Za-z]|$)')
-  b=$(printf '%s\n' "$TEXT" | grep -oE 'BL-[0-9]{3}|BACKLOG-[0-9]{3}' | grep -vcE '^(BL|BACKLOG)-0[0-3][0-9]$')
+  # Fork BL numbers come from the first column of the fork's own index rows,
+  # so the count keeps up as the fork line grows (BACKLOG-041). Without the
+  # index files, the old fixed range 000-039 applies.
+  FORK=$(sed -nE 's/^\| *BACKLOG-([0-9]{3}) *\|.*/\1/p' "$ROOT/dsm-docs/plans/README.md" "$ROOT/dsm-docs/plans/done/fork-INDEX.md" 2>/dev/null | sort -u | paste -sd'|' -)
+  [ -n "$FORK" ] || FORK='0[0-3][0-9]'
+  b=$(printf '%s\n' "$TEXT" | grep -oE 'BL-[0-9]{3}|BACKLOG-[0-9]{3}' | grep -vcE "^(BL|BACKLOG)-($FORK)\$")
   c=$(printf '%s\n' "$TEXT" | grep -ciE 'central|upstream|owner')
   echo "[egress $MODE] names: 0 hits against a $(grep -c . "$PATTERNS")-entry list; report only: #NNN=$h hex=$x non-fork-BL=$b central/upstream/owner lines=$c" >&2
   exit 0
