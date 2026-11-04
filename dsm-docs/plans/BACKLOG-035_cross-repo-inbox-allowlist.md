@@ -75,12 +75,14 @@ target project with `_inbox/`), asserting exit code and stderr reason (§19.1):
 - [ ] T-3: listed `_inbox`, `x.txt`: exit 2.
 - [ ] T-4: listed directory not named `_inbox`: exit 2.
 - [ ] T-5: unlisted `_inbox`: exit 2.
-- [ ] T-6: `_inbox/../x.md` and a symlink into a listed `_inbox` from elsewhere: exit 2.
+- [ ] T-6: `_inbox/../x.md`: exit 2; a listed `_inbox` line that resolves to a folder with another
+  name: exit 2; a symlink from elsewhere into a listed `_inbox` lands there: exit 0.
 - [ ] T-7: Write and Edit on the allowlist file: exit 2 with the user-only reason.
 - [ ] T-8: Bash `cp` into a listed `_inbox`: exit 0, no warning; into an unlisted one: exit 1;
   a redirect into the allowlist file: exit 1.
-- [ ] T-9: no allowlist file: T-1..T-8 give the same results as the `upstream/main` hook (run the
-  old hook first, per the regression lesson).
+- [ ] T-9: no allowlist file: same results as the `upstream/main` hook, except the guard cases (T-7
+  and the Bash write to the allowlist file), which apply whether the file exists or not (run the old
+  hook first, per the regression lesson).
 - [ ] T-10: Step 0f snippet in a Claude Code Bash session: one allowed line, one ignored line,
   ignore status; silent without the file.
 - [ ] T-11: resolver sweep (§21.4) for the changed anti-pattern sentence and
@@ -111,8 +113,49 @@ of inbox messages (DSM_0.2 §21.5).
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-<!-- Filled at close. -->
+S29, 2026-11-04, on `bl-035/cross-repo-inbox-allowlist`. Hook cases ran in `mktemp -d` fixtures (a
+git repo, a project with `_inbox/`, `_inbox/done/` and `other/`, a second project, two symlinks),
+tool JSON fed on stdin to the edited hook and to the `upstream/main` hook, exit code and first
+stderr line recorded per case.
+
+- [x] T-1: Write of a new `.md` and Edit of an existing `.md` directly in the listed `_inbox`,
+  empty session file: exit 0 (upstream hook: 2 for both, so the cases discriminate).
+- [x] T-2: `_inbox/done/a.md`: exit 2, "Cross-repo write blocked".
+- [x] T-3: `_inbox/a.txt`: exit 2.
+- [x] T-4: listed folder named `other`: exit 2.
+- [x] T-5: unlisted `_inbox` of the second project: exit 2.
+- [x] T-6: `_inbox/../a.md`: exit 2; listed line `X/_inbox`, a symlink to a folder named `other`:
+  exit 2; a symlink from the second project into the listed `_inbox`: exit 0. The T-6 text was
+  corrected in S29 to match the approved concept (the write is judged by where it lands).
+- [x] T-7: Write and Edit on the allowlist file: exit 2 each, "Write to the inbox allowlist
+  blocked" (upstream hook: 0, the file is inside the repo).
+- [x] T-8: Bash `cp` into the listed `_inbox`: exit 0 (upstream: 1); into the unlisted one: 1;
+  into `_inbox/done/`: 1; a `>>` redirect into the allowlist file: 1, and stderr carries the
+  "only the user edits this file" note.
+- [x] T-9: allowlist file absent: 12 of 15 cases give the upstream result; the 3 others are
+  T-7 (Write, Edit) and the T-8 redirect, the guard that applies whether the file exists or not
+  (T-9 text corrected in S29).
+- [x] T-10 (dry run): the Step 0f snippet, run under zsh and bash in the fixture repo, printed
+  the same lines: 2 allowed (an absolute path and a `~` path), 3 ignored (a folder not named
+  `_inbox`, a symlink named `_inbox` resolving to `other`, a missing folder); ignore status `NO`
+  without a `.gitignore` and `yes` with `.claude/` ignored; 0 bytes when the file is absent. The
+  block in `dsm-go.md` is byte-identical to the tested file (`cmp`). Live boot: pending below.
+- [x] T-11: §21.4 sweep over `DSM_*.md` and `scripts/commands/*.md` for `always requires
+  confirmation`, `First write to any path outside`, `requires explicit user confirmation`,
+  `one confirmation per cross-repo target` and `cross-repo-allowlist`. Hits: DSM_0.2.C L85
+  (followed by the new paragraph), L218 (the amended line), T file L66 (qualified by the new
+  bullet at L69), and the 5 new-text lines. 0 stale. Nothing was removed or renamed.
+- [x] T-12: `git merge-tree --write-tree --name-only HEAD upstream/main`: exit 0;
+  `upstream/main` is 0 commits ahead, so the four upstream-owned files merge clean today.
+- [x] T-13: added lines of the branch diff (112 non-empty): `#NNN` 0, hex IDs 0, the source
+  spoke's name 0 (control: 7 in the source file); 1 line mentions upstream (the T-9 text, a
+  git ref). Name list: reported by the commit hooks.
 
 ### Pending verification
 
-- [ ] none yet
+- [ ] T-10 live: the first `/dsm-go` after the deploy runs Step 0f in this hub (silent unless the
+  user has created the allowlist).
+- [ ] Spokes: each runs `/dsm-align` once to receive the hook; a spoke inbox note asks for it
+  (separate approval).
+- [ ] This hub's `.claude/CLAUDE.md` alignment block gets the T bullet at the next `/dsm-align`.
+- [ ] Upstream offer (issue plus PR), per the Upstream Contribution section.
