@@ -1,6 +1,7 @@
 # BACKLOG-041: Let the Egress Checker Read the Fork's BL Numbers From Its Own Indexes Instead of a Fixed 000-039 Range
 
-**Status:** Proposed (Gate 1 open)
+**Status:** Implemented (S29)
+**Date Completed:** 2026-11-04
 **Priority:** Medium
 **Extends:** `.claude/hooks/check-public-egress.sh` (`--pre-commit` and `--commit-msg` report line),
 fork-local since BACKLOG-013; the commit-hook modes were added in S27.
@@ -59,8 +60,20 @@ None: the egress checker exists only in this fork.
 
 ## Test Execution Log (per DSM_0.2 §21.3)
 
-<!-- Filled at close. -->
+S29, 2026-11-04, on `bl-041/egress-checker-fork-numbers`. T-1 to T-3 ran through the hook's
+`--commit-msg` path, once with the committed hook (old) and once with the edited one (new).
+
+- [x] T-1: added lines of commit 3658f1f: old 2, new 0. Through this path the old rule gives 2, not
+  the 3 the pre-commit report showed, because `--commit-msg` drops lines starting with `#`, which
+  removes the H1 holding one BACKLOG-040.
+- [x] T-2: `BL-391`: old 1, new 1.
+- [x] T-3: an unfiled fork-shaped number (`BACKLOG-042`, since 041 now has a row): old 1, new 1.
+  Control: the filed `BACKLOG-041` and `BL-041`: old 2, new 0.
+- [x] T-4: logic run with no index files: the old range applies (3 on the T-1 text). Not run
+  through the hook, which fails closed without the name list in a scratch repository.
+- [x] T-5: `bash -n` exit 0; the implementing commit's own report is compared with the count
+  computed from its staged text (result in the commit record and the worklog).
 
 ### Pending verification
 
-- [ ] none yet
+- [ ] none
