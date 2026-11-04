@@ -1,6 +1,6 @@
 # BACKLOG-036: Keep $0-$9 Out of Command-File Snippets, Because the Harness Substitutes Skill Arguments Into Them
 
-**Status:** Proposed (Gate 1 open)
+**Status:** Proposed (Gate 1 approved in S29; implementation next session)
 **Priority:** Medium
 **Extends:** the runnable snippets in `scripts/commands/*.md`; DSM_0.2.B §8.2 (review requirements for
 infrastructure edits).
@@ -39,6 +39,11 @@ the lockfile gets a wrong anchor with no error. In S29 the command files hold 22
 
 Open for Gate 1: the rewrite form (`$(N)` in awk is the one candidate S24 did not run, see T-1);
 whether the check also goes into a commit hook.
+
+**Gate 1 decisions (S29):** awk fields as `$(N)`, shell arguments as `${N}`, prose as "field N".
+The check lives in both DSM_0.2.B §8.2 and this fork's pre-commit report (a count of `$0`-`$9` in
+staged `scripts/commands/*.md` lines). T-1 ran in S29 (research file, Pass 3): `$(N)` arrives
+unchanged with and without arguments.
 
 ## Success Criteria (draft)
 

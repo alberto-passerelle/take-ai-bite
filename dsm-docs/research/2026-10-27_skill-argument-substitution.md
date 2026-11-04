@@ -78,6 +78,26 @@ fences; `${N}` is not replaced.
 Lines matching `\$[0-9]` in this fork's `scripts/commands/*.md`: 14 in 4 files (`dsm-go.md` 9,
 `dsm-wrap-up.md` 2, `dsm-staa.md` 2, `dsm-align.md` 1). Not every match is a snippet.
 
+### Pass 3 (S29): behavioral, scope = `$(N)` in awk, 7 cases (C1-C4 prose, F1-F3 fenced), two runs
+
+Run through the Skill tool (scratch command `s29-argtest`), not a typed command; the controls show
+that this path substitutes as the S24 typed runs did.
+
+| Case | Source | Args `alpha beta` | No args |
+|---|---|---|---|
+| C1 prose | `awk '{print $1}'` | `awk '{print beta}'` | unchanged |
+| C2 prose | `awk '{print $(1)}'` | unchanged | unchanged |
+| C3 prose | `awk '{print $(0)}'` | unchanged | unchanged |
+| C4 prose | `$0 ~ /x/` | `alpha ~ /x/` | unchanged |
+| F1 fenced | `awk '{print $(1)}'` | unchanged | unchanged |
+| F2 fenced | `awk '{print $(0)}'` | unchanged | unchanged |
+| F3 fenced | `awk '{print $1}'` | `awk '{print beta}'` | unchanged |
+
+Result: `$(N)` in awk is not replaced, in prose or fences, with or without arguments. Locally (BSD
+awk on macOS), `$(1)` and `$(0)` give the same output as `$1` and `$0`. This settles the open point
+in the Conclusion; BACKLOG-036 (Gate 1, S29) chose `$(N)` for awk, `${N}` for shell arguments and
+"field N" in prose.
+
 ## Conclusion
 
 Escaping (`\$N`) protects a snippet when the command is invoked, with or without arguments, but
