@@ -82,8 +82,9 @@ if [ "$TOOL_NAME" = "Bash" ]; then
   REPO_ROOT="${REPO_ROOT%/}"
 
   CONFIRM_FILE="$REPO_ROOT/.claude/cross-repo-writes-session.txt"
+  ALLOW_FILE="$REPO_ROOT/.claude/cross-repo-allowlist.txt"
 
-  HITS=$(echo "$INPUT" | REPO_ROOT="$REPO_ROOT" CONFIRM_FILE="$CONFIRM_FILE" python3 -c "
+  HITS=$(echo "$INPUT" | REPO_ROOT="$REPO_ROOT" CONFIRM_FILE="$CONFIRM_FILE" ALLOW_FILE="$ALLOW_FILE" python3 -c "
 import sys, json, os, re
 
 repo = os.environ['REPO_ROOT'].rstrip('/')
@@ -122,6 +123,29 @@ if os.path.isfile(confirm_file):
             line = line.strip()
             if line and not line.startswith('#'):
                 confirmed.append(line.rstrip('/'))
+
+# Standing confirmation for inbox targets (fork-local, BACKLOG-035): the
+# same rule as the Write/Edit branch. Only .md files directly inside a
+# listed _inbox directory count as confirmed.
+allow_file = os.environ['ALLOW_FILE']
+inbox_dirs = set()
+if os.path.isfile(allow_file):
+    with open(allow_file) as fh:
+        for line in fh:
+            line = line.rstrip('\n')
+            if not line or line.startswith('#'):
+                continue
+            if line.startswith('~'):
+                line = home + line[1:]
+            line = line.rstrip('/')
+            if os.path.basename(line) != '_inbox':
+                continue
+            real = os.path.realpath(line)
+            if os.path.basename(real) == '_inbox' and os.path.isdir(real):
+                inbox_dirs.add(real)
+
+def inbox_listed(p):
+    return p.endswith('.md') and os.path.realpath(os.path.dirname(p)) in inbox_dirs
 
 def allowlisted(p):
     # Harness scratchpad and ordinary scratch space are outside the repo by
@@ -183,11 +207,18 @@ for t in targets:
     if not os.path.isabs(t):
         t = os.path.join(base, t)
     t = os.path.normpath(t)
+    if t == allow_file:
+        if t not in seen:
+            seen.add(t)
+            hits.append(t + '  (inbox allowlist: only the user edits this file)')
+        continue
     if allowlisted(t):
         continue
     if t == repo or t.startswith(repo + '/'):
         continue
     if any(t == c or t.startswith(c + '/') for c in confirmed):
+        continue
+    if inbox_listed(t):
         continue
     if t not in seen:
         seen.add(t)
@@ -221,7 +252,8 @@ for h in hits:
     {
       echo "Cross-repo Bash write warning (DSM_0.2.C §2, BL-484)."
       echo
-      echo "This Bash command appears to write outside the repo:"
+      echo "This Bash command appears to write outside the repo, or to the"
+      echo "inbox allowlist that only the user edits:"
       echo "$HITS" | sed 's/^/  /'
       echo
       echo "Repo root: $REPO_ROOT"
@@ -292,6 +324,23 @@ fi
 CANON_PATH="${CANON_PATH%/}"
 REPO_ROOT="${REPO_ROOT%/}"
 
+# The inbox allowlist is the user's standing confirmation (fork-local,
+# BACKLOG-035). Only the user writes it, in the editor: a Write or Edit
+# from the agent would be the agent confirming targets for itself.
+ALLOW_FILE="$REPO_ROOT/.claude/cross-repo-allowlist.txt"
+if [ "$CANON_PATH" = "$ALLOW_FILE" ]; then
+  cat >&2 << EOF
+Write to the inbox allowlist blocked (DSM_0.2.C §2, BACKLOG-035).
+
+Target: $CANON_PATH
+
+Only the user edits this file, in the editor. It lists the _inbox
+folders the user confirms for every session; an agent write would be
+the agent confirming targets for itself.
+EOF
+  exit 2
+fi
+
 # Inside the repo? allow
 case "$CANON_PATH" in
   "$REPO_ROOT"/*|"$REPO_ROOT") exit 0 ;;
@@ -312,6 +361,29 @@ if [ -f "$CONFIRM_FILE" ]; then
       "$CONFIRMED"/*|"$CONFIRMED") exit 0 ;;
     esac
   done < "$CONFIRM_FILE"
+fi
+
+# Standing confirmation for inbox targets (fork-local, BACKLOG-035).
+# A listed line counts only if its last path segment is _inbox, before and
+# after realpath, and it is an existing directory. It covers .md files
+# directly inside that directory, nothing below it.
+if [ -f "$ALLOW_FILE" ]; then
+  case "$CANON_PATH" in
+    *.md)
+      TARGET_DIR=$(dirname "$CANON_PATH")
+      while IFS= read -r LISTED || [ -n "$LISTED" ]; do
+        case "$LISTED" in
+          ""|"#"*) continue ;;
+        esac
+        LISTED="${LISTED/#\~/$HOME}"
+        LISTED="${LISTED%/}"
+        if [ "$(basename "$LISTED")" != "_inbox" ]; then continue; fi
+        if ! LISTED=$(realpath "$LISTED" 2>/dev/null); then continue; fi
+        if [ "$(basename "$LISTED")" != "_inbox" ] || [ ! -d "$LISTED" ]; then continue; fi
+        if [ "$TARGET_DIR" = "$LISTED" ]; then exit 0; fi
+      done < "$ALLOW_FILE"
+      ;;
+  esac
 fi
 
 # Block: cross-repo write to unconfirmed target

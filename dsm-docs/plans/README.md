@@ -28,3 +28,10 @@ Closed fork-local BLs are listed in [`done/fork-INDEX.md`](done/fork-INDEX.md).
 | BACKLOG-030 | Build the Worklog From the Session Log at Wrap-Up and Switch Off the Per-Turn Writes in the Hub | High | Proposed (Gate 1 approved in S27; starts after BACKLOG-029's baseline) |
 | BACKLOG-031 | Let a Project Declare That Its Work Documents May Hold the Names the Work Needs (Egress-Zone Tiers in DSM_0.2.C §5.8) | Medium | Proposed (Gate 1 open) |
 | BACKLOG-032 | Let /dsm-go Step 2g Find a Data-Protection Briefing by a Marker Line, Not Only by Its English Title | Low | Proposed (Gate 1 open) |
+| BACKLOG-033 | Extend an Existing Reasoning Lesson Instead of Appending a Duplicate at Wrap-Up Step 0 | Medium | Proposed (Gate 1 open) |
+| BACKLOG-034 | Tell the Inbox Lifecycle Block to Move Untracked Entries With Plain mv, Because git mv -k Exits 0 Without Moving | Low | Proposed (Gate 1 open) |
+| BACKLOG-036 | Keep $0-$9 Out of Command-File Snippets, Because the Harness Substitutes Skill Arguments Into Them | Medium | Proposed (Gate 1 approved in S29) |
+| BACKLOG-037 | Give a New Spoke's main a First Commit, So the First Wrap-Up Merge Does Not Stop on an Unborn Branch | Medium | Proposed (Gate 1 open) |
+| BACKLOG-038 | Let the Agent See the Worklog Clock-Drift Warning, Not Only the User | Low | Proposed (Gate 1 open) |
+| BACKLOG-039 | Let /dsm-new-spoke Copy a Hub's "Portfolio Not Applicable" Record Instead of Writing a Placeholder Row | Low | Proposed (Gate 1 open) |
+| BACKLOG-040 | Let a Project Use a Neutral Alias for Hub-Facing Inbox File Names and the Source Line, So a Client Name in Its Folder Name Does Not Reach the Hub | Medium | Proposed (Gate 1 open) |

@@ -66,6 +66,7 @@ Read on demand by `/dsm-align`; NOT part of the `@` import chain.
 - First write to any path outside this repository in a session requires explicit user confirmation
 - Present the content and target path before writing; do not write cross-repo silently
 - Subsequent writes to the same cross-repo target in the same session do not need re-confirmation
+- A `_inbox` folder the user lists in `.claude/cross-repo-allowlist.txt` counts as confirmed in every session, for `.md` files directly inside it; only the user edits that file
 
 ### Voice-Attribution Review (reinforces Destructive Action Protocol, per DSM_0.2.C §2.3)
 - Content posted under the user's byline (PR/issue comments, commit messages, inbox notifications) is the user's words; approving the *send* is not approving the *content*
